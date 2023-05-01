@@ -5,6 +5,7 @@ using UnityEngine;
 public class MarchingCubesExample : MonoBehaviour {
   public Vector3Int resolution = Vector3Int.one * 10;
   public float noiseSize = 1f;
+  public int noiseOctaves = 3;
   public Vector3 noiseOffset = Vector3.zero;
 
   public float threshold = 0.5f;
@@ -346,7 +347,7 @@ public class MarchingCubesExample : MonoBehaviour {
     );
 
     // Generate noise
-    FractalNoise noise = new FractalNoise(1 / noiseSize, 1f, 0.5f, 3);
+    FractalNoise noise = new FractalNoise(1 / noiseSize, 1f, 0.5f, noiseOctaves);
 
     // Loop through a 3D grid
     for (int z = 0; z < steps.z; z++) {
