@@ -14,7 +14,7 @@ public class MarchingCubesExample : MonoBehaviour {
   public bool drawGizmos = true;
   public float gizmosSize = 0.1f;
 
-  private MarchingCubesGrid m_grid;
+  private CubeGrid m_grid;
 
   [SerializeField] private bool m_rebuildFlag;
   private MeshFilter m_meshFilter;
@@ -44,7 +44,7 @@ public class MarchingCubesExample : MonoBehaviour {
     };
 
     // Create a new grid
-    m_grid = new MarchingCubesGrid(
+    m_grid = new CubeGrid(
       samplerFunc,
       resolution,
       threshold,

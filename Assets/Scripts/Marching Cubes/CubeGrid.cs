@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using Unity.Jobs;
 using System.Collections.Generic;
 
-public class MarchingCubesGrid {
+public class CubeGrid {
   public Func<float, float, float, float> samplerFunc;
   public Vector3Int resolution;
   public float threshold;
@@ -14,11 +14,11 @@ public class MarchingCubesGrid {
 
   private Vector3Int m_sizes;
   private int m_pointsCount;
-  private GridPoint[] m_points;
+  private CubeGridPoint[] m_points;
   private Vector3 m_cubeSize;
   private Mesh m_mesh;
 
-  public MarchingCubesGrid(
+  public CubeGrid(
     Func<float, float, float, float> sampler,
     Vector3Int resolution,
     float threshold = 0f,
@@ -32,11 +32,11 @@ public class MarchingCubesGrid {
     this.multithreaded = multithreaded;
   }
 
-  public GridPoint GetPoint(int index) {
+  public CubeGridPoint GetPoint(int index) {
     return m_points[index];
   }
 
-  public GridPoint GetPoint(int x, int y, int z) {
+  public CubeGridPoint GetPoint(int x, int y, int z) {
     int index = GetIndexFromCoords(x, y, z);
     return m_points[index];
   }
@@ -66,7 +66,7 @@ public class MarchingCubesGrid {
     m_pointsCount = m_sizes.x * m_sizes.y * m_sizes.z;
 
     // Initialize the grid with points (all of them will start with a value = 0)
-    m_points = new GridPoint[m_sizes.x * m_sizes.y * m_sizes.z];
+    m_points = new CubeGridPoint[m_sizes.x * m_sizes.y * m_sizes.z];
     for (int z = 0; z < m_sizes.z; z++) {
       for (int y = 0; y < m_sizes.y; y++) {
         for (int x = 0; x < m_sizes.x; x++) {
@@ -75,7 +75,7 @@ public class MarchingCubesGrid {
 
           // Get the position of the point and set it
           Vector3 pointPosition = GetPointPosition(x, y, z);
-          m_points[index] = new GridPoint(pointPosition, 0);
+          m_points[index] = new CubeGridPoint(pointPosition, 0);
         }
       }
     }
@@ -167,13 +167,14 @@ public class MarchingCubesGrid {
 
     if (multithreaded) {
       // Create the sub tasks for the job
-      NativeArray<GridPoint> jobPoints = new NativeArray<GridPoint>(
-        m_points,
-        Allocator.TempJob
-      );
+      NativeArray<CubeGridPoint> jobPoints =
+        new NativeArray<CubeGridPoint>(
+          m_points,
+          Allocator.TempJob
+        );
 
       // Create job
-      GridJob job = new GridJob(resolution, jobPoints, GCHandle.Alloc(samplerFunc));
+      CubeGridSampleJob job = new CubeGridSampleJob(resolution, jobPoints, GCHandle.Alloc(samplerFunc));
 
       // Execute the job and complete it right away
       JobHandle jobHandle = job.Schedule(jobPoints.Length, 40000); //  80000
@@ -193,7 +194,7 @@ public class MarchingCubesGrid {
             int index = GetIndexFromCoords(x, y, z);
 
             // Get the point and set the value
-            GridPoint point = m_points[index];
+            CubeGridPoint point = m_points[index];
             point.value = samplerFunc(
               point.position.x,
               point.position.y,

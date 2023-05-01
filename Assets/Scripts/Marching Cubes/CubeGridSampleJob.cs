@@ -3,17 +3,17 @@ using Unity.Jobs;
 using Unity.Collections;
 using System.Runtime.InteropServices;
 
-public struct GridJob : IJobParallelFor {
+public struct CubeGridSampleJob : IJobParallelFor {
   [ReadOnly] public Vector3Int gridResolution;
-  public NativeArray<GridPoint> gridPoints;
+  public NativeArray<CubeGridPoint> gridPoints;
 
   [ReadOnly] public GCHandle samplerHandle;
 
   [ReadOnly] private Vector3Int m_gridSize;
 
-  public GridJob(
+  public CubeGridSampleJob(
     Vector3Int gridResolution,
-    NativeArray<GridPoint> points,
+    NativeArray<CubeGridPoint> points,
     GCHandle samplerHandle
   ) {
     this.gridResolution = gridResolution;
@@ -42,14 +42,14 @@ public struct GridJob : IJobParallelFor {
     Vector3Int coords = GetCoordsFromIndex(index);
 
     // Get the point and sample its value
-    GridPoint gridPoint = gridPoints[index];
-    gridPoint.value = sampler(
+    CubeGridPoint point = gridPoints[index];
+    point.value = sampler(
       (float)coords.x / ((float)gridResolution.x),
       (float)coords.y / ((float)gridResolution.y),
       (float)coords.z / ((float)gridResolution.z)
     );
 
     // Assign the point again
-    gridPoints[index] = gridPoint;
+    gridPoints[index] = point;
   }
 }
