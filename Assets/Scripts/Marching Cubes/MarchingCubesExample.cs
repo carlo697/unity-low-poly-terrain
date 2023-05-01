@@ -13,6 +13,8 @@ public class MarchingCubesExample : MonoBehaviour {
   public float gizmosSize = 0.1f;
 
   private float[,,] m_points;
+  private Vector3 m_singleCubeSize;
+
   private bool m_rebuildFlag;
   private Mesh m_mesh;
   private MeshFilter m_meshFilter;
@@ -326,9 +328,21 @@ public class MarchingCubesExample : MonoBehaviour {
 
   }
 
+  [ContextMenu("InstantRegenerate")]
   public void InstantRegenerate() {
+    var totalTimer = new System.Diagnostics.Stopwatch();
+    totalTimer.Start();
+
+    var stepTimer = new System.Diagnostics.Stopwatch();
+    stepTimer.Start();
+
     Vector3Int steps = new Vector3Int(resolution.x + 1, resolution.y + 1, resolution.z + 1);
     m_points = new float[steps.x, steps.y, steps.z];
+    m_singleCubeSize = new Vector3(
+      1f / ((float)resolution.x),
+      1f / ((float)resolution.y),
+      1f / ((float)resolution.z)
+    );
 
     // Generate noise
     FractalNoise noise = new FractalNoise(1 / noiseSize, 1f, 0.5f, 3);
@@ -338,15 +352,19 @@ public class MarchingCubesExample : MonoBehaviour {
       for (int y = 0; y < steps.y; y++) {
         for (int x = 0; x < steps.x; x++) {
           Vector3 position = GetNormalizedPositionOfPoint(x, y, z);
-          float value = noise.Sample(
+          m_points[x, y, z] = noise.Sample(
             position.x + noiseOffset.x,
             position.y + noiseOffset.y,
             position.z + noiseOffset.z
           );
-          m_points[x, y, z] = value;
         }
       }
     }
+
+    stepTimer.Stop();
+    Debug.Log(string.Format("Grid: {0} ms", stepTimer.ElapsedMilliseconds));
+
+    stepTimer.Restart();
 
     // Loop through the points to generate the vertices
     List<Vector3> vertices = new List<Vector3>();
@@ -358,6 +376,11 @@ public class MarchingCubesExample : MonoBehaviour {
         }
       }
     }
+
+    stepTimer.Stop();
+    Debug.Log(string.Format("Marching: {0} ms", stepTimer.ElapsedMilliseconds));
+
+    stepTimer.Restart();
 
     // Loop through the vertices to generate the triangles
     List<int> triangles = new List<int>();
@@ -382,6 +405,16 @@ public class MarchingCubesExample : MonoBehaviour {
       m_mesh.RecalculateNormals();
     }
 
+    stepTimer.Stop();
+    Debug.Log(
+      string.Format(
+        "Set vertices, triangles, and recalculate normals: {0} ms",
+        stepTimer.ElapsedMilliseconds
+      )
+    );
+
+    stepTimer.Restart();
+
     // Add a mesh filter
     m_meshFilter = GetComponent<MeshFilter>();
     if (!m_meshFilter) {
@@ -400,6 +433,17 @@ public class MarchingCubesExample : MonoBehaviour {
     if (collider) {
       collider.sharedMesh = m_mesh;
     }
+
+    stepTimer.Stop();
+    Debug.Log(
+      string.Format(
+        "Apply to components: {0} ms",
+        stepTimer.ElapsedMilliseconds
+      )
+    );
+
+    totalTimer.Stop();
+    Debug.Log(string.Format("Total: {0} ms", totalTimer.ElapsedMilliseconds));
   }
 
   public void MarchCube(
@@ -425,8 +469,6 @@ public class MarchingCubesExample : MonoBehaviour {
     if (caseIndex == 0 || caseIndex == 0xFF)
       return;
 
-    Vector3 cubeSize = GetNormalizedSizeOfCube();
-
     // Use the found case to add the vertices and triangles
     for (int i = 0; i <= 16; i++) {
       int edgeIndex = cases[caseIndex, i];
@@ -437,7 +479,7 @@ public class MarchingCubesExample : MonoBehaviour {
       Vector3 vertexB = edgeVertices[edgeIndex, 1];
       Vector3 middlePoint = (vertexA + vertexB) / 2;
 
-      vertices.Add(position + Vector3.Scale(middlePoint, cubeSize));
+      vertices.Add(position + Vector3.Scale(middlePoint, m_singleCubeSize));
     }
   }
 
@@ -448,16 +490,6 @@ public class MarchingCubesExample : MonoBehaviour {
       (float)z / ((float)resolution.z)
     );
   }
-
-  Vector3 GetNormalizedSizeOfCube() {
-    return new Vector3(
-      1f / ((float)resolution.x),
-      1f / ((float)resolution.y),
-      1f / ((float)resolution.z)
-    );
-  }
-
-
 
   public void FlagToRegenerate() {
     m_rebuildFlag = true;
