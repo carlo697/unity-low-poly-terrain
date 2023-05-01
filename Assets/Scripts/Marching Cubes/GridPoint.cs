@@ -8,4 +8,12 @@ public struct GridPoint {
     this.position = position;
     this.value = value;
   }
+
+  public override string ToString() {
+    return string.Format(
+      "pos: {0}, value: {1}",
+      position.ToString(),
+      value
+    );
+  }
 }

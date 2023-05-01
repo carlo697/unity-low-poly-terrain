@@ -4,24 +4,27 @@ using Unity.Collections;
 using System.Runtime.InteropServices;
 
 public struct GridJob : IJobParallelFor {
-  [ReadOnly]
-  public Vector3Int gridResolution;
+  [ReadOnly] public Vector3Int gridResolution;
   public NativeArray<GridPoint> gridPoints;
 
-  public GCHandle samplerHandle;
+  [ReadOnly] public GCHandle samplerHandle;
 
-  private Vector3Int m_gridSize;
+  [ReadOnly] private Vector3Int m_gridSize;
 
-  public GridJob(Vector3Int pointsResolution, NativeArray<GridPoint> points, GCHandle samplerHandle) {
-    this.gridResolution = pointsResolution;
+  public GridJob(
+    Vector3Int gridResolution,
+    NativeArray<GridPoint> points,
+    GCHandle samplerHandle
+  ) {
+    this.gridResolution = gridResolution;
     this.gridPoints = points;
     this.samplerHandle = samplerHandle;
 
     // Calculate
     this.m_gridSize = new Vector3Int(
-      pointsResolution.x + 1,
-      pointsResolution.y + 1,
-      pointsResolution.z + 1
+      gridResolution.x + 1,
+      gridResolution.y + 1,
+      gridResolution.z + 1
     );
   }
 
