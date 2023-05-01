@@ -27,16 +27,7 @@ public class MarchingCubesExample : MonoBehaviour {
   private MeshFilter m_meshFilter;
   private MeshRenderer m_meshRenderer;
 
-  static readonly Vector3Int[] corners = new Vector3Int[8] {
-    new Vector3Int(0, 0, 0), // 0
-    new Vector3Int(1, 0, 0), // 1
-    new Vector3Int(1, 1, 0), // 2
-    new Vector3Int(0, 1, 0), // 3
-    new Vector3Int(0, 0, 1), // 4
-    new Vector3Int(1, 0, 1), // 5
-    new Vector3Int(1, 1, 1), // 6
-    new Vector3Int(0, 1, 1)  // 7
-  };
+
 
   void Start() {
 
@@ -246,9 +237,9 @@ public class MarchingCubesExample : MonoBehaviour {
     int caseIndex = 0;
     for (int i = 0; i < 8; i++) {
       int sampleIndex = GetIndexFromCoords(
-        x + corners[i].x,
-        y + corners[i].y,
-        z + corners[i].z
+        x + MarchingCubesConsts.corners[i].x,
+        y + MarchingCubesConsts.corners[i].y,
+        z + MarchingCubesConsts.corners[i].z
       );
       float sample = m_gridPoints[sampleIndex].value;
 
@@ -282,18 +273,18 @@ public class MarchingCubesExample : MonoBehaviour {
         // Find the value in the first vertex of the edge
         int indexVertexA = MarchingCubesConsts.edgeCorners[edgeIndex, 0];
         int indexA = GetIndexFromCoords(
-          x + corners[indexVertexA].x,
-          y + corners[indexVertexA].y,
-          z + corners[indexVertexA].z
+          x + MarchingCubesConsts.corners[indexVertexA].x,
+          y + MarchingCubesConsts.corners[indexVertexA].y,
+          z + MarchingCubesConsts.corners[indexVertexA].z
         );
         float sampleVertexA = m_gridPoints[indexA].value;
 
         // Find the value in the last vertex of the edge
         int indexVertexB = MarchingCubesConsts.edgeCorners[edgeIndex, 1];
         int indexB = GetIndexFromCoords(
-          x + corners[indexVertexB].x,
-          y + corners[indexVertexB].y,
-          z + corners[indexVertexB].z
+          x + MarchingCubesConsts.corners[indexVertexB].x,
+          y + MarchingCubesConsts.corners[indexVertexB].y,
+          z + MarchingCubesConsts.corners[indexVertexB].z
         );
         float sampleVertexB = m_gridPoints[indexB].value;
 
