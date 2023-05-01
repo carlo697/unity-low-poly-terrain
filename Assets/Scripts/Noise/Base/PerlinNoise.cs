@@ -65,14 +65,17 @@ public static class PerlinNoise {
 
   private static readonly int directionCount = 15;
 
-  private static float scalar(Vector3 a, Vector3 b) {
-    return a.x * b.x + a.y * b.y + a.z * b.z;
-  }
+  // private static float scalar(Vector3 a, Vector3 b) {
+  //   return a.x * b.x + a.y * b.y + a.z * b.z;
+  // }
 
   private static float smoothDistance(float d) {
     return d * d * d * (d * (d * 6f - 15f) + 10f);
   }
 
+  // Vector3 = 221 ms
+  // Without scalar = 121 ms
+  // Wihthout Mathf.Lerp = 75 ms
   public static float Sample(float x, float y, float z) {
     int flooredPointX0 = Mathf.FloorToInt(x);
     int flooredPointY0 = Mathf.FloorToInt(y);
@@ -111,23 +114,43 @@ public static class PerlinNoise {
     Vector3 direction011 = directions[permutation[permutationY01 + flooredPointZ1] & directionCount];
     Vector3 direction111 = directions[permutation[permutationY11 + flooredPointZ1] & directionCount];
 
-    float value000 = scalar(direction000, new Vector3(distanceX0, distanceY0, distanceZ0));
-    float value100 = scalar(direction100, new Vector3(distanceX1, distanceY0, distanceZ0));
-    float value010 = scalar(direction010, new Vector3(distanceX0, distanceY1, distanceZ0));
-    float value110 = scalar(direction110, new Vector3(distanceX1, distanceY1, distanceZ0));
-    float value001 = scalar(direction001, new Vector3(distanceX0, distanceY0, distanceZ1));
-    float value101 = scalar(direction101, new Vector3(distanceX1, distanceY0, distanceZ1));
-    float value011 = scalar(direction011, new Vector3(distanceX0, distanceY1, distanceZ1));
-    float value111 = scalar(direction111, new Vector3(distanceX1, distanceY1, distanceZ1));
+    // float value000 = scalar(direction000, new Vector3(distanceX0, distanceY0, distanceZ0));
+    // float value100 = scalar(direction100, new Vector3(distanceX1, distanceY0, distanceZ0));
+    // float value010 = scalar(direction010, new Vector3(distanceX0, distanceY1, distanceZ0));
+    // float value110 = scalar(direction110, new Vector3(distanceX1, distanceY1, distanceZ0));
+    // float value001 = scalar(direction001, new Vector3(distanceX0, distanceY0, distanceZ1));
+    // float value101 = scalar(direction101, new Vector3(distanceX1, distanceY0, distanceZ1));
+    // float value011 = scalar(direction011, new Vector3(distanceX0, distanceY1, distanceZ1));
+    // float value111 = scalar(direction111, new Vector3(distanceX1, distanceY1, distanceZ1));
+
+    float value000 = direction000.x * distanceX0 + direction000.y * distanceY0 + direction000.z * distanceZ0;
+    float value100 = direction100.x * distanceX1 + direction100.y * distanceY0 + direction100.z * distanceZ0;
+    float value010 = direction010.x * distanceX0 + direction010.y * distanceY1 + direction010.z * distanceZ0;
+    float value110 = direction110.x * distanceX1 + direction110.y * distanceY1 + direction110.z * distanceZ0;
+    float value001 = direction001.x * distanceX0 + direction001.y * distanceY0 + direction001.z * distanceZ1;
+    float value101 = direction101.x * distanceX1 + direction101.y * distanceY0 + direction101.z * distanceZ1;
+    float value011 = direction011.x * distanceX0 + direction011.y * distanceY1 + direction011.z * distanceZ1;
+    float value111 = direction111.x * distanceX1 + direction111.y * distanceY1 + direction111.z * distanceZ1;
+
 
     float smoothDistanceX = smoothDistance(distanceX0);
     float smoothDistanceY = smoothDistance(distanceY0);
     float smoothDistanceZ = smoothDistance(distanceZ0);
 
-    return Mathf.Lerp(
-      Mathf.Lerp(Mathf.Lerp(value000, value100, smoothDistanceX), Mathf.Lerp(value010, value110, smoothDistanceX), smoothDistanceY),
-      Mathf.Lerp(Mathf.Lerp(value001, value101, smoothDistanceX), Mathf.Lerp(value011, value111, smoothDistanceX), smoothDistanceY),
-      smoothDistanceZ
-    );
+    // return Mathf.Lerp(
+    //   Mathf.Lerp(Mathf.Lerp(value000, value100, smoothDistanceX), Mathf.Lerp(value010, value110, smoothDistanceX), smoothDistanceY),
+    //   Mathf.Lerp(Mathf.Lerp(value001, value101, smoothDistanceX), Mathf.Lerp(value011, value111, smoothDistanceX), smoothDistanceY),
+    //   smoothDistanceZ
+    // );
+
+    float lerp1X = value000 + (value100 - value000) * smoothDistanceX;
+    float lerp1Y = value010 + (value110 - value010) * smoothDistanceX;
+    float lerpX = lerp1X + (lerp1Y - lerp1X) * smoothDistanceY;
+
+    float lerp2X = value001 + (value101 - value001) * smoothDistanceX;
+    float lerp2Y = value011 + (value111 - value011) * smoothDistanceX;
+    float lerpY = lerp2X + (lerp2Y - lerp2X) * smoothDistanceY;
+
+    return lerpX + (lerpY - lerpX) * smoothDistanceZ;
   }
 }
