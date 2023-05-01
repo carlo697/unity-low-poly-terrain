@@ -262,25 +262,25 @@ public class MarchingCubesExample : MonoBehaviour {
     if (useMiddlePoint) {
       // Use the found case to add the vertices and triangles
       for (int i = 0; i <= 16; i++) {
-        int edgeIndex = MarchingCubeConsts.cases[caseIndex, i];
+        int edgeIndex = MarchingCubesConsts.cases[caseIndex, i];
         if (edgeIndex == -1) return;
 
-        Vector3 vertexA = MarchingCubeConsts.edgeVertices[edgeIndex, 0];
-        Vector3 vertexB = MarchingCubeConsts.edgeVertices[edgeIndex, 1];
+        Vector3 vertexA = MarchingCubesConsts.edgeVertices[edgeIndex, 0];
+        Vector3 vertexB = MarchingCubesConsts.edgeVertices[edgeIndex, 1];
         Vector3 middlePoint = (vertexA + vertexB) / 2;
 
         vertices.Add(position + Vector3.Scale(middlePoint, m_gridCubeSize));
       }
     } else {
       for (int i = 0; i <= 16; i++) {
-        int edgeIndex = MarchingCubeConsts.cases[caseIndex, i];
+        int edgeIndex = MarchingCubesConsts.cases[caseIndex, i];
         if (edgeIndex == -1) return;
 
-        Vector3 vertexA = MarchingCubeConsts.edgeVertices[edgeIndex, 0];
-        Vector3 vertexB = MarchingCubeConsts.edgeVertices[edgeIndex, 1];
+        Vector3 vertexA = MarchingCubesConsts.edgeVertices[edgeIndex, 0];
+        Vector3 vertexB = MarchingCubesConsts.edgeVertices[edgeIndex, 1];
 
         // Find the value in the first vertex of the edge
-        int indexVertexA = MarchingCubeConsts.edgeCorners[edgeIndex, 0];
+        int indexVertexA = MarchingCubesConsts.edgeCorners[edgeIndex, 0];
         int indexA = GetIndexFromCoords(
           x + corners[indexVertexA].x,
           y + corners[indexVertexA].y,
@@ -289,7 +289,7 @@ public class MarchingCubesExample : MonoBehaviour {
         float sampleVertexA = m_gridPoints[indexA].value;
 
         // Find the value in the last vertex of the edge
-        int indexVertexB = MarchingCubeConsts.edgeCorners[edgeIndex, 1];
+        int indexVertexB = MarchingCubesConsts.edgeCorners[edgeIndex, 1];
         int indexB = GetIndexFromCoords(
           x + corners[indexVertexB].x,
           y + corners[indexVertexB].y,

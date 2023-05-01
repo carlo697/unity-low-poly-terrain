@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public static class MarchingCubeConsts {
+public static class MarchingCubesConsts {
 
   public static readonly Vector3[,] edgeVertices = new Vector3[12, 2] {
     { new Vector3(0.0f, 0.0f, 0.0f), new Vector3(1.0f, 0.0f, 0.0f) },
