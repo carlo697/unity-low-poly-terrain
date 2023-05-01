@@ -8,6 +8,7 @@ public class MarchingCubesExample : MonoBehaviour {
   public Vector3 noiseOffset = Vector3.zero;
 
   public float threshold = 0.5f;
+  public bool useMiddlePoint = false;
 
   public bool drawGizmos = true;
   public float gizmosSize = 0.1f;
@@ -469,17 +470,48 @@ public class MarchingCubesExample : MonoBehaviour {
     if (caseIndex == 0 || caseIndex == 0xFF)
       return;
 
-    // Use the found case to add the vertices and triangles
-    for (int i = 0; i <= 16; i++) {
-      int edgeIndex = cases[caseIndex, i];
+    if (useMiddlePoint) {
+      // Use the found case to add the vertices and triangles
+      for (int i = 0; i <= 16; i++) {
+        int edgeIndex = cases[caseIndex, i];
+        if (edgeIndex == -1) return;
 
-      if (edgeIndex == -1) return;
+        Vector3 vertexA = edgeVertices[edgeIndex, 0];
+        Vector3 vertexB = edgeVertices[edgeIndex, 1];
+        Vector3 middlePoint = (vertexA + vertexB) / 2;
 
-      Vector3 vertexA = edgeVertices[edgeIndex, 0];
-      Vector3 vertexB = edgeVertices[edgeIndex, 1];
-      Vector3 middlePoint = (vertexA + vertexB) / 2;
+        vertices.Add(position + Vector3.Scale(middlePoint, m_singleCubeSize));
+      }
+    } else {
+      for (int i = 0; i <= 16; i++) {
+        int edgeIndex = cases[caseIndex, i];
+        if (edgeIndex == -1) return;
 
-      vertices.Add(position + Vector3.Scale(middlePoint, m_singleCubeSize));
+        Vector3 vertexA = edgeVertices[edgeIndex, 0];
+        Vector3 vertexB = edgeVertices[edgeIndex, 1];
+
+        // Find the value in the first vertex of the edge
+        int indexVertexA = edgeCorners[edgeIndex, 0];
+        float sampleVertexA = m_points[
+          x + corners[indexVertexA].x,
+          y + corners[indexVertexA].y,
+          z + corners[indexVertexA].z
+        ];
+
+        // Find the value in the last vertex of the edge
+        int indexVertexB = edgeCorners[edgeIndex, 1];
+        float sampleVertexB = m_points[
+          x + corners[indexVertexB].x,
+          y + corners[indexVertexB].y,
+          z + corners[indexVertexB].z
+        ];
+
+        // Calculate the difference and interpolate
+        float interpolant = (threshold - sampleVertexA) / (sampleVertexB - sampleVertexA);
+        Vector3 interpolatedPosition = Vector3.Lerp(vertexA, vertexB, interpolant);
+
+        vertices.Add(position + Vector3.Scale(interpolatedPosition, m_singleCubeSize));
+      }
     }
   }
 
