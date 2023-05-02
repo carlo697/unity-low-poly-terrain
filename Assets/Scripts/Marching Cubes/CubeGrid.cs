@@ -166,6 +166,9 @@ public class CubeGrid {
     InitializeGrid();
 
     if (multithreaded) {
+      // Store a reference to the sampler function
+      GCHandle samplerHandle = GCHandle.Alloc(samplerFunc);
+
       // Create the sub tasks for the job
       NativeArray<CubeGridPoint> jobPoints =
         new NativeArray<CubeGridPoint>(
@@ -174,7 +177,7 @@ public class CubeGrid {
         );
 
       // Create job
-      CubeGridSampleJob job = new CubeGridSampleJob(resolution, jobPoints, GCHandle.Alloc(samplerFunc));
+      CubeGridSampleJob job = new CubeGridSampleJob(resolution, jobPoints, samplerHandle);
 
       // Execute the job and complete it right away
       JobHandle jobHandle = job.Schedule(jobPoints.Length, 40000); //  80000
@@ -185,6 +188,8 @@ public class CubeGrid {
 
       // Dispose memory
       jobPoints.Dispose();
+      samplerHandle.Free();
+
     } else {
       // Loop through a 3D grid
       for (int z = 0; z < m_sizes.z; z++) {
