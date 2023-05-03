@@ -1,8 +1,5 @@
 using UnityEngine;
 using System;
-using Unity.Collections;
-using System.Runtime.InteropServices;
-using Unity.Jobs;
 using System.Collections.Generic;
 
 public class CubeGrid {
@@ -10,26 +7,22 @@ public class CubeGrid {
   public Vector3Int resolution;
   public float threshold;
   public bool useMiddlePoint;
-  public bool multithreaded;
 
   private Vector3Int m_sizes;
   private int m_pointsCount;
   private CubeGridPoint[] m_points;
   private Vector3 m_cubeSize;
-  private Mesh m_mesh;
 
   public CubeGrid(
     Func<float, float, float, float> sampler,
     Vector3Int resolution,
     float threshold = 0f,
-    bool useMiddlePoint = false,
-    bool multithreaded = false
+    bool useMiddlePoint = false
   ) {
     this.samplerFunc = sampler;
     this.resolution = resolution;
     this.threshold = threshold;
     this.useMiddlePoint = useMiddlePoint;
-    this.multithreaded = multithreaded;
   }
 
   public CubeGridPoint GetPoint(int index) {
@@ -159,56 +152,32 @@ public class CubeGrid {
     }
   }
 
-  public Mesh Render() {
+  public void Generate(
+    out Vector3[] outputVertices,
+    out int[] outputTriangles
+  ) {
     var stepTimer = new System.Diagnostics.Stopwatch();
     stepTimer.Start();
 
     InitializeGrid();
 
-    if (multithreaded) {
-      // Store a reference to the sampler function
-      GCHandle samplerHandle = GCHandle.Alloc(samplerFunc);
+    // Loop through a 3D grid
+    for (int z = 0; z < m_sizes.z; z++) {
+      for (int y = 0; y < m_sizes.y; y++) {
+        for (int x = 0; x < m_sizes.x; x++) {
+          // Get 1D index from the coords
+          int index = GetIndexFromCoords(x, y, z);
 
-      // Create the sub tasks for the job
-      NativeArray<CubeGridPoint> jobPoints =
-        new NativeArray<CubeGridPoint>(
-          m_points,
-          Allocator.TempJob
-        );
+          // Get the point and set the value
+          CubeGridPoint point = m_points[index];
+          point.value = samplerFunc(
+            point.position.x,
+            point.position.y,
+            point.position.z
+          );
 
-      // Create job
-      CubeGridSampleJob job = new CubeGridSampleJob(resolution, jobPoints, samplerHandle);
-
-      // Execute the job and complete it right away
-      JobHandle jobHandle = job.Schedule(jobPoints.Length, 40000); //  80000
-      jobHandle.Complete();
-
-      // Get the results
-      m_points = job.gridPoints.ToArray();
-
-      // Dispose memory
-      jobPoints.Dispose();
-      samplerHandle.Free();
-
-    } else {
-      // Loop through a 3D grid
-      for (int z = 0; z < m_sizes.z; z++) {
-        for (int y = 0; y < m_sizes.y; y++) {
-          for (int x = 0; x < m_sizes.x; x++) {
-            // Get 1D index from the coords
-            int index = GetIndexFromCoords(x, y, z);
-
-            // Get the point and set the value
-            CubeGridPoint point = m_points[index];
-            point.value = samplerFunc(
-              point.position.x,
-              point.position.y,
-              point.position.z
-            );
-
-            // Save the point
-            m_points[index] = point;
-          }
+          // Save the point
+          m_points[index] = point;
         }
       }
     }
@@ -242,28 +211,34 @@ public class CubeGrid {
       triangles.Add(i + 2);
     }
 
+    outputVertices = vertices.ToArray();
+    outputTriangles = triangles.ToArray();
+  }
+
+  public static Mesh CreateMesh(Vector3[] vertices, int[] triangles) {
+    var stepTimer = new System.Diagnostics.Stopwatch();
+    stepTimer.Start();
+
     // Create a mesh
-    if (!m_mesh) {
-      m_mesh = new Mesh();
-    }
-    m_mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+    Mesh mesh = new Mesh();
+    mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
 
     // Set vertices and triangles to the mesh
-    m_mesh.Clear();
-    if (vertices.Count > 0) {
-      m_mesh.vertices = vertices.ToArray();
-      m_mesh.triangles = triangles.ToArray();
-      m_mesh.RecalculateNormals();
+    mesh.Clear();
+    if (vertices.Length > 0) {
+      mesh.vertices = vertices;
+      mesh.triangles = triangles;
+      mesh.RecalculateNormals();
     }
 
     stepTimer.Stop();
     Debug.Log(
       string.Format(
-        "Set vertices, triangles, and recalculate normals: {0} ms",
+        "Generating mesh: {0} ms",
         stepTimer.ElapsedMilliseconds
       )
     );
 
-    return m_mesh;
+    return mesh;
   }
 }
