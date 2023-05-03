@@ -92,6 +92,10 @@ public class MarchingCubesExample : MonoBehaviour {
 
   void LateUpdate() {
     if (handle != null && handle.Value.IsCompleted) {
+      System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
+      timer.Start();
+
+      // Complete the job
       handle.Value.Complete();
 
       // Get the results
@@ -126,11 +130,26 @@ public class MarchingCubesExample : MonoBehaviour {
         m_meshRenderer = gameObject.AddComponent<MeshRenderer>();
       }
 
+      timer.Stop();
+      Debug.Log(
+        string.Format(
+          "Total to apply mesh: {0} ms", timer.ElapsedMilliseconds
+        )
+      );
+      timer.Restart();
+
       // Check if it has a mesh collider
       MeshCollider collider = GetComponent<MeshCollider>();
       if (collider) {
         collider.sharedMesh = mesh;
       }
+
+      timer.Stop();
+      Debug.Log(
+        string.Format(
+          "Total to apply collider: {0} ms", timer.ElapsedMilliseconds
+        )
+      );
     }
   }
 
