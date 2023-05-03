@@ -41,10 +41,12 @@ public class MarchingCubesExample : MonoBehaviour {
     // Generate noise
     FractalNoise noise = new FractalNoise(1 / noiseSize, 1f, 0.5f, noiseOctaves);
     Func<float, float, float, float> samplerFunc = (float x, float y, float z) => {
+      // For supporting non symmetrical grids we need to mutiply each
+      // coord by the resolution to get symmetrical noise
       return noise.Sample(
-        x + noiseOffset.x,
-        y + noiseOffset.y,
-        z + noiseOffset.z
+        (x + noiseOffset.x) * resolution.x,
+        (y + noiseOffset.y) * resolution.y,
+        (z + noiseOffset.z) * resolution.z
       );
     };
 
