@@ -5,7 +5,7 @@ using Unity.Collections;
 using Unity.Jobs;
 
 [ExecuteInEditMode]
-public class MarchingCubesExample : MonoBehaviour {
+public class TerrainChunk : MonoBehaviour {
   public Vector3Int resolution = Vector3Int.one * 10;
   public float noiseSize = 1f;
   public int noiseOctaves = 3;
