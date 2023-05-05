@@ -103,6 +103,12 @@ public class TerrainManager : MonoBehaviour {
     int visibleX = Mathf.CeilToInt(viewDistance / chunkSize.x);
     int visibleZ = Mathf.CeilToInt(viewDistance / chunkSize.z);
 
+    Vector3 positionAtZeroY = new Vector3(
+      worldPosition.x,
+      0f,
+      worldPosition.z
+    );
+
     // Build a list of the coords of the visible chunks
     m_visibleChunkPositions.Clear();
     m_visibleChunkPositionsHashSet.Clear();
@@ -129,7 +135,7 @@ public class TerrainManager : MonoBehaviour {
         );
 
         // Check if a sphere of radius 'distance' is touching the chunk
-        float distanceToChunk = Mathf.Sqrt(bounds.SqrDistance(worldPosition));
+        float distanceToChunk = Mathf.Sqrt(bounds.SqrDistance(positionAtZeroY));
         if (distanceToChunk < viewDistance) {
           m_visibleChunkPositions.Add(position);
           m_visibleChunkPositionsHashSet.Add(position);
@@ -139,19 +145,30 @@ public class TerrainManager : MonoBehaviour {
 
     // Sort the array by measuring the distance from the chunk to the camera
     m_visibleChunkPositions.Sort((a, b) => {
-      float distanceAToCamera = Vector3.Distance(a, worldPosition);
-      float distanceBToCamera = Vector3.Distance(b, worldPosition);
+      float distanceAToCamera = Vector3.Distance(a, positionAtZeroY);
+      float distanceBToCamera = Vector3.Distance(b, positionAtZeroY);
       return distanceAToCamera.CompareTo(distanceBToCamera);
     });
   }
 
   private void Update() {
-    m_timeSinceLastUpdate += Time.deltaTime;
+    // Tell chunks to generate their meshes
+    for (int index = 0; index < m_chunks.Count; index++) {
+      ChunkData chunk = m_chunks[index];
 
-    if (m_timeSinceLastUpdate < m_updatePeriod) {
-      return;
+      // Wait for the last chunk to be done
+      if (chunk.component.isGenerating) break;
+
+      // Tell the chunk to start generating
+      if (chunk.needsUpdate) {
+        chunk.component.GenerateOnNextFrame();
+        chunk.needsUpdate = false;
+        break;
+      }
     }
 
+    m_timeSinceLastUpdate += Time.deltaTime;
+    if (m_timeSinceLastUpdate < m_updatePeriod) return;
     m_timeSinceLastUpdate = 0f;
 
     Camera camera = Camera.main;
@@ -217,16 +234,7 @@ public class TerrainManager : MonoBehaviour {
         }
       }
 
-      // Tell chunks to generate their meshes
-      for (int index = 0; index < m_chunks.Count; index++) {
-        ChunkData chunk = m_chunks[index];
 
-        if (chunk.needsUpdate) {
-          chunk.component.RegenerateOnNextFrame();
-          chunk.needsUpdate = false;
-          break;
-        }
-      }
     }
   }
 }

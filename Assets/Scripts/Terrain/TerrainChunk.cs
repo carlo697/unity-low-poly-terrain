@@ -17,7 +17,10 @@ public class TerrainChunk : MonoBehaviour {
   public bool drawGizmos = true;
   public float gizmosSize = 0.5f;
 
-  [SerializeField] private bool m_rebuildFlag;
+  public bool isGenerating { get; private set; }
+
+  [SerializeField] private bool m_generateFlag;
+
   private MeshFilter m_meshFilter;
   private MeshRenderer m_meshRenderer;
 
@@ -41,7 +44,7 @@ public class TerrainChunk : MonoBehaviour {
   }
 
   void Start() {
-    RegenerateIfNeeded();
+    GenerateIfNeeded();
   }
 
   [ContextMenu("InstantRegenerate")]
@@ -86,7 +89,7 @@ public class TerrainChunk : MonoBehaviour {
   }
 
   void Update() {
-    RegenerateIfNeeded();
+    GenerateIfNeeded();
   }
 
   void DisposeJob() {
@@ -154,28 +157,31 @@ public class TerrainChunk : MonoBehaviour {
           "Total to apply collider: {0} ms", timer.ElapsedMilliseconds
         )
       );
+
+      isGenerating = false;
     }
   }
 
-  public void RegenerateOnNextFrame() {
-    m_rebuildFlag = true;
+  public void GenerateOnNextFrame() {
+    m_generateFlag = true;
+    isGenerating = true;
   }
 
   private void OnValidate() {
     if (Application.isEditor && !Application.isPlaying) {
-      RegenerateOnNextFrame();
+      GenerateOnNextFrame();
     }
   }
 
-  private void RegenerateIfNeeded() {
-    if (m_rebuildFlag || gameObject.name == "Chunk1First" && Input.GetKeyDown(KeyCode.Alpha1)) {
+  private void GenerateIfNeeded() {
+    if (m_generateFlag) {
       ScheduleRegeneration();
-      m_rebuildFlag = false;
+      m_generateFlag = false;
     }
   }
 
   private void OnDrawGizmos() {
-    RegenerateIfNeeded();
+    GenerateIfNeeded();
 
     if (!drawGizmos) return;
 
