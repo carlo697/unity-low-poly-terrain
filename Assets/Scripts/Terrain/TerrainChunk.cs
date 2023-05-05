@@ -157,12 +157,14 @@ public class TerrainChunk : MonoBehaviour {
     }
   }
 
-  public void FlagToRegenerate() {
+  public void RegenerateOnNextFrame() {
     m_rebuildFlag = true;
   }
 
   private void OnValidate() {
-    FlagToRegenerate();
+    if (Application.isEditor && !Application.isPlaying) {
+      RegenerateOnNextFrame();
+    }
   }
 
   private void RegenerateIfNeeded() {
@@ -171,10 +173,6 @@ public class TerrainChunk : MonoBehaviour {
       m_rebuildFlag = false;
     }
   }
-
-  // private void OnValidate() {
-  //   FlagToRegenerate();
-  // }
 
   private void OnDrawGizmos() {
     RegenerateIfNeeded();

@@ -7,12 +7,18 @@ public class TerrainManager : MonoBehaviour {
     public Vector3 coords;
     public TerrainChunk component;
     public GameObject gameObject;
+    public bool needsUpdate;
 
-    public ChunkData(Vector3 worldPosition, Vector3 coords, TerrainChunk component) {
+    public ChunkData(
+      Vector3 worldPosition,
+      Vector3 coords,
+      TerrainChunk component
+    ) {
       this.worldPosition = worldPosition;
       this.coords = coords;
       this.component = component;
       this.gameObject = component.gameObject;
+      this.needsUpdate = true;
     }
   }
 
@@ -129,6 +135,13 @@ public class TerrainManager : MonoBehaviour {
         }
       }
     }
+
+    // Sort the array by measuring the distance from the chunk to the camera
+    m_visibleChunkPositions.Sort((a, b) => {
+      float distanceAToCamera = Vector3.Distance(a, worldPosition);
+      float distanceBToCamera = Vector3.Distance(b, worldPosition);
+      return distanceAToCamera.CompareTo(distanceBToCamera);
+    });
   }
 
   private void Update() {
@@ -168,6 +181,17 @@ public class TerrainManager : MonoBehaviour {
           m_chunks.Remove(chunk);
           m_chunkDictionary.Remove(chunk.worldPosition);
         }
+      }
+    }
+
+    // Tell chunks to generate their meshes
+    for (int index = 0; index < m_chunks.Count; index++) {
+      ChunkData chunk = m_chunks[index];
+
+      if (chunk.needsUpdate) {
+        chunk.component.RegenerateOnNextFrame();
+        chunk.needsUpdate = false;
+        break;
       }
     }
   }
