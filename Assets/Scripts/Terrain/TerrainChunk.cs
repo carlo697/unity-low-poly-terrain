@@ -10,13 +10,13 @@ public class TerrainChunk : MonoBehaviour {
   public float noiseSize = 1f;
   public int noiseOctaves = 3;
   public Vector3 noiseOffset = Vector3.zero;
-  public bool multithreaded;
+  public bool multithreaded = true;
 
-  public float threshold = 0.5f;
+  public float threshold = 0f;
   public bool useMiddlePoint = false;
 
   public bool drawGizmos = true;
-  public float gizmosSize = 0.1f;
+  public float gizmosSize = 0.5f;
 
   [SerializeField] private bool m_rebuildFlag;
   private MeshFilter m_meshFilter;
@@ -26,6 +26,20 @@ public class TerrainChunk : MonoBehaviour {
   private NativeList<Vector3> vertices;
   private NativeList<int> triangles;
   JobHandle? handle;
+
+  void Awake() {
+    // Add a mesh filter
+    m_meshFilter = GetComponent<MeshFilter>();
+    if (!m_meshFilter) {
+      m_meshFilter = gameObject.AddComponent<MeshFilter>();
+    }
+
+    // Add a mesh renderer
+    m_meshRenderer = GetComponent<MeshRenderer>();
+    if (!m_meshRenderer) {
+      m_meshRenderer = gameObject.AddComponent<MeshRenderer>();
+    }
+  }
 
   void Start() {
     RegenerateIfNeeded();
@@ -119,18 +133,8 @@ public class TerrainChunk : MonoBehaviour {
         mesh.RecalculateNormals();
       }
 
-      // Add a mesh filter
-      m_meshFilter = GetComponent<MeshFilter>();
-      if (!m_meshFilter) {
-        m_meshFilter = gameObject.AddComponent<MeshFilter>();
-      }
+      // Set mesh to the mesh filter
       m_meshFilter.sharedMesh = mesh;
-
-      // Add a mesh renderer
-      m_meshRenderer = GetComponent<MeshRenderer>();
-      if (!m_meshRenderer) {
-        m_meshRenderer = gameObject.AddComponent<MeshRenderer>();
-      }
 
       timer.Stop();
       Debug.Log(
