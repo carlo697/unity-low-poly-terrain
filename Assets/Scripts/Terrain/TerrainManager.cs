@@ -7,7 +7,8 @@ public class TerrainManager : MonoBehaviour {
     public Vector3 coords;
     public TerrainChunk component;
     public GameObject gameObject;
-    public bool needsUpdate;
+    public bool needsUpdate = true;
+    public float resolution = 1f;
 
     public ChunkData(
       Vector3 worldPosition,
@@ -18,7 +19,6 @@ public class TerrainManager : MonoBehaviour {
       this.coords = coords;
       this.component = component;
       this.gameObject = component.gameObject;
-      this.needsUpdate = true;
     }
   }
 
@@ -29,6 +29,7 @@ public class TerrainManager : MonoBehaviour {
 
   public float noiseSize = 32f;
   public int noiseOctaves = 3;
+  public float lodDistance = 75f;
 
   private List<ChunkData> m_chunks = new List<ChunkData>();
   private Dictionary<Vector3, ChunkData> m_chunkDictionary =
@@ -182,16 +183,49 @@ public class TerrainManager : MonoBehaviour {
           m_chunkDictionary.Remove(chunk.worldPosition);
         }
       }
-    }
 
-    // Tell chunks to generate their meshes
-    for (int index = 0; index < m_chunks.Count; index++) {
-      ChunkData chunk = m_chunks[index];
+      // Set the resolutions of the chunks based on distance
+      foreach (ChunkData chunk in m_chunks.ToArray()) {
+        // Get the distance to the camera
+        float distanceToCamera = Vector3.Distance(cameraPosition, chunk.worldPosition);
 
-      if (chunk.needsUpdate) {
-        chunk.component.RegenerateOnNextFrame();
-        chunk.needsUpdate = false;
-        break;
+        // Calculate the target resolution
+        float newResolution;
+        if (distanceToCamera < lodDistance * 1f) {
+          newResolution = 1f;
+        } else if (distanceToCamera < lodDistance * 2f) {
+          newResolution = 0.5f;
+        } else if (distanceToCamera < lodDistance * 4f) {
+          newResolution = 0.25f;
+        } else if (distanceToCamera < lodDistance * 8f) {
+          newResolution = 0.125f;
+        } else {
+          newResolution = 0.0625f;
+        }
+
+        if (chunk.resolution != newResolution) {
+          // Update the resolution and noise size
+          chunk.resolution = newResolution;
+          chunk.component.resolution = new Vector3Int(
+            Mathf.Max(Mathf.RoundToInt((float)chunkResolution.x * newResolution), 2),
+            Mathf.Max(Mathf.RoundToInt((float)chunkResolution.y * newResolution), 2),
+            Mathf.Max(Mathf.RoundToInt((float)chunkResolution.z * newResolution), 2)
+          );
+          chunk.component.noiseSize = noiseSize * newResolution;
+          // Request an update
+          chunk.needsUpdate = true;
+        }
+      }
+
+      // Tell chunks to generate their meshes
+      for (int index = 0; index < m_chunks.Count; index++) {
+        ChunkData chunk = m_chunks[index];
+
+        if (chunk.needsUpdate) {
+          chunk.component.RegenerateOnNextFrame();
+          chunk.needsUpdate = false;
+          break;
+        }
       }
     }
   }
