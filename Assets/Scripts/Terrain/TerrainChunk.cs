@@ -10,7 +10,6 @@ public class TerrainChunk : MonoBehaviour {
   public float noiseSize = 1f;
   public int noiseOctaves = 3;
   public Vector3 noiseOffset = Vector3.zero;
-  public bool multithreaded = true;
 
   public float threshold = 0f;
   public bool useMiddlePoint = false;
@@ -79,8 +78,7 @@ public class TerrainChunk : MonoBehaviour {
       samplerHandle,
       resolution,
       threshold,
-      useMiddlePoint,
-      multithreaded
+      useMiddlePoint
     );
 
     // Execute the job and complete it right away

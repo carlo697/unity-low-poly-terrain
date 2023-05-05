@@ -17,8 +17,7 @@ public struct CubeGridJob : IJob {
     GCHandle samplerHandle,
     Vector3Int resolution,
     float threshold = 0f,
-    bool useMiddlePoint = false,
-    bool multithreaded = false
+    bool useMiddlePoint = false
   ) {
     this.vertices = vertices;
     this.triangles = triangles;
