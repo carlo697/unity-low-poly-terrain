@@ -1,5 +1,36 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Unity.Jobs;
+using Unity.Collections;
+
+struct DistanceToCameraComparer : IComparer<Vector3> {
+  public Vector3 cameraPosition;
+
+  public DistanceToCameraComparer(Vector3 cameraPosition) {
+    this.cameraPosition = cameraPosition;
+  }
+
+  public int Compare(Vector3 a, Vector3 b) {
+    float distanceA =
+    (a.x - cameraPosition.x) * (a.x - cameraPosition.x)
+    + (a.z - cameraPosition.z) * (a.z - cameraPosition.z);
+
+    float distanceB =
+      (b.x - cameraPosition.x) * (b.x - cameraPosition.x)
+      + (b.z - cameraPosition.z) * (b.z - cameraPosition.z);
+
+    return distanceA.CompareTo(distanceB);
+  }
+}
+
+public struct ChunkPositionsSortingJob : IJob {
+  public Vector3 cameraPosition;
+  public NativeList<Vector3> chunks;
+
+  public void Execute() {
+    chunks.Sort(new DistanceToCameraComparer(cameraPosition));
+  }
+}
 
 public class TerrainManager : MonoBehaviour {
   public class ChunkData {
@@ -43,6 +74,12 @@ public class TerrainManager : MonoBehaviour {
   public float generatePeriod = 0.02f;
   private float m_generateTimer = 0.0f;
   public int maxNumberOfChunksToGenerate = 15;
+  public bool multithreadedSorting = true;
+
+  private bool m_isSortingReady = true;
+  private JobHandle? m_sortingHandle;
+  private NativeList<Vector3> m_sortingJobChunks;
+  private Vector3 m_lastCameraPosition;
 
   private TerrainNoise m_terrainNoise;
 
@@ -153,139 +190,166 @@ public class TerrainManager : MonoBehaviour {
     }
 
     // Sort the array by measuring the distance from the chunk to the camera
-    m_visibleChunkPositions.Sort((a, b) => {
-      float distanceA =
-        (a.x - worldPosition.x) * (a.x - worldPosition.x)
-        + (a.z - worldPosition.z) * (a.z - worldPosition.z);
-
-      float distanceB =
-        (b.x - worldPosition.x) * (b.x - worldPosition.x)
-        + (b.z - worldPosition.z) * (b.z - worldPosition.z);
-
-      return distanceA.CompareTo(distanceB);
-    });
+    m_lastCameraPosition = worldPosition;
+    m_isSortingReady = false;
+    if (multithreadedSorting) {
+      m_sortingJobChunks = m_visibleChunkPositions.ToNativeList(Allocator.TempJob);
+      ChunkPositionsSortingJob job = new ChunkPositionsSortingJob {
+        cameraPosition = worldPosition,
+        chunks = m_sortingJobChunks
+      };
+      m_sortingHandle = job.Schedule();
+    } else {
+      m_visibleChunkPositions.Sort(new DistanceToCameraComparer(worldPosition));
+      m_isSortingReady = true;
+    }
   }
 
-  private void UpdateGeneration() {
-    m_generateTimer += Time.deltaTime;
-    if (m_generateTimer > generatePeriod) {
-      m_generateTimer = 0f;
+  private void UpdateFollowingVisibleChunks() {
+    // Check if the chunks are already there
+    foreach (Vector3 position in m_visibleChunkPositions) {
+      bool foundChunk = m_chunkDictionary.ContainsKey(position);
 
-      // Group the number of chunks being generated
-      Dictionary<float, int> resolutionGroups = new Dictionary<float, int>();
-      int totalInProgress = 0;
-      for (int index = 0; index < m_chunks.Count; index++) {
-        ChunkData chunk = m_chunks[index];
+      if (!foundChunk) {
+        CreateChunk(position);
+      }
+    }
 
-        if (chunk.component.isGenerating) {
-          // totalInProgress++;
-          totalInProgress += Mathf.RoundToInt((chunk.resolution / 0.0625f));
+    // Delete chunks that are out of view
+    for (int i = m_chunks.Count - 1; i >= 0; i--) {
+      ChunkData chunk = m_chunks[i];
+      Vector3 chunkPosition = chunk.worldPosition;
+      // Find a chunk with the same position
+      bool foundPosition = m_visibleChunkPositionsHashSet.Contains(
+        chunkPosition
+      );
 
-          if (resolutionGroups.ContainsKey(chunk.resolution)) {
-            resolutionGroups[chunk.resolution]++;
-          } else {
-            resolutionGroups[chunk.resolution] = 1;
-          }
-        } else if (!resolutionGroups.ContainsKey(chunk.resolution)) {
-          resolutionGroups[chunk.resolution] = 0;
-        }
+      if (!foundPosition) {
+        GameObject.Destroy(chunk.gameObject);
+        m_chunks.Remove(chunk);
+        m_chunkDictionary.Remove(chunk.worldPosition);
+      }
+    }
+
+    // Set the resolutions of the chunks based on distance
+    foreach (ChunkData chunk in m_chunks) {
+      // Get the distance to the camera
+      float distanceToCamera = Vector3.Distance(m_lastCameraPosition, chunk.worldPosition);
+
+      // Calculate the target resolution
+      float newResolution;
+      if (distanceToCamera < lodDistance * 1f) {
+        newResolution = 1f;
+      } else if (distanceToCamera < lodDistance * 2f) {
+        newResolution = 0.5f;
+      } else if (distanceToCamera < lodDistance * 4f) {
+        newResolution = 0.25f;
+      } else if (distanceToCamera < lodDistance * 8f) {
+        newResolution = 0.125f;
+      } else {
+        newResolution = 0.0625f;
       }
 
-      // Tell chunks to generate their meshes
-      for (int index = 0; index < m_chunks.Count; index++) {
-        ChunkData chunk = m_chunks[index];
+      if (chunk.resolution != newResolution) {
+        // Update the resolution and noise size
+        chunk.resolution = newResolution;
+        chunk.component.resolution = new Vector3Int(
+          Mathf.Max(Mathf.RoundToInt((float)chunkResolution.x * newResolution), 2),
+          Mathf.Max(Mathf.RoundToInt((float)chunkResolution.y * newResolution), 2),
+          Mathf.Max(Mathf.RoundToInt((float)chunkResolution.z * newResolution), 2)
+        );
+        chunk.component.noiseSize = newResolution;
+        // Request an update
+        chunk.needsUpdate = true;
+      }
+    }
+  }
 
-        // Stop generating if we are out of budget
-        if (totalInProgress >= maxNumberOfChunksToGenerate) {
-          break;
-        }
+  private void RequestChunksGeneration() {
+    // Group the number of chunks being generated
+    Dictionary<float, int> resolutionGroups = new Dictionary<float, int>();
+    int totalInProgress = 0;
+    for (int index = 0; index < m_chunks.Count; index++) {
+      ChunkData chunk = m_chunks[index];
 
-        // Tell the chunk to start generating if the budget is available
-        if (
-          chunk.needsUpdate
-          && resolutionGroups[chunk.resolution] < (1f / chunk.resolution)
-        ) {
-          chunk.component.GenerateOnNextFrame();
-          chunk.needsUpdate = false;
+      if (chunk.component.isGenerating) {
+        // totalInProgress++;
+        totalInProgress += Mathf.RoundToInt((chunk.resolution / 0.0625f));
 
-          // Update the groups
+        if (resolutionGroups.ContainsKey(chunk.resolution)) {
           resolutionGroups[chunk.resolution]++;
-          totalInProgress += Mathf.RoundToInt((chunk.resolution / 0.0625f));
+        } else {
+          resolutionGroups[chunk.resolution] = 1;
         }
+      } else if (!resolutionGroups.ContainsKey(chunk.resolution)) {
+        resolutionGroups[chunk.resolution] = 0;
+      }
+    }
+
+    // Tell chunks to generate their meshes
+    for (int index = 0; index < m_chunks.Count; index++) {
+      ChunkData chunk = m_chunks[index];
+
+      // Stop generating if we are out of budget
+      if (totalInProgress >= maxNumberOfChunksToGenerate) {
+        break;
+      }
+
+      // Tell the chunk to start generating if the budget is available
+      if (
+        chunk.needsUpdate
+        && resolutionGroups[chunk.resolution] < (1f / chunk.resolution)
+      ) {
+        chunk.component.GenerateOnNextFrame();
+        chunk.needsUpdate = false;
+
+        // Update the groups
+        resolutionGroups[chunk.resolution]++;
+        totalInProgress += Mathf.RoundToInt((chunk.resolution / 0.0625f));
       }
     }
   }
 
   private void Update() {
-    UpdateGeneration();
+    m_generateTimer += Time.deltaTime;
+    if (m_generateTimer > generatePeriod) {
+      m_generateTimer = 0f;
+      RequestChunksGeneration();
+    }
 
-    m_updateTimer += Time.deltaTime;
-    if (m_updateTimer < updatePeriod) return;
-    m_updateTimer = 0f;
+    // Handle the job used to sort the chunks
+    if (m_sortingHandle != null && m_sortingHandle.Value.IsCompleted) {
+      // Complete the job
+      m_sortingHandle.Value.Complete();
+
+      // Get the results
+      this.m_visibleChunkPositions = new List<Vector3>(m_sortingJobChunks.ToArray());
+
+      // Dispose memory
+      m_sortingJobChunks.Dispose();
+      m_sortingHandle = null;
+      m_isSortingReady = true;
+
+      UpdateFollowingVisibleChunks();
+      return;
+    }
 
     Camera camera = Camera.main;
-    if (camera) {
-      Vector3 cameraPosition = FlatY(camera.transform.position);
+    if (camera && m_isSortingReady) {
+      m_updateTimer += Time.deltaTime;
+      if (m_updateTimer > updatePeriod) {
+        m_updateTimer = 0f;
 
-      UpdateVisibleChunkPositions(cameraPosition);
+        Vector3 cameraPosition = FlatY(camera.transform.position);
 
-      // Check if the chunks are already there
-      foreach (Vector3 position in m_visibleChunkPositions) {
-        bool foundChunk = m_chunkDictionary.ContainsKey(position);
+        UpdateVisibleChunkPositions(cameraPosition);
 
-        if (!foundChunk) {
-          CreateChunk(position);
-        }
-      }
-
-      // Delete chunks that are out of view
-      for (int i = m_chunks.Count - 1; i >= 0; i--) {
-        ChunkData chunk = m_chunks[i];
-        Vector3 chunkPosition = chunk.worldPosition;
-        // Find a chunk with the same position
-        bool foundPosition = m_visibleChunkPositionsHashSet.Contains(
-          chunkPosition
-        );
-
-        if (!foundPosition) {
-          GameObject.Destroy(chunk.gameObject);
-          m_chunks.Remove(chunk);
-          m_chunkDictionary.Remove(chunk.worldPosition);
-        }
-      }
-
-      // Set the resolutions of the chunks based on distance
-      foreach (ChunkData chunk in m_chunks) {
-        // Get the distance to the camera
-        float distanceToCamera = Vector3.Distance(cameraPosition, chunk.worldPosition);
-
-        // Calculate the target resolution
-        float newResolution;
-        if (distanceToCamera < lodDistance * 1f) {
-          newResolution = 1f;
-        } else if (distanceToCamera < lodDistance * 2f) {
-          newResolution = 0.5f;
-        } else if (distanceToCamera < lodDistance * 4f) {
-          newResolution = 0.25f;
-        } else if (distanceToCamera < lodDistance * 8f) {
-          newResolution = 0.125f;
-        } else {
-          newResolution = 0.0625f;
-        }
-
-        if (chunk.resolution != newResolution) {
-          // Update the resolution and noise size
-          chunk.resolution = newResolution;
-          chunk.component.resolution = new Vector3Int(
-            Mathf.Max(Mathf.RoundToInt((float)chunkResolution.x * newResolution), 2),
-            Mathf.Max(Mathf.RoundToInt((float)chunkResolution.y * newResolution), 2),
-            Mathf.Max(Mathf.RoundToInt((float)chunkResolution.z * newResolution), 2)
-          );
-          chunk.component.noiseSize = newResolution;
-          // Request an update
-          chunk.needsUpdate = true;
+        if (!multithreadedSorting) {
+          UpdateFollowingVisibleChunks();
         }
       }
     }
+
+
   }
 }
