@@ -8,8 +8,8 @@ using Unity.Jobs;
 public class TerrainChunk : MonoBehaviour {
   public Vector3Int resolution = Vector3Int.one * 10;
   public float noiseSize = 1f;
-  public int noiseOctaves = 3;
   public Vector3 noiseOffset = Vector3.zero;
+  public ISamplerFactory samplerFactory;
 
   public float threshold = 0f;
   public bool useMiddlePoint = false;
@@ -55,20 +55,25 @@ public class TerrainChunk : MonoBehaviour {
     }
 
     // Generate noise
-    FractalNoise noise = new FractalNoise(1 / noiseSize, 1f, 0.5f, noiseOctaves);
-    Func<float, float, float, float> samplerFunc = (float x, float y, float z) => {
-      // For supporting non symmetrical grids we need to mutiply each
-      // coord by the resolution to get symmetrical noise
-      return noise.Sample(
-        (x + noiseOffset.x) * resolution.x,
-        (y + noiseOffset.y) * resolution.y,
-        (z + noiseOffset.z) * resolution.z
-      );
-    };
+    Func<float, float, float, float> sampler;
+    if (samplerFactory != null) {
+      sampler = samplerFactory.GetSampler(this);
+    } else {
+      FractalNoise noise = new FractalNoise(32f, 1f, 0.5f, 5);
+      sampler = (float x, float y, float z) => {
+        // For supporting non symmetrical grids we need to mutiply each
+        // coord by the resolution to get symmetrical noise
+        return noise.Sample(
+          (x + noiseOffset.x) * resolution.x,
+          (y + noiseOffset.y) * resolution.y,
+          (z + noiseOffset.z) * resolution.z
+        );
+      };
+    }
 
     // Create a new grid
     // Store a reference to the sampler function
-    samplerHandle = GCHandle.Alloc(samplerFunc);
+    samplerHandle = GCHandle.Alloc(sampler);
 
     // Create the sub tasks for the job
     vertices = new NativeList<Vector3>(Allocator.Persistent);
@@ -184,6 +189,13 @@ public class TerrainChunk : MonoBehaviour {
     GenerateIfNeeded();
 
     if (!drawGizmos) return;
+
+    Gizmos.color = Color.white;
+    Vector3 scale = transform.lossyScale;
+    Gizmos.DrawWireCube(
+      transform.position + scale / 2f,
+      transform.lossyScale
+    );
 
     // for (int z = 0; z < m_grid.resolution.z; z++) {
     //   for (int y = 0; y < m_grid.resolution.y; y++) {

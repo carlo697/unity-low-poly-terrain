@@ -27,7 +27,6 @@ public class TerrainManager : MonoBehaviour {
   public Vector3Int chunkResolution = new Vector3Int(32, 64, 32);
   public Material chunkMaterial;
 
-  public float noiseSize = 32f;
   public int noiseOctaves = 3;
   public float lodDistance = 75f;
 
@@ -41,6 +40,12 @@ public class TerrainManager : MonoBehaviour {
 
   public float m_updatePeriod = 0.1f;
   private float m_timeSinceLastUpdate = 0.0f;
+
+  private TerrainNoise m_terrainNoise;
+
+  private void Awake() {
+    m_terrainNoise = GetComponent<TerrainNoise>();
+  }
 
   private void CreateChunk(Vector3 worldPosition) {
     // Create empty GameObject
@@ -67,9 +72,8 @@ public class TerrainManager : MonoBehaviour {
     gameObject.AddComponent<MeshCollider>();
 
     // Set variables
+    chunk.samplerFactory = m_terrainNoise;
     chunk.resolution = chunkResolution;
-    chunk.noiseSize = noiseSize;
-    chunk.noiseOctaves = noiseOctaves;
     chunk.noiseOffset = coords;
     chunk.GetComponent<MeshRenderer>().sharedMaterial = chunkMaterial;
   }
@@ -228,13 +232,11 @@ public class TerrainManager : MonoBehaviour {
             Mathf.Max(Mathf.RoundToInt((float)chunkResolution.y * newResolution), 2),
             Mathf.Max(Mathf.RoundToInt((float)chunkResolution.z * newResolution), 2)
           );
-          chunk.component.noiseSize = noiseSize * newResolution;
+          chunk.component.noiseSize = newResolution;
           // Request an update
           chunk.needsUpdate = true;
         }
       }
-
-
     }
   }
 }
