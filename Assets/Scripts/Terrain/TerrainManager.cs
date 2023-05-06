@@ -57,6 +57,7 @@ public class TerrainManager : MonoBehaviour {
   public Vector3 chunkSize = new Vector3(32f, 64f, 32f);
   public Vector3Int chunkResolution = new Vector3Int(32, 64, 32);
   public Material chunkMaterial;
+  public bool debug;
 
   public int noiseOctaves = 3;
   public float lodDistance = 75f;
@@ -112,6 +113,7 @@ public class TerrainManager : MonoBehaviour {
     gameObject.AddComponent<MeshCollider>();
 
     // Set variables
+    chunk.debug = debug;
     chunk.samplerFactory = m_terrainNoise;
     chunk.resolution = chunkResolution;
     chunk.noiseOffset = coords;
