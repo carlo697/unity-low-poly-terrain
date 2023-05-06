@@ -151,9 +151,15 @@ public class TerrainManager : MonoBehaviour {
 
     // Sort the array by measuring the distance from the chunk to the camera
     m_visibleChunkPositions.Sort((a, b) => {
-      float distanceAToCamera = Vector3.Distance(a, worldPosition);
-      float distanceBToCamera = Vector3.Distance(b, worldPosition);
-      return distanceAToCamera.CompareTo(distanceBToCamera);
+      float distanceA =
+        (a.x - worldPosition.x) * (a.x - worldPosition.x)
+        + (a.z - worldPosition.z) * (a.z - worldPosition.z);
+
+      float distanceB =
+        (b.x - worldPosition.x) * (b.x - worldPosition.x)
+        + (b.z - worldPosition.z) * (b.z - worldPosition.z);
+
+      return distanceA.CompareTo(distanceB);
     });
   }
 
