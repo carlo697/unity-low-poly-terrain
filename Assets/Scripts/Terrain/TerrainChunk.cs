@@ -10,6 +10,7 @@ public class TerrainChunk : MonoBehaviour {
   public float noiseSize = 1f;
   public Vector3 noiseOffset = Vector3.zero;
   public ISamplerFactory samplerFactory;
+  public bool debug;
 
   public float threshold = 0f;
   public bool useMiddlePoint = false;
@@ -50,7 +51,8 @@ public class TerrainChunk : MonoBehaviour {
   [ContextMenu("InstantRegenerate")]
   public void ScheduleRegeneration() {
     if (handle != null) {
-      Debug.Log("There was already a handle running");
+      if (debug)
+        Debug.Log("There was already a handle running");
       CancelJob();
     }
 
@@ -86,7 +88,8 @@ public class TerrainChunk : MonoBehaviour {
       samplerHandle,
       resolution,
       threshold,
-      useMiddlePoint
+      useMiddlePoint,
+      debug
     );
 
     // Execute the job and complete it right away
@@ -143,11 +146,12 @@ public class TerrainChunk : MonoBehaviour {
       m_meshFilter.sharedMesh = mesh;
 
       timer.Stop();
-      Debug.Log(
-        string.Format(
-          "Total to apply mesh: {0} ms", timer.ElapsedMilliseconds
-        )
-      );
+      if (debug)
+        Debug.Log(
+          string.Format(
+            "Total to apply mesh: {0} ms", timer.ElapsedMilliseconds
+          )
+        );
       timer.Restart();
 
       // Check if it has a mesh collider
@@ -157,11 +161,12 @@ public class TerrainChunk : MonoBehaviour {
       }
 
       timer.Stop();
-      Debug.Log(
-        string.Format(
-          "Total to apply collider: {0} ms", timer.ElapsedMilliseconds
-        )
-      );
+      if (debug)
+        Debug.Log(
+          string.Format(
+            "Total to apply collider: {0} ms", timer.ElapsedMilliseconds
+          )
+        );
 
       isGenerating = false;
     }

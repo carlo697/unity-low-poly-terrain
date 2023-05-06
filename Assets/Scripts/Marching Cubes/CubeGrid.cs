@@ -154,7 +154,8 @@ public class CubeGrid {
 
   public void Generate(
     out Vector3[] outputVertices,
-    out int[] outputTriangles
+    out int[] outputTriangles,
+    bool debug = false
   ) {
     var stepTimer = new System.Diagnostics.Stopwatch();
     stepTimer.Start();
@@ -183,7 +184,8 @@ public class CubeGrid {
     }
 
     stepTimer.Stop();
-    Debug.Log(string.Format("Grid: {0} ms", stepTimer.ElapsedMilliseconds));
+    if (debug)
+      Debug.Log(string.Format("Grid: {0} ms", stepTimer.ElapsedMilliseconds));
 
     stepTimer.Restart();
 
@@ -199,7 +201,8 @@ public class CubeGrid {
     }
 
     stepTimer.Stop();
-    Debug.Log(string.Format("Marching: {0} ms", stepTimer.ElapsedMilliseconds));
+    if (debug)
+      Debug.Log(string.Format("Marching: {0} ms", stepTimer.ElapsedMilliseconds));
 
     stepTimer.Restart();
 
@@ -215,7 +218,11 @@ public class CubeGrid {
     outputTriangles = triangles.ToArray();
   }
 
-  public static Mesh CreateMesh(Vector3[] vertices, int[] triangles) {
+  public static Mesh CreateMesh(
+    Vector3[] vertices,
+    int[] triangles,
+    bool debug = false
+  ) {
     var stepTimer = new System.Diagnostics.Stopwatch();
     stepTimer.Start();
 
@@ -232,12 +239,13 @@ public class CubeGrid {
     }
 
     stepTimer.Stop();
-    Debug.Log(
-      string.Format(
-        "Generating mesh: {0} ms",
-        stepTimer.ElapsedMilliseconds
-      )
-    );
+    if (debug)
+      Debug.Log(
+        string.Format(
+          "Generating mesh: {0} ms",
+          stepTimer.ElapsedMilliseconds
+        )
+      );
 
     return mesh;
   }

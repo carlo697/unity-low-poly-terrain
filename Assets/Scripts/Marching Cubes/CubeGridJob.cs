@@ -10,6 +10,7 @@ public struct CubeGridJob : IJob {
   private Vector3Int resolution;
   private float threshold;
   private bool useMiddlePoint;
+  private bool debug;
 
   public CubeGridJob(
     NativeList<Vector3> vertices,
@@ -17,7 +18,8 @@ public struct CubeGridJob : IJob {
     GCHandle samplerHandle,
     Vector3Int resolution,
     float threshold = 0f,
-    bool useMiddlePoint = false
+    bool useMiddlePoint = false,
+    bool debug = false
   ) {
     this.vertices = vertices;
     this.triangles = triangles;
@@ -25,6 +27,7 @@ public struct CubeGridJob : IJob {
     this.resolution = resolution;
     this.threshold = threshold;
     this.useMiddlePoint = useMiddlePoint;
+    this.debug = debug;
   }
 
   public void Execute() {
@@ -39,7 +42,7 @@ public struct CubeGridJob : IJob {
 
     Vector3[] vertices;
     int[] triangles;
-    grid.Generate(out vertices, out triangles);
+    grid.Generate(out vertices, out triangles, debug);
 
     for (int i = 0; i < vertices.Length; i++) {
       this.vertices.Add(vertices[i]);
