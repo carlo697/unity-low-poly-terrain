@@ -99,6 +99,14 @@ public class TerrainManager : MonoBehaviour {
     return GetChunkPositionFromCoords(chunkCoords);
   }
 
+  private Vector3 FlatY(Vector3 worldPosition) {
+    return new Vector3(
+      worldPosition.x,
+      0f,
+      worldPosition.z
+    );
+  }
+
   private void UpdateVisibleChunkPositions(Vector3 worldPosition) {
     // Get the chunk the player is standing right now
     Vector3 mainChunkCoords = GetChunkCoordsAt(worldPosition);
@@ -106,12 +114,6 @@ public class TerrainManager : MonoBehaviour {
 
     int visibleX = Mathf.CeilToInt(viewDistance / chunkSize.x);
     int visibleZ = Mathf.CeilToInt(viewDistance / chunkSize.z);
-
-    Vector3 positionAtZeroY = new Vector3(
-      worldPosition.x,
-      0f,
-      worldPosition.z
-    );
 
     // Build a list of the coords of the visible chunks
     m_visibleChunkPositions.Clear();
@@ -139,7 +141,7 @@ public class TerrainManager : MonoBehaviour {
         );
 
         // Check if a sphere of radius 'distance' is touching the chunk
-        float distanceToChunk = Mathf.Sqrt(bounds.SqrDistance(positionAtZeroY));
+        float distanceToChunk = Mathf.Sqrt(bounds.SqrDistance(worldPosition));
         if (distanceToChunk < viewDistance) {
           m_visibleChunkPositions.Add(position);
           m_visibleChunkPositionsHashSet.Add(position);
@@ -149,8 +151,8 @@ public class TerrainManager : MonoBehaviour {
 
     // Sort the array by measuring the distance from the chunk to the camera
     m_visibleChunkPositions.Sort((a, b) => {
-      float distanceAToCamera = Vector3.Distance(a, positionAtZeroY);
-      float distanceBToCamera = Vector3.Distance(b, positionAtZeroY);
+      float distanceAToCamera = Vector3.Distance(a, worldPosition);
+      float distanceBToCamera = Vector3.Distance(b, worldPosition);
       return distanceAToCamera.CompareTo(distanceBToCamera);
     });
   }
@@ -177,7 +179,7 @@ public class TerrainManager : MonoBehaviour {
 
     Camera camera = Camera.main;
     if (camera) {
-      Vector3 cameraPosition = camera.transform.position;
+      Vector3 cameraPosition = FlatY(camera.transform.position);
 
       UpdateVisibleChunkPositions(cameraPosition);
 
@@ -218,7 +220,7 @@ public class TerrainManager : MonoBehaviour {
           newResolution = 0.5f;
         } else if (distanceToCamera < lodDistance * 4f) {
           newResolution = 0.25f;
-        } else if (distanceToCamera < lodDistance * 8f) {
+        } else if (distanceToCamera < lodDistance * 6f) {
           newResolution = 0.125f;
         } else {
           newResolution = 0.0625f;
