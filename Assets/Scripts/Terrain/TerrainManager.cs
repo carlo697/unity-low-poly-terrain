@@ -38,8 +38,11 @@ public class TerrainManager : MonoBehaviour {
   private HashSet<Vector3> m_visibleChunkPositionsHashSet =
     new HashSet<Vector3>();
 
-  public float m_updatePeriod = 0.1f;
-  private float m_timeSinceLastUpdate = 0.0f;
+  public float updatePeriod = 0.3f;
+  private float m_updateTimer = 0.0f;
+  public float generatePeriod = 0.02f;
+  private float m_generateTimer = 0.0f;
+  public int maxNumberOfChunksToGenerate = 15;
 
   private TerrainNoise m_terrainNoise;
 
@@ -142,7 +145,7 @@ public class TerrainManager : MonoBehaviour {
 
         // Check if a sphere of radius 'distance' is touching the chunk
         float distanceToChunk = Mathf.Sqrt(bounds.SqrDistance(worldPosition));
-        if (distanceToChunk < viewDistance) {
+        if (distanceToChunk <= viewDistance) {
           m_visibleChunkPositions.Add(position);
           m_visibleChunkPositionsHashSet.Add(position);
         }
@@ -163,25 +166,62 @@ public class TerrainManager : MonoBehaviour {
     });
   }
 
-  private void Update() {
-    // Tell chunks to generate their meshes
-    for (int index = 0; index < m_chunks.Count; index++) {
-      ChunkData chunk = m_chunks[index];
+  private void UpdateGeneration() {
+    m_generateTimer += Time.deltaTime;
+    if (m_generateTimer > generatePeriod) {
+      m_generateTimer = 0f;
 
-      // Wait for the last chunk to be done
-      if (chunk.component.isGenerating) break;
+      // Group the number of chunks being generated
+      Dictionary<float, int> resolutionGroups = new Dictionary<float, int>();
+      int totalInProgress = 0;
+      for (int index = 0; index < m_chunks.Count; index++) {
+        ChunkData chunk = m_chunks[index];
 
-      // Tell the chunk to start generating
-      if (chunk.needsUpdate) {
-        chunk.component.GenerateOnNextFrame();
-        chunk.needsUpdate = false;
-        break;
+        if (chunk.component.isGenerating) {
+          // totalInProgress++;
+          totalInProgress += Mathf.RoundToInt((chunk.resolution / 0.0625f));
+
+          if (resolutionGroups.ContainsKey(chunk.resolution)) {
+            resolutionGroups[chunk.resolution]++;
+          } else {
+            resolutionGroups[chunk.resolution] = 1;
+          }
+        } else if (!resolutionGroups.ContainsKey(chunk.resolution)) {
+          resolutionGroups[chunk.resolution] = 0;
+        }
+      }
+
+      // Tell chunks to generate their meshes
+      for (int index = 0; index < m_chunks.Count; index++) {
+        ChunkData chunk = m_chunks[index];
+
+        // Stop generating if we are out of budget
+        if (totalInProgress >= maxNumberOfChunksToGenerate) {
+          break;
+        }
+
+        // Tell the chunk to start generating if the budget is available
+        if (
+          chunk.needsUpdate
+          && resolutionGroups[chunk.resolution] < (1f / chunk.resolution)
+        ) {
+          chunk.component.GenerateOnNextFrame();
+          chunk.needsUpdate = false;
+
+          // Update the groups
+          resolutionGroups[chunk.resolution]++;
+          totalInProgress += Mathf.RoundToInt((chunk.resolution / 0.0625f));
+        }
       }
     }
+  }
 
-    m_timeSinceLastUpdate += Time.deltaTime;
-    if (m_timeSinceLastUpdate < m_updatePeriod) return;
-    m_timeSinceLastUpdate = 0f;
+  private void Update() {
+    UpdateGeneration();
+
+    m_updateTimer += Time.deltaTime;
+    if (m_updateTimer < updatePeriod) return;
+    m_updateTimer = 0f;
 
     Camera camera = Camera.main;
     if (camera) {
@@ -227,7 +267,7 @@ public class TerrainManager : MonoBehaviour {
           newResolution = 0.5f;
         } else if (distanceToCamera < lodDistance * 4f) {
           newResolution = 0.25f;
-        } else if (distanceToCamera < lodDistance * 6f) {
+        } else if (distanceToCamera < lodDistance * 8f) {
           newResolution = 0.125f;
         } else {
           newResolution = 0.0625f;
