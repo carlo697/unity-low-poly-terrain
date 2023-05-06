@@ -193,7 +193,8 @@ public class TerrainManager : MonoBehaviour {
       }
 
       // Delete chunks that are out of view
-      foreach (ChunkData chunk in m_chunks.ToArray()) {
+      for (int i = m_chunks.Count - 1; i >= 0; i--) {
+        ChunkData chunk = m_chunks[i];
         Vector3 chunkPosition = chunk.worldPosition;
         // Find a chunk with the same position
         bool foundPosition = m_visibleChunkPositionsHashSet.Contains(
@@ -208,7 +209,7 @@ public class TerrainManager : MonoBehaviour {
       }
 
       // Set the resolutions of the chunks based on distance
-      foreach (ChunkData chunk in m_chunks.ToArray()) {
+      foreach (ChunkData chunk in m_chunks) {
         // Get the distance to the camera
         float distanceToCamera = Vector3.Distance(cameraPosition, chunk.worldPosition);
 
