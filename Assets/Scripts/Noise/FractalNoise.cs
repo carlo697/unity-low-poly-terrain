@@ -7,6 +7,7 @@ public class FractalNoise : INoise {
   private float persistence;
   private int seed;
   private int octaves;
+  private float maxHeight;
 
   private Vector3[] m_offsets;
 
@@ -22,7 +23,14 @@ public class FractalNoise : INoise {
     this.persistence = persistence;
     this.octaves = octaves;
 
+    this.maxHeight = 1f / getMaxValue();
+    // this.maxHeight = 1f / Mathf.Pow(getMaxValue(), 1f / 2.5f) * 1.02f;
+
     SetSeed(seed);
+  }
+
+  public float getMaxValue() {
+    return (Mathf.Pow(this.persistence, octaves) - 1f) / (persistence - 1f);
   }
 
   public void SetSeed(int seed) {
@@ -57,6 +65,6 @@ public class FractalNoise : INoise {
       frequency *= 2.0f;
     }
 
-    return finalValue;
+    return finalValue * maxHeight;
   }
 }
