@@ -56,6 +56,7 @@ public class TerrainManager : MonoBehaviour {
   public float viewDistance = 100f;
   public Vector3 chunkSize = new Vector3(32f, 64f, 32f);
   public Vector3Int chunkResolution = new Vector3Int(32, 64, 32);
+  public float waterLevel = 40f;
   public Material chunkMaterial;
   public bool debug;
 
@@ -95,7 +96,11 @@ public class TerrainManager : MonoBehaviour {
     ));
 
     // Set position and parent
-    gameObject.transform.position = worldPosition;
+    gameObject.transform.position = new Vector3(
+      worldPosition.x,
+      -waterLevel,
+      worldPosition.z
+    );
     gameObject.transform.localScale = chunkSize;
     gameObject.transform.SetParent(transform);
 
@@ -351,7 +356,5 @@ public class TerrainManager : MonoBehaviour {
         }
       }
     }
-
-
   }
 }
