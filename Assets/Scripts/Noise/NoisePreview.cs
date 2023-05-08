@@ -71,15 +71,18 @@ public class NoisePreview : MonoBehaviour {
     }
 
     // Generate material and assign texture
-    Material newMaterial = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
-    newMaterial.SetTexture("_BaseMap", TextureGenerator.GetTextureFromHeightmap(heightmap));
+    Material material = m_meshRenderer.sharedMaterial;
+    if (!material) {
+      material = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
+    }
+    material.SetTexture("_BaseMap", TextureGenerator.GetTextureFromHeightmap(heightmap));
 
     // Add a mesh renderer and assign material
     m_meshRenderer = GetComponent<MeshRenderer>();
     if (!m_meshRenderer) {
       m_meshRenderer = gameObject.AddComponent<MeshRenderer>();
     }
-    m_meshRenderer.sharedMaterial = newMaterial;
+    m_meshRenderer.sharedMaterial = material;
   }
 
   private void OnValidate() {
