@@ -294,34 +294,41 @@ public class TerrainManager : MonoBehaviour {
     }
 
     // Tell chunks to generate their meshes
-    for (int index = 0; index < m_chunks.Count; index++) {
-      ChunkData chunk = m_chunks[index];
+    // Check if the chunks are already there
+    for (int index = 0; index < m_visibleChunkPositions.Count; index++) {
+      Vector3 position = m_visibleChunkPositions[index];
 
-      // Stop generating if we are out of budget
-      if (totalInProgress >= maxNumberOfChunksToGenerate) {
-        break;
-      }
+      if (m_chunkDictionary.ContainsKey(position)) {
+        ChunkData chunk = m_chunkDictionary[position];
 
-      // Tell the chunk to start generating if the budget is available
-      if (
-        chunk.needsUpdate
-        && resolutionGroups[chunk.resolution] < (1f / chunk.resolution)
-      ) {
-        chunk.component.GenerateOnNextFrame();
-        chunk.needsUpdate = false;
+        // Stop generating if we are out of budget
+        if (totalInProgress >= maxNumberOfChunksToGenerate) {
+          break;
+        }
 
-        // Update the groups
-        resolutionGroups[chunk.resolution]++;
-        totalInProgress += Mathf.RoundToInt((chunk.resolution / 0.0625f));
+        // Tell the chunk to start generating if the budget is available
+        if (
+          chunk.needsUpdate
+          && resolutionGroups[chunk.resolution] < (1f / chunk.resolution)
+        ) {
+          chunk.component.GenerateOnNextFrame();
+          chunk.needsUpdate = false;
+
+          // Update the groups
+          resolutionGroups[chunk.resolution]++;
+          totalInProgress += Mathf.RoundToInt((chunk.resolution / 0.0625f));
+        }
       }
     }
   }
 
   private void Update() {
-    m_generateTimer += Time.deltaTime;
-    if (m_generateTimer > generatePeriod) {
-      m_generateTimer = 0f;
-      RequestChunksGeneration();
+    if (m_isSortingReady) {
+      m_generateTimer += Time.deltaTime;
+      if (m_generateTimer > generatePeriod) {
+        m_generateTimer = 0f;
+        RequestChunksGeneration();
+      }
     }
 
     // Handle the job used to sort the chunks
