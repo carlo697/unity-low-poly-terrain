@@ -180,9 +180,9 @@ public class TerrainManager : MonoBehaviour {
         //Create a bounds that encloses the chunk
         Bounds bounds = new Bounds(
           new Vector3(
-            position.x - chunkSize.x / 2f,
-            position.y - chunkSize.y / 2f,
-            position.z - chunkSize.z / 2f
+            position.x + chunkSize.x / 2f,
+            position.y + chunkSize.y / 2f,
+            position.z + chunkSize.z / 2f
           ),
           chunkSize
         );
