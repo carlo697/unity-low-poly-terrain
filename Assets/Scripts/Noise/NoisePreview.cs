@@ -9,6 +9,7 @@ public class NoisePreview : MonoBehaviour {
   public float amplitude = 1f;
   public float persistence = 0.5f;
   public int octaves = 3;
+  public AnimationCurve curve = AnimationCurve.Linear(-1f, -1f, 1f, 1f);
 
   public enum NoiseType { BuiltIn, Simple3D, Advanced3D };
   public NoiseType type = NoiseType.BuiltIn;
@@ -51,19 +52,19 @@ public class NoisePreview : MonoBehaviour {
             (float)y * frequency + offset.y
           );
         } else if (type == NoiseType.Simple3D) {
-          float value = m_basicNoise.Sample(
+          float value = curve.Evaluate(m_basicNoise.Sample(
             (float)x + offset.x,
             (float)y + offset.y,
             offset.z
-          );
+          ));
 
           heightmap[x, y] = (value + 1f) / 2f;
         } else {
-          float value = m_fractalNoise.Sample(
+          float value = curve.Evaluate(m_fractalNoise.Sample(
             (float)x + offset.x,
             (float)y + offset.y,
             offset.z
-          );
+          ));
 
           heightmap[x, y] = (value + 1f) / 2f;
         }
