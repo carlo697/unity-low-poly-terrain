@@ -3,36 +3,36 @@ using System.Collections.Generic;
 using Unity.Jobs;
 using Unity.Collections;
 
-struct DistanceToCameraComparer : IComparer<Vector3> {
-  public Vector3 cameraPosition;
-
-  public DistanceToCameraComparer(Vector3 cameraPosition) {
-    this.cameraPosition = cameraPosition;
-  }
-
-  public int Compare(Vector3 a, Vector3 b) {
-    float distanceA =
-    (a.x - cameraPosition.x) * (a.x - cameraPosition.x)
-    + (a.z - cameraPosition.z) * (a.z - cameraPosition.z);
-
-    float distanceB =
-      (b.x - cameraPosition.x) * (b.x - cameraPosition.x)
-      + (b.z - cameraPosition.z) * (b.z - cameraPosition.z);
-
-    return distanceA.CompareTo(distanceB);
-  }
-}
-
-public struct ChunkPositionsSortingJob : IJob {
-  public Vector3 cameraPosition;
-  public NativeList<Vector3> chunks;
-
-  public void Execute() {
-    chunks.Sort(new DistanceToCameraComparer(cameraPosition));
-  }
-}
-
 public class TerrainManager : MonoBehaviour {
+  struct DistanceToCameraComparer : IComparer<Vector3> {
+    public Vector3 cameraPosition;
+
+    public DistanceToCameraComparer(Vector3 cameraPosition) {
+      this.cameraPosition = cameraPosition;
+    }
+
+    public int Compare(Vector3 a, Vector3 b) {
+      float distanceA =
+      (a.x - cameraPosition.x) * (a.x - cameraPosition.x)
+      + (a.z - cameraPosition.z) * (a.z - cameraPosition.z);
+
+      float distanceB =
+        (b.x - cameraPosition.x) * (b.x - cameraPosition.x)
+        + (b.z - cameraPosition.z) * (b.z - cameraPosition.z);
+
+      return distanceA.CompareTo(distanceB);
+    }
+  }
+
+  public struct ChunkPositionsSortingJob : IJob {
+    public Vector3 cameraPosition;
+    public NativeList<Vector3> chunks;
+
+    public void Execute() {
+      chunks.Sort(new DistanceToCameraComparer(cameraPosition));
+    }
+  }
+
   public class ChunkData {
     public Vector3 worldPosition;
     public Vector3 coords;
@@ -83,10 +83,12 @@ public class TerrainManager : MonoBehaviour {
   private NativeList<Vector3> m_sortingJobChunks;
   private Vector3 m_lastCameraPosition;
 
-  private TerrainNoise m_terrainNoise;
+  [SerializeField] private TerrainNoise m_terrainNoise;
 
   private void Awake() {
-    m_terrainNoise = GetComponent<TerrainNoise>();
+    if (!m_terrainNoise) {
+      m_terrainNoise = GetComponent<TerrainNoise>();
+    }
   }
 
   private void CreateChunk(Vector3 worldPosition) {
@@ -121,7 +123,6 @@ public class TerrainManager : MonoBehaviour {
     chunk.debug = debug;
     chunk.samplerFactory = m_terrainNoise;
     chunk.resolution = chunkResolution;
-    chunk.noiseOffset = coords;
     chunk.GetComponent<MeshRenderer>().sharedMaterial = chunkMaterial;
   }
 
@@ -265,7 +266,6 @@ public class TerrainManager : MonoBehaviour {
           Mathf.Max(Mathf.RoundToInt((float)chunkResolution.y * newResolution), 2),
           Mathf.Max(Mathf.RoundToInt((float)chunkResolution.z * newResolution), 2)
         );
-        chunk.component.noiseSize = newResolution;
         // Request an update
         chunk.needsUpdate = true;
       }

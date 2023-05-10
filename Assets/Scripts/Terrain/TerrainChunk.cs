@@ -177,10 +177,14 @@ public class TerrainChunk : MonoBehaviour {
     isGenerating = true;
   }
 
-  private void OnValidate() {
+  public void GenerateOnEditor() {
     if (Application.isEditor && !Application.isPlaying) {
       GenerateOnNextFrame();
     }
+  }
+
+  private void OnValidate() {
+    GenerateOnEditor();
   }
 
   private void GenerateIfNeeded() {

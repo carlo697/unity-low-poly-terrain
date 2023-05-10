@@ -5,42 +5,86 @@ public class TerrainNoise : ISamplerFactory {
 
   public float noiseSize = 32f;
   public int noiseOctaves = 5;
+  public bool updateChunksInEditor = true;
+
+  public AnimationCurve curve;
+  public AnimationCurve normalizerCurve;
+
+  private int seed = 0;
+
+  private float Normalize(float value) {
+    return ((value + 1f) / 2f);
+  }
+
+  private float Denormalize(float value) {
+    return (value * 2f) - 1f;
+  }
 
   public override Func<float, float, float, float> GetSampler(
     TerrainChunk chunk
   ) {
-    float noiseMultiplier = noiseSize * chunk.noiseSize;
+    // Create copies of the curves
+    AnimationCurve curve = new AnimationCurve(this.curve.keys);
+    AnimationCurve normalizerCurve = new AnimationCurve(this.normalizerCurve.keys);
 
-    FractalNoise noise = new FractalNoise(
-      1 / noiseMultiplier,
-      1f,
-      0.5f,
-      noiseOctaves
-    );
+    // Main noise for the terrain
+    FastNoiseLite noise = new FastNoiseLite(seed + 1);
+    noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
+    noise.SetFrequency(1f);
+    noise.SetFractalType(FastNoiseLite.FractalType.FBm);
+    noise.SetFractalOctaves(noiseOctaves);
+
+    // FastNoiseLite cavesNoise = new FastNoiseLite(seed);
+    // cavesNoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
+    // cavesNoise.SetFrequency(8f / noiseMultiplier);
+
+    // Noise for a cave system
+    FastNoiseLite cavesNoise = new FastNoiseLite(seed);
+    cavesNoise.SetNoiseType(FastNoiseLite.NoiseType.Cellular);
+    cavesNoise.SetFrequency(4f);
+    cavesNoise.SetCellularDistanceFunction(FastNoiseLite.CellularDistanceFunction.EuclideanSq);
+    cavesNoise.SetCellularReturnType(FastNoiseLite.CellularReturnType.Distance);
+    cavesNoise.SetCellularJitter(1f);
+    // cavesNoise.SetFractalType(FastNoiseLite.FractalType.FBm);
+    // cavesNoise.SetFractalOctaves(2);
+
+    // Variables needed to sample the point in world space
+    float noiseMultiplier = 1 / (noiseSize * chunk.noiseSize);
+    Vector3 chunkWorldPosition = chunk.transform.position;
+    Vector3 chunkWorldSize = chunk.transform.localScale;
 
     return (float x, float y, float z) => {
-      // For supporting non symmetrical grids we need to mutiply each
-      // coord by the resolution to get symmetrical noise
-      // return y - noise.Sample(
-      //   (x + chunk.noiseOffset.x) * chunk.resolution.x,
-      //   (y + chunk.noiseOffset.y) * chunk.resolution.y,
-      //   (z + chunk.noiseOffset.z) * chunk.resolution.z
+      // Sample the point in world space
+      float finalX = ((chunkWorldPosition.x + (x * chunkWorldSize.x)) * noiseMultiplier) + chunk.noiseOffset.x;
+      float finalY = ((chunkWorldPosition.y + (y * chunkWorldSize.y)) * noiseMultiplier) + chunk.noiseOffset.y;
+      float finalZ = ((chunkWorldPosition.z + (z * chunkWorldSize.z)) * noiseMultiplier) + chunk.noiseOffset.z;
+
+      // Start sampling
+      float height = y;
+
+      // Add terrain noise
+      height -= Normalize(noise.GetNoise(finalX, finalY, finalZ));
+      // height += ((caves.GetNoise(finalX, finalZ) + 1f) / 2f) * 0.1f;
+      // height += 1f - Mathf.Abs(noise.GetNoise(finalX, 0, finalZ));
+
+      // Caves
+      // float caves3D = cavesNoise.GetNoise(finalX, finalY, finalZ) + 0.2f;
+      // height = Denormalize(
+      //   Normalize(normalizerCurve.Evaluate(height)) + Normalize(normalizerCurve.Evaluate(caves3D))
       // );
 
-      float xMultiplier = (x + chunk.noiseOffset.x) * chunk.resolution.x;
-      float yMultiplier = (y + chunk.noiseOffset.y) * chunk.resolution.y;
-      float zMultiplier = (z + chunk.noiseOffset.z) * chunk.resolution.z;
-
-      float heightFalloff = y - 0.1f;
-      // float baseNoise = ((noise.Sample(
-      //   xMultiplier,
-      //   yMultiplier,
-      //   zMultiplier
-      // ) + 1) / 2) * 0.95f;
-      float baseHeight =
-        ((noise.Sample(xMultiplier, 0, zMultiplier) + 1f) / 2f)
-        * 0.95f;
-      return heightFalloff - baseHeight;
+      return height;
     };
+  }
+
+  private void OnValidate() {
+    if (updateChunksInEditor) {
+      TerrainChunk[] chunks = GameObject.FindObjectsOfType<TerrainChunk>();
+      foreach (var chunk in chunks) {
+        if (chunk.samplerFactory == this) {
+          chunk.GenerateOnEditor();
+        }
+      }
+    }
   }
 }
