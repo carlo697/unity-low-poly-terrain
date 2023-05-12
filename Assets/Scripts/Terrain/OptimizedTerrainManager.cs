@@ -368,9 +368,9 @@ public class OptimizedTerrainManager : MonoBehaviour {
 
     Camera camera = Camera.main;
     if (camera) {
-      m_generateTimer += Time.deltaTime;
-      if (m_generateTimer > generatePeriod) {
-        m_generateTimer = 0f;
+      m_updateTimer += Time.deltaTime;
+      if (m_updateTimer > updatePeriod) {
+        m_updateTimer = 0f;
 
         Vector3 cameraPosition = FlatY(camera.transform.position);
 
