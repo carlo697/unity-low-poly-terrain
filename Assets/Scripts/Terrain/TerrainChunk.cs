@@ -18,11 +18,15 @@ public class TerrainChunk : MonoBehaviour {
   public bool drawGizmos = true;
   public float gizmosSize = 0.5f;
 
-  public bool isGenerating { get; private set; }
+  public bool isGenerating { get; private set; } = false;
+  public bool hasEverBeenGenerated { get; private set; } = false;
 
   [SerializeField] private bool m_generateFlag;
 
+
+  public MeshFilter meshFilter { get { return m_meshFilter; } }
   private MeshFilter m_meshFilter;
+  public MeshRenderer meshRenderer { get { return m_meshRenderer; } }
   private MeshRenderer m_meshRenderer;
 
   private GCHandle samplerHandle;
@@ -169,6 +173,7 @@ public class TerrainChunk : MonoBehaviour {
         );
 
       isGenerating = false;
+      hasEverBeenGenerated = true;
     }
   }
 

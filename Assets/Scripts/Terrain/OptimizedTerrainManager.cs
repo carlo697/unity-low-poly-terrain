@@ -19,6 +19,14 @@ public class OptimizedTerrainManager : MonoBehaviour {
       return (this.position == b.position) && (this.size == b.size);
     }
 
+    public static bool operator !=(ChunkTransform a, ChunkTransform b) {
+      return (a.position != b.position) && (a.size != b.size);
+    }
+
+    public static bool operator ==(ChunkTransform a, ChunkTransform b) {
+      return (a.position == b.position) && (a.size == b.size);
+    }
+
     public override int GetHashCode() {
       return position.GetHashCode() ^ size.GetHashCode();
     }
@@ -29,14 +37,19 @@ public class OptimizedTerrainManager : MonoBehaviour {
     public TerrainChunk component;
     public GameObject gameObject;
     public bool needsUpdate = true;
+    public Bounds bounds;
 
     public SpawnedChunk(
-      ChunkTransform position,
+      ChunkTransform transform,
       TerrainChunk component
     ) {
-      this.transform = position;
+      this.transform = transform;
       this.component = component;
       this.gameObject = component.gameObject;
+      this.bounds = new Bounds(
+        transform.position + transform.size / 2f,
+        transform.size
+      );
     }
   }
 
@@ -71,6 +84,7 @@ public class OptimizedTerrainManager : MonoBehaviour {
   public float lodDistance = 75f;
 
   private List<SpawnedChunk> m_chunks = new List<SpawnedChunk>();
+  private List<SpawnedChunk> m_chunksToDelete = new List<SpawnedChunk>();
   private List<ChunkTransform> m_visibleChunkPositions = new List<ChunkTransform>();
   private Dictionary<ChunkTransform, SpawnedChunk> m_chunkDictionary =
     new Dictionary<ChunkTransform, SpawnedChunk>();
@@ -110,6 +124,9 @@ public class OptimizedTerrainManager : MonoBehaviour {
 
     // Create chunk component
     TerrainChunk chunk = gameObject.AddComponent<TerrainChunk>();
+
+    // Hide the meshRenderer
+    chunk.meshRenderer.enabled = false;
 
     // Add to the list
     SpawnedChunk data = new SpawnedChunk(chunkPosition, chunk);
@@ -263,9 +280,15 @@ public class OptimizedTerrainManager : MonoBehaviour {
       );
 
       if (!foundPosition) {
-        GameObject.Destroy(chunk.gameObject);
         m_chunks.Remove(chunk);
         m_chunkDictionary.Remove(chunk.transform);
+
+        if (chunk.component.hasEverBeenGenerated) {
+          chunk.gameObject.name = string.Format("(To Delete) {0}", chunk.gameObject.name);
+          m_chunksToDelete.Add(chunk);
+        } else {
+          GameObject.Destroy(chunk.gameObject);
+        }
       }
     }
   }
@@ -302,18 +325,52 @@ public class OptimizedTerrainManager : MonoBehaviour {
     }
   }
 
+  private void DeleteChunks() {
+    // Delete chunks that are out of view
+    for (int i = m_chunksToDelete.Count - 1; i >= 0; i--) {
+      SpawnedChunk chunkToDelete = m_chunksToDelete[i];
+
+      // Find the chunks intersecting this chunk
+      bool areAllReady = true;
+      for (int j = 0; j < m_chunks.Count; j++) {
+        SpawnedChunk chunkB = m_chunks[j];
+
+        if (
+          chunkB.bounds.Intersects(chunkToDelete.bounds)
+          && !chunkB.component.hasEverBeenGenerated
+        ) {
+          areAllReady = false;
+          break;
+        }
+      }
+
+      if (areAllReady) {
+        Destroy(chunkToDelete.gameObject);
+        m_chunksToDelete.RemoveAt(i);
+      }
+    }
+
+    // Show chunks that are completed
+    for (int j = 0; j < m_chunks.Count; j++) {
+      SpawnedChunk chunk = m_chunks[j];
+      if (chunk.component.hasEverBeenGenerated)
+        chunk.component.meshRenderer.enabled = true;
+    }
+  }
+
   private void Update() {
     m_generateTimer += Time.deltaTime;
     if (m_generateTimer > generatePeriod) {
       m_generateTimer = 0f;
+      DeleteChunks();
       RequestChunksGeneration();
     }
 
     Camera camera = Camera.main;
     if (camera) {
-      m_updateTimer += Time.deltaTime;
-      if (m_updateTimer > updatePeriod) {
-        m_updateTimer = 0f;
+      m_generateTimer += Time.deltaTime;
+      if (m_generateTimer > generatePeriod) {
+        m_generateTimer = 0f;
 
         Vector3 cameraPosition = FlatY(camera.transform.position);
 
