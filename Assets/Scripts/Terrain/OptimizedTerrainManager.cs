@@ -6,11 +6,13 @@ public class OptimizedTerrainManager : MonoBehaviour {
     public Vector3 coords;
     public Vector3 position;
     public Vector3 size;
+    public Bounds bounds;
 
     public ChunkTransform(Vector3 coords, Vector3 position, Vector3 size) {
       this.coords = position;
       this.position = coords;
       this.size = size;
+      this.bounds = new Bounds(position + size / 2f, size);
     }
 
     public override bool Equals(System.Object objB) {
@@ -55,12 +57,21 @@ public class OptimizedTerrainManager : MonoBehaviour {
 
   struct DistanceToCameraComparer : IComparer<ChunkTransform> {
     public Vector3 cameraPosition;
+    public Plane[] cameraPlanes;
 
-    public DistanceToCameraComparer(Vector3 cameraPosition) {
-      this.cameraPosition = cameraPosition;
+    public DistanceToCameraComparer(Camera camera) {
+      this.cameraPosition = camera.transform.position;
+      this.cameraPlanes = GeometryUtility.CalculateFrustumPlanes(camera);
     }
 
     public int Compare(ChunkTransform a, ChunkTransform b) {
+      bool isAInside = GeometryUtility.TestPlanesAABB(cameraPlanes, a.bounds);
+      bool isBInside = GeometryUtility.TestPlanesAABB(cameraPlanes, b.bounds);
+
+      if (isAInside != isBInside) {
+        return isAInside.CompareTo(isBInside);
+      }
+
       float distanceA =
       (a.position.x - cameraPosition.x) * (a.position.x - cameraPosition.x)
       + (a.position.z - cameraPosition.z) * (a.position.z - cameraPosition.z);
@@ -174,17 +185,19 @@ public class OptimizedTerrainManager : MonoBehaviour {
     );
   }
 
-  private void UpdateVisibleChunkPositions(Vector3 cameraPosition) {
+  private void UpdateVisibleChunkPositions(Camera camera) {
     m_visibleChunkPositions.Clear();
     m_visibleChunkPositionsHashSet.Clear();
 
-    // Get the chunk the player is standing right now
-    Vector3 mainChunkCoords = GetNearestChunkCoordsTo(cameraPosition);
-
+    // Get the camera position and bounds
+    Vector3 cameraPosition = FlatY(camera.transform.position);
     Bounds cameraBounds = new Bounds(
       cameraPosition,
       Vector3.one * viewDistance * 2f
     );
+
+    // Get the chunk the player is standing right now
+    Vector3 mainChunkCoords = GetNearestChunkCoordsTo(cameraPosition);
 
     // The first square is 2x2
     int level = 0;
@@ -257,7 +270,7 @@ public class OptimizedTerrainManager : MonoBehaviour {
 
     // Sort the array by measuring the distance from the chunk to the camera
     m_lastCameraPosition = cameraPosition;
-    m_visibleChunkPositions.Sort(new DistanceToCameraComparer(cameraPosition));
+    m_visibleChunkPositions.Sort(new DistanceToCameraComparer(camera));
   }
 
   private void UpdateFollowingVisibleChunks() {
@@ -372,16 +385,14 @@ public class OptimizedTerrainManager : MonoBehaviour {
       if (m_updateTimer > updatePeriod) {
         m_updateTimer = 0f;
 
-        Vector3 cameraPosition = FlatY(camera.transform.position);
-
-        UpdateVisibleChunkPositions(cameraPosition);
+        UpdateVisibleChunkPositions(camera);
         UpdateFollowingVisibleChunks();
       }
     }
   }
 
   private void OnDrawGizmos() {
-    UpdateVisibleChunkPositions(m_lastCameraPosition);
+    UpdateVisibleChunkPositions(Camera.main);
 
     Gizmos.color = Color.black;
     Gizmos.DrawWireCube(m_lastCameraPosition, Vector3.one * viewDistance * 2f);
