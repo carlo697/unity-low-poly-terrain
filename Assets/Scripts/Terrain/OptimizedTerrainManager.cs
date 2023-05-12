@@ -295,12 +295,12 @@ public class OptimizedTerrainManager : MonoBehaviour {
       if (!foundPosition) {
         m_chunks.Remove(chunk);
         m_chunkDictionary.Remove(chunk.transform);
+        chunk.gameObject.name = string.Format("(To Delete) {0}", chunk.gameObject.name);
 
         if (chunk.component.hasEverBeenGenerated) {
-          chunk.gameObject.name = string.Format("(To Delete) {0}", chunk.gameObject.name);
           m_chunksToDelete.Add(chunk);
         } else {
-          GameObject.Destroy(chunk.gameObject);
+          chunk.component.DestroyOnNextFrame();
         }
       }
     }
@@ -314,10 +314,10 @@ public class OptimizedTerrainManager : MonoBehaviour {
       if (chunk.component.isGenerating) {
         totalInProgress++;
       }
+    }
 
-      if (totalInProgress > maxNumberOfChunksToGenerate) {
-        return;
-      }
+    if (totalInProgress >= maxNumberOfChunksToGenerate) {
+      return;
     }
 
     // Tell chunks to generate their meshes
@@ -342,6 +342,10 @@ public class OptimizedTerrainManager : MonoBehaviour {
     // Delete chunks that are out of view
     for (int i = m_chunksToDelete.Count - 1; i >= 0; i--) {
       SpawnedChunk chunkToDelete = m_chunksToDelete[i];
+
+      if (chunkToDelete.component.isJobInProgress) {
+        continue;
+      }
 
       // Find the chunks intersecting this chunk
       bool areAllReady = true;

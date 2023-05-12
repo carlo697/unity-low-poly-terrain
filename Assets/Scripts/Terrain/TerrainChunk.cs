@@ -18,11 +18,12 @@ public class TerrainChunk : MonoBehaviour {
   public bool drawGizmos = true;
   public float gizmosSize = 0.5f;
 
+  public bool isJobInProgress { get { return m_handle.HasValue; } }
   public bool isGenerating { get; private set; } = false;
   public bool hasEverBeenGenerated { get; private set; } = false;
 
   [SerializeField] private bool m_generateFlag;
-
+  private bool m_destroyFlag;
 
   public MeshFilter meshFilter { get { return m_meshFilter; } }
   private MeshFilter m_meshFilter;
@@ -32,7 +33,7 @@ public class TerrainChunk : MonoBehaviour {
   private GCHandle samplerHandle;
   private NativeList<Vector3> vertices;
   private NativeList<int> triangles;
-  JobHandle? handle;
+  JobHandle? m_handle;
 
   void Awake() {
     // Add a mesh filter
@@ -54,7 +55,7 @@ public class TerrainChunk : MonoBehaviour {
 
   [ContextMenu("InstantRegenerate")]
   public void ScheduleRegeneration() {
-    if (handle != null) {
+    if (m_handle.HasValue) {
       if (debug)
         Debug.Log("There was already a handle running");
       CancelJob();
@@ -81,7 +82,7 @@ public class TerrainChunk : MonoBehaviour {
     // Store a reference to the sampler function
     samplerHandle = GCHandle.Alloc(sampler);
 
-    // Create the sub tasks for the job
+    // Create the lists for the job
     vertices = new NativeList<Vector3>(Allocator.Persistent);
     triangles = new NativeList<int>(Allocator.Persistent);
 
@@ -95,41 +96,52 @@ public class TerrainChunk : MonoBehaviour {
       useMiddlePoint,
       debug
     );
-
-    // Execute the job and complete it right away
-    this.handle = job.Schedule();
+    this.m_handle = job.Schedule();
   }
 
   void Update() {
-    GenerateIfNeeded();
+    if (m_destroyFlag && !m_handle.HasValue) {
+      Destroy(gameObject);
+    } else {
+      GenerateIfNeeded();
+    }
+  }
+
+  public void DestroyOnNextFrame() {
+    m_destroyFlag = true;
   }
 
   private void OnDestroy() {
     Destroy(m_meshFilter.sharedMesh);
+
+    if (m_handle.HasValue) {
+      Debug.Log("Chunk destroyed and there was a job running");
+      CancelJob();
+    }
   }
 
   void DisposeJob() {
     vertices.Dispose();
     triangles.Dispose();
     samplerHandle.Free();
-    handle = null;
+    m_handle = null;
   }
 
   void CancelJob() {
-    handle.Value.Complete();
+    m_handle.Value.Complete();
     vertices.Dispose();
     triangles.Dispose();
     samplerHandle.Free();
-    handle = null;
+    m_handle = null;
   }
 
   void LateUpdate() {
-    if (handle != null && handle.Value.IsCompleted) {
+    if (m_handle.HasValue && m_handle.Value.IsCompleted) {
       System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
       timer.Start();
 
       // Complete the job
-      handle.Value.Complete();
+      m_handle.Value.Complete();
 
       // Get the results
       Vector3[] finalVertices = this.vertices.ToArray();
@@ -138,51 +150,54 @@ public class TerrainChunk : MonoBehaviour {
       // Dispose memory
       DisposeJob();
 
-      // Create a mesh
-      Mesh mesh = CubeGrid.CreateMesh(
-        finalVertices,
-        finalTriangles,
-        debug,
-        meshFilter.sharedMesh
-      );
-      mesh.name = gameObject.name;
-      mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
-
-      // Set vertices and triangles to the mesh
-      if (finalVertices.Length > 0) {
-        mesh.vertices = finalVertices;
-        mesh.triangles = finalTriangles;
-        mesh.RecalculateNormals();
-      }
-
-      // Set mesh to the mesh filter
-      m_meshFilter.sharedMesh = mesh;
-
-      timer.Stop();
-      if (debug)
-        Debug.Log(
-          string.Format(
-            "Total to apply mesh: {0} ms", timer.ElapsedMilliseconds
-          )
-        );
-      timer.Restart();
-
-      // Check if it has a mesh collider
-      MeshCollider collider = GetComponent<MeshCollider>();
-      if (collider) {
-        collider.sharedMesh = mesh;
-      }
-
-      timer.Stop();
-      if (debug)
-        Debug.Log(
-          string.Format(
-            "Total to apply collider: {0} ms", timer.ElapsedMilliseconds
-          )
-        );
-
+      // Flags
       isGenerating = false;
       hasEverBeenGenerated = true;
+
+      if (!m_destroyFlag) {
+        // Create a mesh
+        Mesh mesh = CubeGrid.CreateMesh(
+          finalVertices,
+          finalTriangles,
+          debug,
+          meshFilter.sharedMesh
+        );
+        mesh.name = gameObject.name;
+        mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+
+        // Set vertices and triangles to the mesh
+        if (finalVertices.Length > 0) {
+          mesh.vertices = finalVertices;
+          mesh.triangles = finalTriangles;
+          mesh.RecalculateNormals();
+        }
+
+        // Set mesh to the mesh filter
+        m_meshFilter.sharedMesh = mesh;
+
+        timer.Stop();
+        if (debug)
+          Debug.Log(
+            string.Format(
+              "Total to apply mesh: {0} ms", timer.ElapsedMilliseconds
+            )
+          );
+        timer.Restart();
+
+        // Check if it has a mesh collider
+        MeshCollider collider = GetComponent<MeshCollider>();
+        if (collider) {
+          collider.sharedMesh = mesh;
+        }
+
+        timer.Stop();
+        if (debug)
+          Debug.Log(
+            string.Format(
+              "Total to apply collider: {0} ms", timer.ElapsedMilliseconds
+            )
+          );
+      }
     }
   }
 
@@ -202,13 +217,11 @@ public class TerrainChunk : MonoBehaviour {
   }
 
   private void GenerateIfNeeded() {
-    if (m_generateFlag) {
+    if (m_generateFlag && !m_destroyFlag) {
       ScheduleRegeneration();
       m_generateFlag = false;
     }
   }
-
-
 
   private void OnDrawGizmos() {
     GenerateIfNeeded();
