@@ -104,6 +104,10 @@ public class TerrainChunk : MonoBehaviour {
     GenerateIfNeeded();
   }
 
+  private void OnDestroy() {
+    Destroy(m_meshFilter.sharedMesh);
+  }
+
   void DisposeJob() {
     vertices.Dispose();
     triangles.Dispose();
@@ -135,7 +139,12 @@ public class TerrainChunk : MonoBehaviour {
       DisposeJob();
 
       // Create a mesh
-      Mesh mesh = CubeGrid.CreateMesh(finalVertices, finalTriangles);
+      Mesh mesh = CubeGrid.CreateMesh(
+        finalVertices,
+        finalTriangles,
+        debug,
+        meshFilter.sharedMesh
+      );
       mesh.name = gameObject.name;
       mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
 
@@ -198,6 +207,8 @@ public class TerrainChunk : MonoBehaviour {
       m_generateFlag = false;
     }
   }
+
+
 
   private void OnDrawGizmos() {
     GenerateIfNeeded();

@@ -221,13 +221,20 @@ public class CubeGrid {
   public static Mesh CreateMesh(
     Vector3[] vertices,
     int[] triangles,
-    bool debug = false
+    bool debug = false,
+    Mesh meshToReuse = null
   ) {
     var stepTimer = new System.Diagnostics.Stopwatch();
     stepTimer.Start();
 
     // Create a mesh
-    Mesh mesh = new Mesh();
+    Mesh mesh;
+    if (meshToReuse) {
+      mesh = meshToReuse;
+      mesh.Clear();
+    } else {
+      mesh = new Mesh();
+    }
     mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
 
     // Set vertices and triangles to the mesh
