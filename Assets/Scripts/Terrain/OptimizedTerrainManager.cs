@@ -108,6 +108,8 @@ public class OptimizedTerrainManager : MonoBehaviour {
   private float m_generateTimer = 0.0f;
   public int maxNumberOfChunksToGenerate = 2;
 
+  public bool drawGizmos = true;
+
   private Vector3 m_lastCameraPosition;
 
   [SerializeField] private TerrainNoise m_terrainNoise;
@@ -396,14 +398,16 @@ public class OptimizedTerrainManager : MonoBehaviour {
   }
 
   private void OnDrawGizmos() {
-    UpdateVisibleChunkPositions(Camera.main);
+    if (drawGizmos) {
+      UpdateVisibleChunkPositions(Camera.main);
 
-    Gizmos.color = Color.black;
-    Gizmos.DrawWireCube(m_lastCameraPosition, Vector3.one * viewDistance * 2f);
+      Gizmos.color = Color.black;
+      Gizmos.DrawWireCube(m_lastCameraPosition, Vector3.one * viewDistance * 2f);
 
-    Gizmos.color = Color.white;
-    foreach (ChunkTransform chunk in m_visibleChunkPositions) {
-      Gizmos.DrawWireCube(chunk.position + chunk.size / 2f, chunk.size);
+      Gizmos.color = Color.white;
+      foreach (ChunkTransform chunk in m_visibleChunkPositions) {
+        Gizmos.DrawWireCube(chunk.position + chunk.size / 2f, chunk.size);
+      }
     }
   }
 }
