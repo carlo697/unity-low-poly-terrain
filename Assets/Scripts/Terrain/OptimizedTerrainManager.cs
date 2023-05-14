@@ -3,14 +3,12 @@ using System.Collections.Generic;
 
 public class OptimizedTerrainManager : MonoBehaviour {
   public struct ChunkTransform {
-    public Vector3 coords;
     public Vector3 position;
     public Vector3 size;
     public Bounds bounds;
 
-    public ChunkTransform(Vector3 coords, Vector3 position, Vector3 size) {
-      this.coords = position;
-      this.position = coords;
+    public ChunkTransform(Vector3 position, Vector3 size) {
+      this.position = position;
       this.size = size;
       this.bounds = new Bounds(position + size / 2f, size);
     }
@@ -91,9 +89,6 @@ public class OptimizedTerrainManager : MonoBehaviour {
   public Material chunkMaterial;
   public bool debug;
 
-  public int noiseOctaves = 3;
-  public float lodDistance = 75f;
-
   private List<SpawnedChunk> m_chunks = new List<SpawnedChunk>();
   private List<SpawnedChunk> m_chunksToDelete = new List<SpawnedChunk>();
   private List<ChunkTransform> m_visibleChunkPositions = new List<ChunkTransform>();
@@ -153,6 +148,7 @@ public class OptimizedTerrainManager : MonoBehaviour {
     float resolutionLevel = chunkPosition.size.x / chunkSize.x;
 
     // Set variables
+    chunk.drawGizmos = false;
     chunk.debug = debug;
     chunk.samplerFactory = m_terrainNoise;
     chunk.resolution = new Vector3Int(
@@ -226,7 +222,7 @@ public class OptimizedTerrainManager : MonoBehaviour {
       }
 
       // Save the chunk
-      ChunkTransform chunk = new ChunkTransform(position, currentCoords, size);
+      ChunkTransform chunk = new ChunkTransform(position, size);
       m_visibleChunkPositions.Add(chunk);
       m_visibleChunkPositionsHashSet.Add(chunk);
 
