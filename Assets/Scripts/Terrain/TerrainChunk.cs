@@ -112,7 +112,9 @@ public class TerrainChunk : MonoBehaviour {
   }
 
   private void OnDestroy() {
-    Destroy(m_meshFilter.sharedMesh);
+    if (!Application.isEditor) {
+      Destroy(m_meshFilter.sharedMesh);
+    }
 
     if (m_handle.HasValue) {
       Debug.Log("Chunk destroyed and there was a job running");
@@ -247,5 +249,49 @@ public class TerrainChunk : MonoBehaviour {
     //     }
     //   }
     // }
+  }
+
+  public static Vector3 RandomPointInBounds(Bounds bounds) {
+    return new Vector3(
+      UnityEngine.Random.Range(bounds.min.x, bounds.max.x),
+      bounds.max.y,
+      UnityEngine.Random.Range(bounds.min.z, bounds.max.z)
+    );
+  }
+
+  [ContextMenu("Test Raycasts")]
+  public void TestRaycast(bool debug) {
+    // Check if it has a mesh collider
+    MeshCollider collider = GetComponent<MeshCollider>();
+
+    if (collider) {
+      System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
+      timer.Start();
+
+      Bounds bounds = collider.bounds;
+      RaycastHit[] hits = new RaycastHit[10];
+      float distance = collider.bounds.size.y;
+      int totalHits = 0;
+
+      if (collider) {
+        for (int i = 0; i < 10000; i++) {
+          Ray ray = new Ray(RandomPointInBounds(bounds), Vector3.down);
+          int hitCount = Physics.RaycastNonAlloc(ray, hits, distance);
+
+          for (int j = 0; j < hitCount; j++) {
+            RaycastHit hit = hits[j];
+            totalHits++;
+          }
+        }
+      }
+
+      timer.Stop();
+
+      if (debug) {
+        Debug.Log(timer.ElapsedMilliseconds);
+        Debug.Log(timer.ElapsedTicks);
+        Debug.Log(totalHits);
+      }
+    }
   }
 }
