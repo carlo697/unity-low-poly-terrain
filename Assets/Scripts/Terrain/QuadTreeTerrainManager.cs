@@ -220,7 +220,6 @@ public class QuadTreeTerrainManager : MonoBehaviour {
       -waterLevel,
       transform.position.z
     );
-    gameObject.transform.localScale = transform.size;
     gameObject.transform.SetParent(base.transform);
 
     // Create chunk component
@@ -238,15 +237,16 @@ public class QuadTreeTerrainManager : MonoBehaviour {
     gameObject.AddComponent<MeshCollider>();
 
     // Calculate the resolution level
-    float resolutionLevel = transform.size.x / chunkSize.x;
+    float resolutionLevel = chunkSize.x / transform.size.x;
 
     // Set variables
     chunk.drawGizmos = false;
     chunk.debug = debug;
     chunk.samplerFactory = m_terrainNoise;
+    chunk.size = transform.size;
     chunk.resolution = new Vector3Int(
       chunkResolution.x,
-      Mathf.CeilToInt(chunkSize.y / resolutionLevel),
+      Mathf.CeilToInt(chunkResolution.y * resolutionLevel),
       chunkResolution.z
     );
     chunk.GetComponent<MeshRenderer>().sharedMaterial = chunkMaterial;

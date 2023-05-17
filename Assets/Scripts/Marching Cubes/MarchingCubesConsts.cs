@@ -27,6 +27,21 @@ public static class MarchingCubesConsts {
     { new Vector3(0.0f, 1.0f, 0.0f), new Vector3(0.0f, 1.0f, 1.0f) }
   };
 
+  public static readonly Vector3Int[,] edgeVerticesIndexes = new Vector3Int[12, 2] {
+    { new Vector3Int(0, 0, 0), new Vector3Int(1, 0, 0) },
+    { new Vector3Int(1, 0, 0), new Vector3Int(1, 1, 0) },
+    { new Vector3Int(0, 1, 0), new Vector3Int(1, 1, 0) },
+    { new Vector3Int(0, 0, 0), new Vector3Int(0, 1, 0) },
+    { new Vector3Int(0, 0, 1), new Vector3Int(1, 0, 1) },
+    { new Vector3Int(1, 0, 1), new Vector3Int(1, 1, 1) },
+    { new Vector3Int(0, 1, 1), new Vector3Int(1, 1, 1) },
+    { new Vector3Int(0, 0, 1), new Vector3Int(0, 1, 1) },
+    { new Vector3Int(0, 0, 0), new Vector3Int(0, 0, 1) },
+    { new Vector3Int(1, 0, 0), new Vector3Int(1, 0, 1) },
+    { new Vector3Int(1, 1, 0), new Vector3Int(1, 1, 1) },
+    { new Vector3Int(0, 1, 0), new Vector3Int(0, 1, 1) }
+  };
+
   public static readonly int[,] edgeCorners = new int[12, 2] {
     { 0, 1 },
     { 1, 2 },

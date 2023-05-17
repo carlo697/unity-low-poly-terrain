@@ -7,6 +7,7 @@ public struct CubeGridJob : IJob {
   private NativeList<Vector3> vertices;
   private NativeList<int> triangles;
   private GCHandle samplerHandle;
+  private Vector3 size;
   private Vector3Int resolution;
   private float threshold;
   private bool useMiddlePoint;
@@ -16,6 +17,7 @@ public struct CubeGridJob : IJob {
     NativeList<Vector3> vertices,
     NativeList<int> triangles,
     GCHandle samplerHandle,
+    Vector3 size,
     Vector3Int resolution,
     float threshold = 0f,
     bool useMiddlePoint = false,
@@ -24,6 +26,7 @@ public struct CubeGridJob : IJob {
     this.vertices = vertices;
     this.triangles = triangles;
     this.samplerHandle = samplerHandle;
+    this.size = size;
     this.resolution = resolution;
     this.threshold = threshold;
     this.useMiddlePoint = useMiddlePoint;
@@ -35,6 +38,7 @@ public struct CubeGridJob : IJob {
 
     CubeGrid grid = new CubeGrid(
       samplerFunc,
+      size,
       resolution,
       threshold,
       useMiddlePoint

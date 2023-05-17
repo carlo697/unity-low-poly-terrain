@@ -115,20 +115,19 @@ public class OptimizedTerrainManager : MonoBehaviour {
     }
   }
 
-  private void CreateChunk(ChunkTransform chunkPosition) {
+  private void CreateChunk(ChunkTransform transform) {
     // Create empty GameObject
     GameObject gameObject = new GameObject(string.Format(
-      "{0}, {1}", chunkPosition.position.x, chunkPosition.position.z
+      "{0}, {1}", transform.position.x, transform.position.z
     ));
 
     // Set position and parent
     gameObject.transform.position = new Vector3(
-      chunkPosition.position.x,
+      transform.position.x,
       -waterLevel,
-      chunkPosition.position.z
+      transform.position.z
     );
-    gameObject.transform.localScale = chunkPosition.size;
-    gameObject.transform.SetParent(transform);
+    gameObject.transform.SetParent(base.transform);
 
     // Create chunk component
     TerrainChunk chunk = gameObject.AddComponent<TerrainChunk>();
@@ -137,23 +136,24 @@ public class OptimizedTerrainManager : MonoBehaviour {
     chunk.meshRenderer.enabled = false;
 
     // Add to the list
-    SpawnedChunk data = new SpawnedChunk(chunkPosition, chunk);
+    SpawnedChunk data = new SpawnedChunk(transform, chunk);
     m_chunks.Add(data);
-    m_chunkDictionary.Add(chunkPosition, data);
+    m_chunkDictionary.Add(transform, data);
 
     // Add mesh collider
     gameObject.AddComponent<MeshCollider>();
 
     // Calculate the resolution level
-    float resolutionLevel = chunkPosition.size.x / chunkSize.x;
+    float resolutionLevel = chunkSize.x / transform.size.x;
 
     // Set variables
     chunk.drawGizmos = false;
     chunk.debug = debug;
     chunk.samplerFactory = m_terrainNoise;
+    chunk.size = transform.size;
     chunk.resolution = new Vector3Int(
       chunkResolution.x,
-      Mathf.CeilToInt(chunkSize.y / resolutionLevel),
+      Mathf.CeilToInt(chunkResolution.y * resolutionLevel),
       chunkResolution.z
     );
     chunk.GetComponent<MeshRenderer>().sharedMaterial = chunkMaterial;

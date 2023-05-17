@@ -103,7 +103,6 @@ public class TerrainManager : MonoBehaviour {
       -waterLevel,
       worldPosition.z
     );
-    gameObject.transform.localScale = chunkSize;
     gameObject.transform.SetParent(transform);
 
     Vector3 coords = GetChunkCoordsAt(worldPosition);
@@ -122,6 +121,7 @@ public class TerrainManager : MonoBehaviour {
     // Set variables
     chunk.debug = debug;
     chunk.samplerFactory = m_terrainNoise;
+    chunk.size = chunkSize;
     chunk.resolution = chunkResolution;
     chunk.GetComponent<MeshRenderer>().sharedMaterial = chunkMaterial;
   }

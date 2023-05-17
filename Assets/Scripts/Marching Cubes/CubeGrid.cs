@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class CubeGrid {
   public Func<float, float, float, float> samplerFunc;
+  public Vector3 size;
   public Vector3Int resolution;
   public float threshold;
   public bool useMiddlePoint;
@@ -11,15 +12,16 @@ public class CubeGrid {
   private Vector3Int m_sizes;
   private int m_pointsCount;
   private CubeGridPoint[] m_points;
-  private Vector3 m_cubeSize;
 
   public CubeGrid(
     Func<float, float, float, float> sampler,
+    Vector3 size,
     Vector3Int resolution,
     float threshold = 0f,
     bool useMiddlePoint = false
   ) {
     this.samplerFunc = sampler;
+    this.size = size;
     this.resolution = resolution;
     this.threshold = threshold;
     this.useMiddlePoint = useMiddlePoint;
@@ -36,9 +38,9 @@ public class CubeGrid {
 
   public Vector3 GetPointPosition(int x, int y, int z) {
     return new Vector3(
-      (float)x / ((float)resolution.x),
-      (float)y / ((float)resolution.y),
-      (float)z / ((float)resolution.z)
+      ((float)x / ((float)resolution.x)) * size.x,
+      ((float)y / ((float)resolution.y)) * size.y,
+      ((float)z / ((float)resolution.z)) * size.z
     );
   }
 
@@ -72,21 +74,13 @@ public class CubeGrid {
         }
       }
     }
-
-    // This is the size of a single cube inside the grid (each cube consists of 8 points)
-    m_cubeSize = new Vector3(
-      1f / ((float)resolution.x),
-      1f / ((float)resolution.y),
-      1f / ((float)resolution.z)
-    );
   }
 
   public void MarchCube(
     ICollection<Vector3> vertices,
     int x,
     int y,
-    int z,
-    Vector3 position
+    int z
   ) {
     // Find the case index
     int caseIndex = 0;
@@ -111,43 +105,53 @@ public class CubeGrid {
         int edgeIndex = MarchingCubesConsts.cases[caseIndex, i];
         if (edgeIndex == -1) return;
 
-        Vector3 vertexA = MarchingCubesConsts.edgeVertices[edgeIndex, 0];
-        Vector3 vertexB = MarchingCubesConsts.edgeVertices[edgeIndex, 1];
-        Vector3 middlePoint = (vertexA + vertexB) / 2;
+        Vector3Int coordsA = MarchingCubesConsts.edgeVerticesIndexes[edgeIndex, 0];
+        int indexA = GetIndexFromCoords(
+          x + coordsA.x,
+          y + coordsA.y,
+          z + coordsA.z
+        );
+        Vector3 positionA = m_points[indexA].position;
 
-        vertices.Add(position + Vector3.Scale(middlePoint, m_cubeSize));
+        Vector3Int coordsB = MarchingCubesConsts.edgeVerticesIndexes[edgeIndex, 1];
+        int indexB = GetIndexFromCoords(
+          x + coordsB.x,
+          y + coordsB.y,
+          z + coordsB.z
+        );
+        Vector3 positionB = m_points[indexB].position;
+        Vector3 middlePoint = (positionA + positionB) / 2;
+
+        vertices.Add(middlePoint);
       }
     } else {
       for (int i = 0; i <= 16; i++) {
         int edgeIndex = MarchingCubesConsts.cases[caseIndex, i];
         if (edgeIndex == -1) return;
 
-        Vector3 vertexA = MarchingCubesConsts.edgeVertices[edgeIndex, 0];
-        Vector3 vertexB = MarchingCubesConsts.edgeVertices[edgeIndex, 1];
-
-        // Find the value in the first vertex of the edge
-        int indexVertexA = MarchingCubesConsts.edgeCorners[edgeIndex, 0];
+        Vector3Int coordsA = MarchingCubesConsts.edgeVerticesIndexes[edgeIndex, 0];
         int indexA = GetIndexFromCoords(
-          x + MarchingCubesConsts.corners[indexVertexA].x,
-          y + MarchingCubesConsts.corners[indexVertexA].y,
-          z + MarchingCubesConsts.corners[indexVertexA].z
+          x + coordsA.x,
+          y + coordsA.y,
+          z + coordsA.z
         );
-        float sampleVertexA = m_points[indexA].value;
+        float sampleA = m_points[indexA].value;
+        Vector3 positionA = m_points[indexA].position;
 
-        // Find the value in the last vertex of the edge
-        int indexVertexB = MarchingCubesConsts.edgeCorners[edgeIndex, 1];
+        Vector3Int coordsB = MarchingCubesConsts.edgeVerticesIndexes[edgeIndex, 1];
         int indexB = GetIndexFromCoords(
-          x + MarchingCubesConsts.corners[indexVertexB].x,
-          y + MarchingCubesConsts.corners[indexVertexB].y,
-          z + MarchingCubesConsts.corners[indexVertexB].z
+          x + coordsB.x,
+          y + coordsB.y,
+          z + coordsB.z
         );
-        float sampleVertexB = m_points[indexB].value;
+        float sampleB = m_points[indexB].value;
+        Vector3 positionB = m_points[indexB].position;
 
         // Calculate the difference and interpolate
-        float interpolant = (threshold - sampleVertexA) / (sampleVertexB - sampleVertexA);
-        Vector3 interpolatedPosition = Vector3.Lerp(vertexA, vertexB, interpolant);
+        float interpolant = (threshold - sampleA) / (sampleB - sampleA);
+        Vector3 interpolatedPosition = Vector3.Lerp(positionA, positionB, interpolant);
 
-        vertices.Add(position + Vector3.Scale(interpolatedPosition, m_cubeSize));
+        vertices.Add(interpolatedPosition);
       }
     }
   }
@@ -194,8 +198,7 @@ public class CubeGrid {
     for (int z = 0; z < m_sizes.z - 1; z++) {
       for (int y = 0; y < m_sizes.y - 1; y++) {
         for (int x = 0; x < m_sizes.x - 1; x++) {
-          Vector3 pointPosition = GetPointPosition(x, y, z);
-          MarchCube(vertices, x, y, z, pointPosition);
+          MarchCube(vertices, x, y, z);
         }
       }
     }

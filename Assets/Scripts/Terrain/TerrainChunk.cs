@@ -7,6 +7,7 @@ using Unity.Jobs;
 [ExecuteInEditMode]
 public class TerrainChunk : MonoBehaviour {
   public Vector3Int resolution = Vector3Int.one * 10;
+  public Vector3 size = Vector3.one * 10;
   public float noiseSize = 1f;
   public Vector3 noiseOffset = Vector3.zero;
   public ISamplerFactory samplerFactory;
@@ -91,6 +92,7 @@ public class TerrainChunk : MonoBehaviour {
       vertices,
       triangles,
       samplerHandle,
+      size,
       resolution,
       threshold,
       useMiddlePoint,
@@ -231,10 +233,9 @@ public class TerrainChunk : MonoBehaviour {
     if (!drawGizmos) return;
 
     Gizmos.color = Color.white;
-    Vector3 scale = transform.lossyScale;
     Gizmos.DrawWireCube(
-      transform.position + scale / 2f,
-      transform.lossyScale
+      transform.position + size / 2f,
+      size
     );
 
     // for (int z = 0; z < m_grid.resolution.z; z++) {

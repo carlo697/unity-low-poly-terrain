@@ -51,16 +51,21 @@ public class TerrainNoise : ISamplerFactory {
     // Variables needed to sample the point in world space
     float noiseMultiplier = 1 / (noiseSize * chunk.noiseSize);
     Vector3 chunkWorldPosition = chunk.transform.position;
-    Vector3 chunkWorldSize = chunk.transform.localScale;
+    Vector3 chunkWorldSize = chunk.size;
+    Vector3 inverseChunkWorldSize = new Vector3(
+      1f / chunkWorldSize.x,
+      1f / chunkWorldSize.y,
+      1f / chunkWorldSize.z
+    );
 
     return (float x, float y, float z) => {
       // Sample the point in world space
-      float finalX = ((chunkWorldPosition.x + (x * chunkWorldSize.x)) * noiseMultiplier) + chunk.noiseOffset.x;
-      float finalY = ((chunkWorldPosition.y + (y * chunkWorldSize.y)) * noiseMultiplier) + chunk.noiseOffset.y;
-      float finalZ = ((chunkWorldPosition.z + (z * chunkWorldSize.z)) * noiseMultiplier) + chunk.noiseOffset.z;
+      float finalX = ((chunkWorldPosition.x + x) * noiseMultiplier) + chunk.noiseOffset.x;
+      float finalY = ((chunkWorldPosition.y + y) * noiseMultiplier) + chunk.noiseOffset.y;
+      float finalZ = ((chunkWorldPosition.z + z) * noiseMultiplier) + chunk.noiseOffset.z;
 
       // Start sampling
-      float height = y;
+      float height = y * inverseChunkWorldSize.y;
 
       // Add terrain noise
       height -= Normalize(noise.GetNoise(finalX, finalY, finalZ));
