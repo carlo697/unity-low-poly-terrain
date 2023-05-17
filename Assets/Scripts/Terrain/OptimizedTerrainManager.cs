@@ -67,7 +67,7 @@ public class OptimizedTerrainManager : MonoBehaviour {
       bool isBInside = GeometryUtility.TestPlanesAABB(cameraPlanes, b.bounds);
 
       if (isAInside != isBInside) {
-        return isAInside.CompareTo(isBInside);
+        return isBInside.CompareTo(isAInside);
       }
 
       float distanceA =
