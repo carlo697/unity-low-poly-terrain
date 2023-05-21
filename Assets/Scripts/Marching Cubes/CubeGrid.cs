@@ -2,8 +2,11 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 
+public delegate CubeGridPoint CubeGridSamplerFunc(CubeGridPoint point);
+
 public class CubeGrid {
-  public Func<float, float, float, float> samplerFunc;
+  public CubeGridSamplerFunc samplerFunc;
+
   public Vector3 size;
   public Vector3Int resolution;
   public float threshold;
@@ -14,7 +17,7 @@ public class CubeGrid {
   private CubeGridPoint[] m_points;
 
   public CubeGrid(
-    Func<float, float, float, float> sampler,
+    CubeGridSamplerFunc sampler,
     Vector3 size,
     Vector3Int resolution,
     float threshold = 0f,
@@ -70,7 +73,12 @@ public class CubeGrid {
 
           // Get the position of the point and set it
           Vector3 pointPosition = GetPointPosition(x, y, z);
-          m_points[index] = new CubeGridPoint(pointPosition, 0);
+          m_points[index] = new CubeGridPoint(
+            index,
+            new Vector3Int(x, y, z),
+            pointPosition,
+            0
+          );
         }
       }
     }
@@ -174,15 +182,7 @@ public class CubeGrid {
           int index = GetIndexFromCoords(x, y, z);
 
           // Get the point and set the value
-          CubeGridPoint point = m_points[index];
-          point.value = samplerFunc(
-            point.position.x,
-            point.position.y,
-            point.position.z
-          );
-
-          // Save the point
-          m_points[index] = point;
+          m_points[index] = samplerFunc(m_points[index]);
         }
       }
     }

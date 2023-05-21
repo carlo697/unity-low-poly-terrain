@@ -20,7 +20,7 @@ public class TerrainNoise : ISamplerFactory {
     return (value * 2f) - 1f;
   }
 
-  public override Func<float, float, float, float> GetSampler(
+  public override CubeGridSamplerFunc GetSampler(
     TerrainChunk chunk
   ) {
     // Create copies of the curves
@@ -63,14 +63,14 @@ public class TerrainNoise : ISamplerFactory {
       1f / chunkWorldSize.z
     );
 
-    return (float x, float y, float z) => {
+    return (CubeGridPoint point) => {
       // Sample the point in world space
-      float finalX = ((chunkWorldPosition.x + x) * noiseMultiplier) + chunk.noiseOffset.x;
-      float finalY = ((chunkWorldPosition.y + y) * noiseMultiplier) + chunk.noiseOffset.y;
-      float finalZ = ((chunkWorldPosition.z + z) * noiseMultiplier) + chunk.noiseOffset.z;
+      float finalX = ((chunkWorldPosition.x + point.position.x) * noiseMultiplier) + chunk.noiseOffset.x;
+      float finalY = ((chunkWorldPosition.y + point.position.y) * noiseMultiplier) + chunk.noiseOffset.y;
+      float finalZ = ((chunkWorldPosition.z + point.position.z) * noiseMultiplier) + chunk.noiseOffset.z;
 
       // Start sampling
-      float height = y * inverseChunkWorldSize.y;
+      float height = point.position.y * inverseChunkWorldSize.y;
 
       // Add terrain noise
       // height -= Normalize(noise.GetNoise(finalX, finalY, finalZ));
@@ -84,7 +84,8 @@ public class TerrainNoise : ISamplerFactory {
       //   Normalize(normalizerCurve.Evaluate(height)) + Normalize(normalizerCurve.Evaluate(caves3D))
       // );
 
-      return height;
+      point.value = height;
+      return point;
     };
   }
 

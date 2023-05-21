@@ -34,7 +34,7 @@ public struct CubeGridJob : IJob {
   }
 
   public void Execute() {
-    var samplerFunc = (System.Func<float, float, float, float>)samplerHandle.Target;
+    var samplerFunc = (CubeGridSamplerFunc)samplerHandle.Target;
 
     CubeGrid grid = new CubeGrid(
       samplerFunc,

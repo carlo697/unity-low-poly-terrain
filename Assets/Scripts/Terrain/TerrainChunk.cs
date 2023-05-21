@@ -63,19 +63,21 @@ public class TerrainChunk : MonoBehaviour {
     }
 
     // Generate noise
-    Func<float, float, float, float> sampler;
+    CubeGridSamplerFunc sampler;
     if (samplerFactory != null) {
       sampler = samplerFactory.GetSampler(this);
     } else {
       FractalNoise noise = new FractalNoise(32f, 1f, 0.5f, 5);
-      sampler = (float x, float y, float z) => {
+      sampler = (CubeGridPoint point) => {
         // For supporting non symmetrical grids we need to mutiply each
         // coord by the resolution to get symmetrical noise
-        return noise.Sample(
-          (x + noiseOffset.x) * resolution.x,
-          (y + noiseOffset.y) * resolution.y,
-          (z + noiseOffset.z) * resolution.z
+        point.value = noise.Sample(
+          (point.position.x + noiseOffset.x) * resolution.x,
+          (point.position.y + noiseOffset.y) * resolution.y,
+          (point.position.z + noiseOffset.z) * resolution.z
         );
+
+        return point;
       };
     }
 
