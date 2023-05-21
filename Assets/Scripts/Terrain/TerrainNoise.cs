@@ -28,23 +28,28 @@ public class TerrainNoise : ISamplerFactory {
     AnimationCurve normalizerCurve = new AnimationCurve(this.normalizerCurve.keys);
 
     // Main noise for the terrain
-    FastNoiseLite noise = new FastNoiseLite(seed + 1);
-    noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
-    noise.SetFrequency(1f);
-    noise.SetFractalType(FastNoiseLite.FractalType.FBm);
-    noise.SetFractalOctaves(noiseOctaves);
+    // FastNoiseLite noise = new FastNoiseLite(seed + 1);
+    // noise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
+    // noise.SetFrequency(1f);
+    // noise.SetFractalType(FastNoiseLite.FractalType.FBm);
+    // noise.SetFractalOctaves(noiseOctaves);
+    FastNoise noise = new FastNoise("FractalFBm");
+    noise.Set("Source", new FastNoise("Simplex"));
+    noise.Set("Gain", 0.5f);
+    noise.Set("Lacunarity", 2f);
+    noise.Set("Octaves", noiseOctaves);
 
     // FastNoiseLite cavesNoise = new FastNoiseLite(seed);
     // cavesNoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
     // cavesNoise.SetFrequency(8f / noiseMultiplier);
 
     // Noise for a cave system
-    FastNoiseLite cavesNoise = new FastNoiseLite(seed);
-    cavesNoise.SetNoiseType(FastNoiseLite.NoiseType.Cellular);
-    cavesNoise.SetFrequency(4f);
-    cavesNoise.SetCellularDistanceFunction(FastNoiseLite.CellularDistanceFunction.EuclideanSq);
-    cavesNoise.SetCellularReturnType(FastNoiseLite.CellularReturnType.Distance);
-    cavesNoise.SetCellularJitter(1f);
+    // FastNoiseLite cavesNoise = new FastNoiseLite(seed);
+    // cavesNoise.SetNoiseType(FastNoiseLite.NoiseType.Cellular);
+    // cavesNoise.SetFrequency(4f);
+    // cavesNoise.SetCellularDistanceFunction(FastNoiseLite.CellularDistanceFunction.EuclideanSq);
+    // cavesNoise.SetCellularReturnType(FastNoiseLite.CellularReturnType.Distance);
+    // cavesNoise.SetCellularJitter(1f);
     // cavesNoise.SetFractalType(FastNoiseLite.FractalType.FBm);
     // cavesNoise.SetFractalOctaves(2);
 
@@ -68,7 +73,8 @@ public class TerrainNoise : ISamplerFactory {
       float height = y * inverseChunkWorldSize.y;
 
       // Add terrain noise
-      height -= Normalize(noise.GetNoise(finalX, finalY, finalZ));
+      // height -= Normalize(noise.GetNoise(finalX, finalY, finalZ));
+      height -= Normalize(noise.GenSingle3D(finalX, finalY, finalZ, seed));
       // height += ((caves.GetNoise(finalX, finalZ) + 1f) / 2f) * 0.1f;
       // height += 1f - Mathf.Abs(noise.GetNoise(finalX, 0, finalZ));
 
