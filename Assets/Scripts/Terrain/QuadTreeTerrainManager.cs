@@ -203,6 +203,14 @@ public class QuadTreeTerrainManager : MonoBehaviour {
 
   [SerializeField] private TerrainNoise m_terrainNoise;
 
+  public float levelsOfDetail = 8f;
+  public float detailDistanceBase = 2f;
+  public float detailDistanceMultiplier = 1f;
+  public int detailDistanceDecreaseAtLevel = 1;
+  public float detailDistanceConstantDecrease = 0f;
+  private List<float> m_levelDistances = new List<float>();
+  [SerializeField] private int m_debugChunkCount;
+
   private void Awake() {
     if (!m_terrainNoise) {
       m_terrainNoise = GetComponent<TerrainNoise>();
@@ -260,9 +268,6 @@ public class QuadTreeTerrainManager : MonoBehaviour {
     );
   }
 
-  public float levelsOfDetail = 8;
-  private List<float> m_levelDistances = new List<float>();
-
   private void UpdateChunkTrees(Vector3 cameraPosition, bool drawGizmos = false) {
     m_levelDistances.Clear();
 
@@ -275,7 +280,13 @@ public class QuadTreeTerrainManager : MonoBehaviour {
 
     // Calculate the distances for the levels of detail
     for (int i = 0; i < levelsOfDetail; i++) {
-      m_levelDistances.Add(Mathf.Pow(2f, i + 1f) * minimunChunkSize);
+      int decreaseLevel = Mathf.Max(0, i - detailDistanceDecreaseAtLevel);
+      m_levelDistances.Add(
+        (
+          (Mathf.Pow(detailDistanceBase, i + 1f) * minimunChunkSize)
+          / (1f + (float)decreaseLevel * detailDistanceConstantDecrease)
+        ) * detailDistanceMultiplier
+      );
     }
     m_levelDistances.Reverse();
 
@@ -399,6 +410,7 @@ public class QuadTreeTerrainManager : MonoBehaviour {
     // Sort the array by measuring the distance from the chunk to the camera
     m_lastCameraPosition = cameraPosition;
     m_visibleChunkPositions.Sort(new DistanceToCameraComparer(camera));
+    m_debugChunkCount = m_visibleChunkPositions.Count;
 
     // Set camera fog
     RenderSettings.fogStartDistance = 100f;
