@@ -66,7 +66,7 @@ public class TerrainNoise : ISamplerFactory {
     return (CubeGridPoint point) => {
       // Sample the point in world space
       float finalX = ((chunkWorldPosition.x + point.position.x) * noiseMultiplier) + chunk.noiseOffset.x;
-      float finalY = ((chunkWorldPosition.y + point.position.y) * noiseMultiplier) + chunk.noiseOffset.y;
+      float finalY = (point.position.y * noiseMultiplier) + chunk.noiseOffset.y;
       float finalZ = ((chunkWorldPosition.z + point.position.z) * noiseMultiplier) + chunk.noiseOffset.z;
 
       // Start sampling
