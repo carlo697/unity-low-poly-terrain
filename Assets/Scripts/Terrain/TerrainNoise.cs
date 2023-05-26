@@ -38,6 +38,7 @@ public class TerrainNoise : ISamplerFactory {
     noise.Set("Gain", 0.5f);
     noise.Set("Lacunarity", 2f);
     noise.Set("Octaves", noiseOctaves);
+    float[] noiseGrid = null;
 
     // FastNoiseLite cavesNoise = new FastNoiseLite(seed);
     // cavesNoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
@@ -64,17 +65,40 @@ public class TerrainNoise : ISamplerFactory {
     );
 
     return (CubeGridPoint point) => {
-      // Sample the point in world space
-      float finalX = ((chunkWorldPosition.x + point.position.x) * noiseMultiplier) + chunk.noiseOffset.x;
-      float finalY = (point.position.y * noiseMultiplier) + chunk.noiseOffset.y;
-      float finalZ = ((chunkWorldPosition.z + point.position.z) * noiseMultiplier) + chunk.noiseOffset.z;
+      // Generate the noise inside the sampler the first time it's called
+      if (noiseGrid == null) {
+        int gridLengthX = chunk.resolution.x + 1;
+        int gridLengthY = chunk.resolution.y + 1;
+        int gridLengthZ = chunk.resolution.z + 1;
+        int gridSizeNormalizer = Mathf.RoundToInt(chunkWorldSize.x / 32f);
+
+        // Generate the base terrain noise
+        noiseGrid = new float[gridLengthX * gridLengthY * gridLengthZ];
+        noise.GenUniformGrid3D(
+          noiseGrid,
+          Mathf.RoundToInt(chunkWorldPosition.z / gridSizeNormalizer),
+          Mathf.RoundToInt(0),
+          Mathf.RoundToInt(chunkWorldPosition.x / gridSizeNormalizer),
+          gridLengthX,
+          gridLengthY,
+          gridLengthZ,
+          noiseMultiplier * gridSizeNormalizer,
+          seed
+        );
+      }
+
+      // Coordinates to sample the point in world space
+      // float finalX = ((chunkWorldPosition.x + point.position.x) * noiseMultiplier) + chunk.noiseOffset.x;
+      // float finalY = (point.position.y * noiseMultiplier) + chunk.noiseOffset.y;
+      // float finalZ = ((chunkWorldPosition.z + point.position.z) * noiseMultiplier) + chunk.noiseOffset.z;
 
       // Start sampling
       float height = point.position.y * inverseChunkWorldSize.y;
 
       // Add terrain noise
       // height -= Normalize(noise.GetNoise(finalX, finalY, finalZ));
-      height -= Normalize(noise.GenSingle3D(finalX, finalY, finalZ, seed));
+      // height -= Normalize(noise.GenSingle3D(finalX, finalY, finalZ, seed));
+      height -= Normalize(noiseGrid[point.index]);
       // height += ((caves.GetNoise(finalX, finalZ) + 1f) / 2f) * 0.1f;
       // height += 1f - Mathf.Abs(noise.GetNoise(finalX, 0, finalZ));
 
