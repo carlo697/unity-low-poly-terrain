@@ -2,11 +2,23 @@ using UnityEngine;
 using System;
 
 public class TerrainNoise : ISamplerFactory {
+  // Materials
+  public Color grassColor = Color.green;
+  public Color darkGrassColor = Color.Lerp(Color.green, Color.black, 0.5f);
+  public Color snowColor = Color.white;
+  public Color dirtColor = Color.yellow;
+  public Color sandColor = Color.yellow;
 
+  // Heights
+  public float snowHeight = 100f;
+  public float sandHeight = 10f;
+
+  // Noise
   public float noiseSize = 32f;
   public int noiseOctaves = 5;
   public bool updateChunksInEditor = true;
 
+  // Curves
   public AnimationCurve curve;
   public AnimationCurve normalizerCurve;
 
@@ -20,8 +32,10 @@ public class TerrainNoise : ISamplerFactory {
     return (value * 2f) - 1f;
   }
 
-  public override CubeGridSamplerFunc GetSampler(
-    TerrainChunk chunk
+  public override void GetSampler(
+    TerrainChunk chunk,
+    out CubeGridSamplerFunc samplerFunc,
+    out CubeGridPostProcessingFunc postProcessingFunc
   ) {
     // Create copies of the curves
     AnimationCurve curve = new AnimationCurve(this.curve.keys);
@@ -64,7 +78,7 @@ public class TerrainNoise : ISamplerFactory {
       1f / chunkWorldSize.z
     );
 
-    return (CubeGridPoint point) => {
+    samplerFunc = (CubeGridPoint point) => {
       // Generate the noise inside the sampler the first time it's called
       if (noiseGrid == null) {
         int gridLengthX = chunk.resolution.x + 1;
@@ -110,6 +124,32 @@ public class TerrainNoise : ISamplerFactory {
 
       point.value = height;
       return point;
+    };
+
+    postProcessingFunc = (CubeGrid grid) => {
+      Color black = Color.black;
+
+      for (int z = 0; z < grid.gridSize.z; z++) {
+        for (int y = 0; y < grid.gridSize.y; y++) {
+          for (int x = 0; x < grid.gridSize.x; x++) {
+            int index = grid.GetIndexFromCoords(x, y, z);
+            CubeGridPoint point = grid.gridPoints[index];
+
+            float height = point.position.y + chunkWorldPosition.y;
+
+            if (height >= snowHeight) {
+              point.color = snowColor;
+            } else if (height <= sandHeight) {
+              point.color = sandColor;
+            } else {
+              float normalizedGrassHeight = Mathf.InverseLerp(sandHeight, snowHeight, height);
+              point.color = Color.Lerp(grassColor, darkGrassColor, normalizedGrassHeight);
+            }
+
+            grid.gridPoints[index] = point;
+          }
+        }
+      }
     };
   }
 

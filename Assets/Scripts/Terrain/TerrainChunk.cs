@@ -32,8 +32,10 @@ public class TerrainChunk : MonoBehaviour {
   private MeshRenderer m_meshRenderer;
 
   private GCHandle samplerHandle;
+  private GCHandle postProcessingHandle;
   private NativeList<Vector3> vertices;
   private NativeList<int> triangles;
+  private NativeList<Color> colors;
   JobHandle? m_handle;
 
   void Awake() {
@@ -62,38 +64,31 @@ public class TerrainChunk : MonoBehaviour {
       CancelJob();
     }
 
-    // Generate noise
-    CubeGridSamplerFunc sampler;
+    // Create the delegates for sampling the noise
+    CubeGridSamplerFunc samplerFunc;
+    CubeGridPostProcessingFunc postProcessingFunc;
     if (samplerFactory != null) {
-      sampler = samplerFactory.GetSampler(this);
+      samplerFactory.GetSampler(this, out samplerFunc, out postProcessingFunc);
     } else {
-      FractalNoise noise = new FractalNoise(32f, 1f, 0.5f, 5);
-      sampler = (CubeGridPoint point) => {
-        // For supporting non symmetrical grids we need to mutiply each
-        // coord by the resolution to get symmetrical noise
-        point.value = noise.Sample(
-          (point.position.x + noiseOffset.x) * resolution.x,
-          (point.position.y + noiseOffset.y) * resolution.y,
-          (point.position.z + noiseOffset.z) * resolution.z
-        );
-
-        return point;
-      };
+      throw new Exception("No sampler found");
     }
 
-    // Create a new grid
     // Store a reference to the sampler function
-    samplerHandle = GCHandle.Alloc(sampler);
+    samplerHandle = GCHandle.Alloc(samplerFunc);
+    postProcessingHandle = GCHandle.Alloc(postProcessingFunc);
 
     // Create the lists for the job
     vertices = new NativeList<Vector3>(Allocator.Persistent);
     triangles = new NativeList<int>(Allocator.Persistent);
+    colors = new NativeList<Color>(Allocator.Persistent);
 
     // Create job
     CubeGridJob job = new CubeGridJob(
       vertices,
       triangles,
+      colors,
       samplerHandle,
+      postProcessingHandle,
       size,
       resolution,
       threshold,
@@ -129,7 +124,9 @@ public class TerrainChunk : MonoBehaviour {
   void DisposeJob() {
     vertices.Dispose();
     triangles.Dispose();
+    colors.Dispose();
     samplerHandle.Free();
+    postProcessingHandle.Free();
     m_handle = null;
   }
 
@@ -137,7 +134,9 @@ public class TerrainChunk : MonoBehaviour {
     m_handle.Value.Complete();
     vertices.Dispose();
     triangles.Dispose();
+    colors.Dispose();
     samplerHandle.Free();
+    postProcessingHandle.Free();
     m_handle = null;
   }
 
@@ -152,6 +151,7 @@ public class TerrainChunk : MonoBehaviour {
       // Get the results
       Vector3[] finalVertices = this.vertices.ToArray();
       int[] finalTriangles = this.triangles.ToArray();
+      Color[] finalColors = this.colors.ToArray();
 
       // Dispose memory
       DisposeJob();
@@ -165,6 +165,7 @@ public class TerrainChunk : MonoBehaviour {
         Mesh mesh = CubeGrid.CreateMesh(
           finalVertices,
           finalTriangles,
+          finalColors,
           debug,
           meshFilter.sharedMesh
         );

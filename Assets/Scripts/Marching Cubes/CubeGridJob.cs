@@ -6,7 +6,9 @@ using System.Runtime.InteropServices;
 public struct CubeGridJob : IJob {
   private NativeList<Vector3> vertices;
   private NativeList<int> triangles;
+  private NativeList<Color> colors;
   private GCHandle samplerHandle;
+  private GCHandle postProcessingHandle;
   private Vector3 size;
   private Vector3Int resolution;
   private float threshold;
@@ -16,7 +18,9 @@ public struct CubeGridJob : IJob {
   public CubeGridJob(
     NativeList<Vector3> vertices,
     NativeList<int> triangles,
+    NativeList<Color> colors,
     GCHandle samplerHandle,
+    GCHandle postProcessingHandle,
     Vector3 size,
     Vector3Int resolution,
     float threshold = 0f,
@@ -25,7 +29,9 @@ public struct CubeGridJob : IJob {
   ) {
     this.vertices = vertices;
     this.triangles = triangles;
+    this.colors = colors;
     this.samplerHandle = samplerHandle;
+    this.postProcessingHandle = postProcessingHandle;
     this.size = size;
     this.resolution = resolution;
     this.threshold = threshold;
@@ -35,9 +41,11 @@ public struct CubeGridJob : IJob {
 
   public void Execute() {
     var samplerFunc = (CubeGridSamplerFunc)samplerHandle.Target;
+    var postProcessingFunc = (CubeGridPostProcessingFunc)postProcessingHandle.Target;
 
     CubeGrid grid = new CubeGrid(
       samplerFunc,
+      postProcessingFunc,
       size,
       resolution,
       threshold,
@@ -46,7 +54,8 @@ public struct CubeGridJob : IJob {
 
     Vector3[] vertices;
     int[] triangles;
-    grid.Generate(out vertices, out triangles, debug);
+    Color[] colors;
+    grid.Generate(out vertices, out triangles, out colors, debug);
 
     for (int i = 0; i < vertices.Length; i++) {
       this.vertices.Add(vertices[i]);
@@ -54,6 +63,10 @@ public struct CubeGridJob : IJob {
 
     for (int i = 0; i < vertices.Length; i++) {
       this.triangles.Add(triangles[i]);
+    }
+
+    for (int i = 0; i < colors.Length; i++) {
+      this.colors.Add(colors[i]);
     }
   }
 }

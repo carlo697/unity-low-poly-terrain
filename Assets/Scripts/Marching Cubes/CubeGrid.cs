@@ -3,27 +3,33 @@ using System;
 using System.Collections.Generic;
 
 public delegate CubeGridPoint CubeGridSamplerFunc(CubeGridPoint point);
+public delegate void CubeGridPostProcessingFunc(CubeGrid grid);
 
 public class CubeGrid {
   public CubeGridSamplerFunc samplerFunc;
+  public CubeGridPostProcessingFunc postProcessingFunc;
 
   public Vector3 size;
   public Vector3Int resolution;
   public float threshold;
   public bool useMiddlePoint;
 
+  public Vector3Int gridSize { get { return m_sizes; } }
+  public CubeGridPoint[] gridPoints { get { return m_points; } }
+
   private Vector3Int m_sizes;
-  private int m_pointsCount;
   private CubeGridPoint[] m_points;
 
   public CubeGrid(
-    CubeGridSamplerFunc sampler,
+    CubeGridSamplerFunc samplerFunc,
+    CubeGridPostProcessingFunc postProcessingFunc,
     Vector3 size,
     Vector3Int resolution,
     float threshold = 0f,
     bool useMiddlePoint = false
   ) {
-    this.samplerFunc = sampler;
+    this.samplerFunc = samplerFunc;
+    this.postProcessingFunc = postProcessingFunc;
     this.size = size;
     this.resolution = resolution;
     this.threshold = threshold;
@@ -61,7 +67,6 @@ public class CubeGrid {
   private void InitializeGrid() {
     // Calculations needed to create the grid array
     m_sizes = new Vector3Int(resolution.x + 1, resolution.y + 1, resolution.z + 1);
-    m_pointsCount = m_sizes.x * m_sizes.y * m_sizes.z;
 
     // Initialize the grid with points (all of them will start with a value = 0)
     m_points = new CubeGridPoint[m_sizes.x * m_sizes.y * m_sizes.z];
@@ -73,19 +78,22 @@ public class CubeGrid {
 
           // Get the position of the point and set it
           Vector3 pointPosition = GetPointPosition(x, y, z);
-          m_points[index] = new CubeGridPoint(
+          m_points[index] = samplerFunc(new CubeGridPoint(
             index,
-            new Vector3Int(x, y, z),
             pointPosition,
             0
-          );
+          ));
         }
       }
     }
+
+    // Call post processing
+    postProcessingFunc(this);
   }
 
   public void MarchCube(
     ICollection<Vector3> vertices,
+    ICollection<Color> colors,
     int x,
     int y,
     int z
@@ -160,6 +168,7 @@ public class CubeGrid {
         Vector3 interpolatedPosition = Vector3.Lerp(positionA, positionB, interpolant);
 
         vertices.Add(interpolatedPosition);
+        colors.Add(Color.Lerp(m_points[indexA].color, m_points[indexB].color, interpolant));
       }
     }
   }
@@ -167,25 +176,13 @@ public class CubeGrid {
   public void Generate(
     out Vector3[] outputVertices,
     out int[] outputTriangles,
+    out Color[] outputColors,
     bool debug = false
   ) {
     var stepTimer = new System.Diagnostics.Stopwatch();
     stepTimer.Start();
 
     InitializeGrid();
-
-    // Loop through a 3D grid
-    for (int z = 0; z < m_sizes.z; z++) {
-      for (int y = 0; y < m_sizes.y; y++) {
-        for (int x = 0; x < m_sizes.x; x++) {
-          // Get 1D index from the coords
-          int index = GetIndexFromCoords(x, y, z);
-
-          // Get the point and set the value
-          m_points[index] = samplerFunc(m_points[index]);
-        }
-      }
-    }
 
     stepTimer.Stop();
     if (debug)
@@ -195,10 +192,11 @@ public class CubeGrid {
 
     // Loop through the points to generate the vertices
     List<Vector3> vertices = new List<Vector3>();
+    List<Color> colors = new List<Color>();
     for (int z = 0; z < m_sizes.z - 1; z++) {
       for (int y = 0; y < m_sizes.y - 1; y++) {
         for (int x = 0; x < m_sizes.x - 1; x++) {
-          MarchCube(vertices, x, y, z);
+          MarchCube(vertices, colors, x, y, z);
         }
       }
     }
@@ -219,11 +217,13 @@ public class CubeGrid {
 
     outputVertices = vertices.ToArray();
     outputTriangles = triangles.ToArray();
+    outputColors = colors.ToArray();
   }
 
   public static Mesh CreateMesh(
     Vector3[] vertices,
     int[] triangles,
+    Color[] colors,
     bool debug = false,
     Mesh meshToReuse = null
   ) {
@@ -245,6 +245,7 @@ public class CubeGrid {
     if (vertices.Length > 0) {
       mesh.vertices = vertices;
       mesh.triangles = triangles;
+      mesh.colors = colors;
       mesh.RecalculateNormals();
     }
 
