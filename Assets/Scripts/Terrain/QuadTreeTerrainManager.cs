@@ -25,23 +25,15 @@ class ChunkTree {
     if (level > levelDistances.Count - 1)
       return;
 
-    // Vector3 closestPoint = bounds.ClosestPoint(cameraPosition);
-    // float sqrDistanceToCamera = Vector3.Distance(closestPoint, cameraPosition);
-    // float sqrLevelDistance = levelDistances[level] * levelDistances[level];
-
     Vector3 closestPoint = bounds.ClosestPoint(cameraPosition);
     float levelDistance = levelDistances[level];
-    Bounds levelBounds = new Bounds(cameraPosition, Vector3.one * levelDistance * 2f);
 
     if (drawGizmos) {
       Gizmos.color = Color.red;
-      Gizmos.DrawWireCube(
-        levelBounds.center,
-        new Vector3(levelBounds.size.x, 100f, levelBounds.size.z)
-      );
+      Gizmos.DrawWireSphere(cameraPosition, levelDistance);
     }
 
-    if (levelBounds.Contains(closestPoint)) {
+    if (Vector3.Distance(cameraPosition, closestPoint) <= levelDistance) {
       Vector2 halfExtents = extents / 2f;
       children = new ChunkTree[4] {
         // North east
