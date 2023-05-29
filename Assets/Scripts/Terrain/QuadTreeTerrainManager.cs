@@ -187,7 +187,8 @@ public class QuadTreeTerrainManager : MonoBehaviour {
   private float m_updateTimer = 0.0f;
   public float generatePeriod = 0.02f;
   private float m_generateTimer = 0.0f;
-  public int maxNumberOfChunksToGenerate = 2;
+  public int maxConsecutiveChunks = 2;
+  public int maxConsecutiveChunksAtOneFrame = 2;
 
   public bool drawGizmos = true;
 
@@ -452,9 +453,11 @@ public class QuadTreeTerrainManager : MonoBehaviour {
       }
     }
 
-    if (totalInProgress >= maxNumberOfChunksToGenerate) {
+    if (totalInProgress >= maxConsecutiveChunks) {
       return;
     }
+
+    int requestsOnThisFrame = 0;
 
     // Tell chunks to generate their meshes
     // Check if the chunks are already there
@@ -468,8 +471,16 @@ public class QuadTreeTerrainManager : MonoBehaviour {
         if (chunk.needsUpdate) {
           chunk.component.GenerateOnNextFrame();
           chunk.needsUpdate = false;
-          return;
+          requestsOnThisFrame++;
+          totalInProgress++;
         }
+      }
+
+      if (
+        requestsOnThisFrame >= maxConsecutiveChunksAtOneFrame
+        || totalInProgress >= maxConsecutiveChunks
+      ) {
+        return;
       }
     }
   }
