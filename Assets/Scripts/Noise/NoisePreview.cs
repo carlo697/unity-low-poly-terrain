@@ -6,40 +6,35 @@ public class NoisePreview : MonoBehaviour {
 
   public int seed = 0;
   public float frequency = 0.05f;
-  public float amplitude = 1f;
   public float persistence = 0.5f;
   public int octaves = 3;
+  public bool middle;
   public AnimationCurve curve = AnimationCurve.Linear(-1f, -1f, 1f, 1f);
 
-  public enum NoiseType { BuiltIn, Simple3D, Advanced3D };
+  public enum NoiseType { BuiltIn, FastNoise2D, FastNoise3D };
   public NoiseType type = NoiseType.BuiltIn;
+  public bool debugTime;
 
   private MeshRenderer m_meshRenderer;
 
-  private BasicNoise m_basicNoise;
-  private FractalNoise m_fractalNoise;
+  private FastNoise m_fastNoise2;
 
   private void Start() {
     Generate();
   }
 
   private void InitializeNoises() {
-    m_basicNoise = new BasicNoise(
-      frequency,
-      amplitude,
-      seed
-    );
-
-    m_fractalNoise = new FractalNoise(
-      frequency,
-      amplitude,
-      persistence,
-      octaves,
-      seed
-    );
+    m_fastNoise2 = new FastNoise("FractalFBm");
+    m_fastNoise2.Set("Source", new FastNoise("Simplex"));
+    m_fastNoise2.Set("Gain", persistence);
+    m_fastNoise2.Set("Lacunarity", 2f);
+    m_fastNoise2.Set("Octaves", octaves);
   }
 
   public void Generate() {
+    System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
+    watch.Start();
+
     InitializeNoises();
 
     // Generate heightmap
@@ -51,25 +46,34 @@ public class NoisePreview : MonoBehaviour {
             (float)x * frequency + offset.x,
             (float)y * frequency + offset.y
           );
-        } else if (type == NoiseType.Simple3D) {
-          float value = curve.Evaluate(m_basicNoise.Sample(
-            (float)x + offset.x,
-            (float)y + offset.y,
-            offset.z
+        } else if (type == NoiseType.FastNoise2D) {
+          float value = curve.Evaluate(m_fastNoise2.GenSingle2D(
+            (float)x * frequency + offset.x,
+            (float)y * frequency + offset.y,
+            seed
           ));
 
           heightmap[x, y] = (value + 1f) / 2f;
-        } else {
-          float value = curve.Evaluate(m_fractalNoise.Sample(
-            (float)x + offset.x,
-            (float)y + offset.y,
-            offset.z
+        } else if (type == NoiseType.FastNoise3D) {
+          float value = curve.Evaluate(m_fastNoise2.GenSingle3D(
+            (float)x * frequency + offset.x,
+            (float)y * frequency + offset.y,
+            offset.z,
+            seed
           ));
 
           heightmap[x, y] = (value + 1f) / 2f;
         }
+
+        if (middle) {
+          heightmap[x, y] = heightmap[x, y] >= 0.5f ? 1f : 0f;
+        }
       }
     }
+
+    watch.Stop();
+    if (debugTime)
+      Debug.Log(string.Format("Time: {0} ms", watch.ElapsedMilliseconds));
 
     // Add a mesh renderer and assign material
     m_meshRenderer = GetComponent<MeshRenderer>();
@@ -110,10 +114,19 @@ public class NoisePreview : MonoBehaviour {
 
       if (type == NoiseType.BuiltIn) {
         finalValue = Mathf.PerlinNoise(coordX, coordY);
-      } else if (type == NoiseType.Simple3D) {
-        finalValue = m_basicNoise.Sample(coordX, coordY, coordZ);
-      } else {
-        finalValue = m_fractalNoise.Sample(coordX, coordY, coordZ);
+      } else if (type == NoiseType.FastNoise2D) {
+        finalValue = m_fastNoise2.GenSingle2D(
+          coordX,
+          coordY,
+          0
+        );
+      } else if (type == NoiseType.FastNoise3D) {
+        finalValue = m_fastNoise2.GenSingle3D(
+          coordX,
+          coordY,
+          coordZ,
+          0
+        );
       }
 
       median += finalValue / samples;
