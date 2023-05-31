@@ -17,13 +17,13 @@ public class NoisePreview : MonoBehaviour {
 
   private MeshRenderer m_meshRenderer;
 
-  private FastNoise m_fastNoise2;
+  protected FastNoise m_fastNoise2;
 
   private void Start() {
     Generate();
   }
 
-  private void InitializeNoises() {
+  protected virtual void InitializeNoises() {
     m_fastNoise2 = new FastNoise("FractalFBm");
     m_fastNoise2.Set("Source", new FastNoise("Simplex"));
     m_fastNoise2.Set("Gain", persistence);
@@ -31,7 +31,23 @@ public class NoisePreview : MonoBehaviour {
     m_fastNoise2.Set("Octaves", octaves);
   }
 
-  public void Generate() {
+  public void AssignHeightmap(float[,] heightmap) {
+    // Add a mesh renderer and assign material
+    m_meshRenderer = GetComponent<MeshRenderer>();
+    if (!m_meshRenderer) {
+      m_meshRenderer = gameObject.AddComponent<MeshRenderer>();
+    }
+
+    // Generate material and assign texture
+    Material material = m_meshRenderer.sharedMaterial;
+    if (!material) {
+      material = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
+    }
+    material.SetTexture("_BaseMap", TextureGenerator.GetTextureFromHeightmap(heightmap));
+    m_meshRenderer.sharedMaterial = material;
+  }
+
+  public virtual void Generate() {
     System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
     watch.Start();
 
@@ -75,19 +91,7 @@ public class NoisePreview : MonoBehaviour {
     if (debugTime)
       Debug.Log(string.Format("Time: {0} ms", watch.ElapsedMilliseconds));
 
-    // Add a mesh renderer and assign material
-    m_meshRenderer = GetComponent<MeshRenderer>();
-    if (!m_meshRenderer) {
-      m_meshRenderer = gameObject.AddComponent<MeshRenderer>();
-    }
-
-    // Generate material and assign texture
-    Material material = m_meshRenderer.sharedMaterial;
-    if (!material) {
-      material = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
-    }
-    material.SetTexture("_BaseMap", TextureGenerator.GetTextureFromHeightmap(heightmap));
-    m_meshRenderer.sharedMaterial = material;
+    AssignHeightmap(heightmap);
   }
 
   private void OnValidate() {

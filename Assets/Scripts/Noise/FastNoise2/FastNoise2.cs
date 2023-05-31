@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // Thanks to Jordan Peck
 // Source: https://github.com/Auburn/FastNoise2
 // Source: https://github.com/Auburn/FastNoise2Bindings
-class FastNoise {
+public class FastNoise {
   public struct OutputMinMax {
     public OutputMinMax(float minValue = float.PositiveInfinity, float maxValue = float.NegativeInfinity) {
       min = minValue;
