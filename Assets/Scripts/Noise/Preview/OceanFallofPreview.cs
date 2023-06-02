@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class OceanFallofPreview : NoisePreview {
   public Vector3 noiseOffset = Vector3.zero;
+  public bool useOutputCurve;
+  public AnimationCurve outputCurve = AnimationCurve.Linear(0f, 0f, 1f, 1f);
 
   public override void Generate() {
     System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
@@ -31,7 +33,10 @@ public class OceanFallofPreview : NoisePreview {
           seed
         ) + 1f) / 2f;
 
-        float finalFalloff = noise - curvedFalloff;
+        // float finalFalloff = noise - curvedFalloff;
+        float finalFalloff = noise * (1f - curvedFalloff);
+        if (useOutputCurve)
+          finalFalloff = outputCurve.Evaluate(finalFalloff);
 
         if (middle) {
           heightmap[x, y] = finalFalloff >= 0.5f ? 1f : 0f;
