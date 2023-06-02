@@ -1,18 +1,24 @@
 using UnityEngine;
 
 public class NoisePreview : MonoBehaviour {
+  [Header("Position")]
   public Vector3 offset = Vector3.zero;
-  public int resolution = 256;
 
+  [Header("Noise")]
+  public int resolution = 256;
   public int seed = 0;
   public float frequency = 0.05f;
   public float persistence = 0.5f;
   public int octaves = 3;
-  public bool middle;
-  public AnimationCurve curve = AnimationCurve.Linear(-1f, -1f, 1f, 1f);
 
+  [Header("Noise Output")]
+  public bool useThreshold;
+  public float threshold = 0.5f;
+  public AnimationCurve curve = AnimationCurve.Linear(-1f, -1f, 1f, 1f);
   public enum NoiseType { BuiltIn, FastNoise2D, FastNoise3D };
   public NoiseType type = NoiseType.BuiltIn;
+
+  [Header("Debug")]
   public bool debugTime;
 
   private MeshRenderer m_meshRenderer;
@@ -81,8 +87,8 @@ public class NoisePreview : MonoBehaviour {
           heightmap[x, y] = (value + 1f) / 2f;
         }
 
-        if (middle) {
-          heightmap[x, y] = heightmap[x, y] >= 0.5f ? 1f : 0f;
+        if (useThreshold) {
+          heightmap[x, y] = heightmap[x, y] >= threshold ? 1f : 0f;
         }
       }
     }

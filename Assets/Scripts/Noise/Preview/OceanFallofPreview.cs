@@ -1,7 +1,8 @@
 using UnityEngine;
 
 public class OceanFallofPreview : NoisePreview {
-  public Vector3 noiseOffset = Vector3.zero;
+  [Header("Falloff")]
+  public Vector3 falloffOffset = Vector3.zero;
   public bool useOutputCurve;
   public AnimationCurve outputCurve = AnimationCurve.Linear(0f, 0f, 1f, 1f);
 
@@ -17,8 +18,8 @@ public class OceanFallofPreview : NoisePreview {
       for (int x = 0; x < resolution; x++) {
         float scale = frequency;
 
-        float normalizedX = (float)x / resolution + offset.x;
-        float normalizedY = (float)y / resolution + offset.y;
+        float normalizedX = (float)x / resolution + falloffOffset.x;
+        float normalizedY = (float)y / resolution + falloffOffset.y;
 
         float posX = Mathf.Clamp01(normalizedX) * 2f - 1f;
         float posY = Mathf.Clamp01(normalizedY) * 2f - 1f;
@@ -27,8 +28,8 @@ public class OceanFallofPreview : NoisePreview {
         float curvedFalloff = curve.Evaluate(falloff);
 
         float noise = (m_fastNoise2.GenSingle3D(
-          normalizedX * scale + noiseOffset.x,
-          normalizedY * scale + noiseOffset.y,
+          normalizedX * scale + offset.x,
+          normalizedY * scale + offset.y,
           0,
           seed
         ) + 1f) / 2f;
@@ -38,8 +39,8 @@ public class OceanFallofPreview : NoisePreview {
         if (useOutputCurve)
           finalFalloff = outputCurve.Evaluate(finalFalloff);
 
-        if (middle) {
-          heightmap[x, y] = finalFalloff >= 0.5f ? 1f : 0f;
+        if (useThreshold) {
+          heightmap[x, y] = finalFalloff >= threshold ? 1f : 0f;
         } else {
           heightmap[x, y] = finalFalloff;
         }
