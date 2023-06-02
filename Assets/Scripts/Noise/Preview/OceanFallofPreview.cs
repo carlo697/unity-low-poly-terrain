@@ -3,6 +3,7 @@ using UnityEngine;
 public class OceanFallofPreview : NoisePreview {
   [Header("Falloff")]
   public Vector3 falloffOffset = Vector3.zero;
+  public bool useFalloffOnly;
   public bool useOutputCurve;
   public AnimationCurve outputCurve = AnimationCurve.Linear(0f, 0f, 1f, 1f);
 
@@ -35,7 +36,7 @@ public class OceanFallofPreview : NoisePreview {
         ) + 1f) / 2f;
 
         // float finalFalloff = noise - curvedFalloff;
-        float finalFalloff = noise * (1f - curvedFalloff);
+        float finalFalloff = useFalloffOnly ? curvedFalloff : noise * (1f - curvedFalloff);
         if (useOutputCurve)
           finalFalloff = outputCurve.Evaluate(finalFalloff);
 
