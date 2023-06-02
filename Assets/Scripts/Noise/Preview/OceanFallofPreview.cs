@@ -2,7 +2,8 @@ using UnityEngine;
 
 public class OceanFallofPreview : NoisePreview {
   [Header("Falloff")]
-  public Vector3 falloffOffset = Vector3.zero;
+  public Vector2 falloffOffset = Vector2.zero;
+  public Vector2 falloffScale = Vector2.one;
   public bool useFalloffOnly;
   public bool useOutputCurve;
   public AnimationCurve outputCurve = AnimationCurve.Linear(0f, 0f, 1f, 1f);
@@ -19,8 +20,8 @@ public class OceanFallofPreview : NoisePreview {
       for (int x = 0; x < resolution; x++) {
         float scale = frequency;
 
-        float normalizedX = (float)x / resolution + falloffOffset.x;
-        float normalizedY = (float)y / resolution + falloffOffset.y;
+        float normalizedX = ((float)x / resolution + falloffOffset.x) * falloffScale.x;
+        float normalizedY = ((float)y / resolution + falloffOffset.y) * falloffScale.y;
 
         float posX = Mathf.Clamp01(normalizedX) * 2f - 1f;
         float posY = Mathf.Clamp01(normalizedY) * 2f - 1f;
