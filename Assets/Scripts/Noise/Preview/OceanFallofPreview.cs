@@ -15,11 +15,11 @@ public class OceanFallofPreview : NoisePreview {
       for (int x = 0; x < resolution; x++) {
         float scale = frequency;
 
-        float normalizedX = Mathf.Clamp01((float)x / resolution + offset.x);
-        float normalizedY = Mathf.Clamp01((float)y / resolution + offset.y);
+        float normalizedX = (float)x / resolution + offset.x;
+        float normalizedY = (float)y / resolution + offset.y;
 
-        float posX = normalizedX * 2f - 1f;
-        float posY = normalizedY * 2f - 1f;
+        float posX = Mathf.Clamp01(normalizedX) * 2f - 1f;
+        float posY = Mathf.Clamp01(normalizedY) * 2f - 1f;
 
         float falloff = 1f - (1f - posX * posX) * (1f - posY * posY);
         float curvedFalloff = curve.Evaluate(falloff);
@@ -37,7 +37,6 @@ public class OceanFallofPreview : NoisePreview {
           heightmap[x, y] = finalFalloff >= 0.5f ? 1f : 0f;
         } else {
           heightmap[x, y] = finalFalloff;
-
         }
       }
     }
