@@ -2,6 +2,13 @@ using UnityEngine;
 using System;
 
 public class TerrainNoise : ISamplerFactory {
+  [Header("Size")]
+  public Vector2 mapSize = Vector3.one * 16000f;
+
+  [Header("General Curves")]
+  public AnimationCurve curve;
+  public AnimationCurve normalizerCurve;
+
   [Header("Materials")]
   public Color grassColor = Color.green;
   public Color darkGrassColor = Color.Lerp(Color.green, Color.black, 0.5f);
@@ -14,23 +21,24 @@ public class TerrainNoise : ISamplerFactory {
   public float sandHeight = 10f;
 
   [Header("Base Noise Settings")]
+  public int seed = 0;
   public float noiseSize = 32f;
   public int noiseOctaves = 5;
   public bool updateChunksInEditor = true;
 
   [Header("Falloff Settings")]
+  public float seaLevel = 0.5f;
+  public float seaBorderBeforeThreshold = 0.05f;
+  public float seaBorderAfterThreshold = 0.1f;
+  public float landGap = 0.1f;
   public bool useFalloff;
   public float falloffNoiseSize = 1f;
   public int falloffNoiseOctaves = 8;
-
-  [Header("General Curves")]
-  public AnimationCurve curve;
-  public AnimationCurve normalizerCurve;
+  public AnimationCurve falloffGradientCurve = AnimationCurve.Linear(-1f, -1f, 1f, 1f);
+  public AnimationCurve falloffOutputCurve = AnimationCurve.Linear(0f, 0f, 1f, 1f);
 
   [Header("Debug")]
   public bool useFalloffAsColor;
-
-  private int seed = 0;
 
   private float Normalize(float value) {
     return ((value + 1f) / 2f);
@@ -48,6 +56,8 @@ public class TerrainNoise : ISamplerFactory {
     // Create copies of the curves
     AnimationCurve curve = new AnimationCurve(this.curve.keys);
     AnimationCurve normalizerCurve = new AnimationCurve(this.normalizerCurve.keys);
+    AnimationCurve falloffGradientCurve = new AnimationCurve(this.falloffGradientCurve.keys);
+    AnimationCurve falloffOutputCurve = new AnimationCurve(this.falloffOutputCurve.keys);
 
     // Main noise for the terrain
     // FastNoiseLite noise = new FastNoiseLite(seed + 1);
@@ -62,12 +72,16 @@ public class TerrainNoise : ISamplerFactory {
     noise.Set("Octaves", noiseOctaves);
     float[] noiseGrid = null;
 
+    // Noise used to deform the falloff map
     FastNoise falloffNoise = new FastNoise("FractalFBm");
     falloffNoise.Set("Source", new FastNoise("Simplex"));
     falloffNoise.Set("Gain", 0.5f);
     falloffNoise.Set("Lacunarity", 2f);
     falloffNoise.Set("Octaves", falloffNoiseOctaves);
     float[] falloffNoiseGrid = null;
+
+    // Debug color texture
+    float[] debugFalloff = null;
 
     // FastNoiseLite cavesNoise = new FastNoiseLite(seed);
     // cavesNoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
@@ -106,7 +120,7 @@ public class TerrainNoise : ISamplerFactory {
         int yStart = 0;
         int zStart = Mathf.RoundToInt(chunkWorldPosition.z / gridSizeNormalizer);
 
-        // Generate the falloff noise
+        // Generate the falloff noise texture
         if (useFalloff) {
           falloffNoiseGrid = new float[gridLengthX * gridLengthZ];
           noise.GenUniformGrid2D(
@@ -118,6 +132,10 @@ public class TerrainNoise : ISamplerFactory {
             (noiseMultiplier * gridSizeNormalizer) / falloffNoiseSize,
             seed + 2
           );
+
+          if (useFalloffAsColor) {
+            debugFalloff = new float[gridLengthX * gridLengthZ];
+          }
         }
 
         // Generate the base terrain noise
@@ -149,19 +167,59 @@ public class TerrainNoise : ISamplerFactory {
       int index2D = z * gridLengthX + x;
 
       // Start sampling
+      float output = 0;
       float heightGradient = point.position.y * inverseChunkWorldSize.y;
-      float height = heightGradient;
+
+      if (useFalloff) {
+        // Clamped coordinates for creating the falloff texture
+        float posX = (chunkWorldPosition.x + point.position.x) / mapSize.x / 2f;
+        posX = Mathf.Clamp01(Math.Abs(posX));
+        float posY = (chunkWorldPosition.z + point.position.z) / mapSize.y / 2f;
+        posY = Mathf.Clamp01(Math.Abs(posY));
+
+        // Create the falloff map
+        float falloff = 1f - (1f - posX * posX) * (1f - posY * posY);
+        float curvedFalloff = 1f - falloffGradientCurve.Evaluate(falloff);
+
+        // Sample and normalize the noise
+        float falloffNoiseSample = Normalize(falloffNoiseGrid[index2D]);
+
+        // Combine the falloff map and the noise
+        float finalFalloff = falloffNoiseSample * curvedFalloff;
+        finalFalloff = falloffOutputCurve.Evaluate(finalFalloff);
+
+        // Land gradient
+        float landGradient;
+        float start = seaLevel;
+        if (finalFalloff <= start) {
+          landGradient = 0f;
+        } else {
+          landGradient = Mathf.SmoothStep(0f, 1f, (finalFalloff - start) / (landGap));
+        }
+
+        // Use the land gredient to combine the base terrain noise with the falloff map
+        float heightBelowSeaLevel = heightGradient - finalFalloff;
+        float heightAboveSeaLevel = heightGradient - 0.5f - (Normalize(noiseGrid[point.index]) * 0.5f);
+        output = Mathf.Lerp(heightBelowSeaLevel, heightAboveSeaLevel, landGradient);
+
+        if (useFalloffAsColor) {
+          debugFalloff[index2D] = 1f - output;
+        }
+
+        // height = Mathf.Lerp(heightGradient, height, finalFalloff);
+        // height = Mathf.Lerp(heightGradient, height, finalFalloff);
+        // height = heightGradient - finalFalloff;
+        // height = heightGradient - landGradient;
+        // height = heightGradient - (landGradient * 0.8f);
+        // height = Mathf.Lerp(height, heightGradient - seaLevel, borderGradient);
+      } else {
+        output = heightGradient - Normalize(noiseGrid[point.index]);
+      }
 
       // Add terrain noise
       // height -= Normalize(noise.GetNoise(finalX, finalY, finalZ));
       // height -= Normalize(noise.GenSingle3D(finalX, finalY, finalZ, seed));
-      height -= Normalize(noiseGrid[point.index]);
-
-      // AddFalloff
-      if (useFalloff) {
-        float falloffNoiseSample = Normalize(falloffNoiseGrid[index2D]);
-        height = Mathf.Lerp(heightGradient, height, falloffNoiseSample);
-      }
+      // height -= Normalize(noiseGrid[point.index]);
 
       // height += ((caves.GetNoise(finalX, finalZ) + 1f) / 2f) * 0.1f;
       // height += 1f - Mathf.Abs(noise.GetNoise(finalX, 0, finalZ));
@@ -172,7 +230,7 @@ public class TerrainNoise : ISamplerFactory {
       //   Normalize(normalizerCurve.Evaluate(height)) + Normalize(normalizerCurve.Evaluate(caves3D))
       // );
 
-      point.value = height;
+      point.value = output;
       return point;
     };
 
@@ -185,10 +243,9 @@ public class TerrainNoise : ISamplerFactory {
             int index = grid.GetIndexFromCoords(x, y, z);
             CubeGridPoint point = grid.gridPoints[index];
 
-            if (useFalloffAsColor) {
+            if (useFalloff && useFalloffAsColor) {
               int index2D = z * grid.gridSize.x + x;
-              float falloffNoiseSample = Normalize(falloffNoiseGrid[index2D]);
-              point.color = Color.Lerp(Color.black, Color.white, falloffNoiseSample);
+              point.color = Color.Lerp(Color.black, Color.white, debugFalloff[index2D]);
             } else {
               float height = point.position.y + chunkWorldPosition.y;
 
