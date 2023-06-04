@@ -170,7 +170,6 @@ public class QuadTreeTerrainManager : MonoBehaviour {
   public float viewDistance = 100f;
   public Vector3 chunkSize = new Vector3(32f, 128f, 32f);
   public Vector3Int chunkResolution = new Vector3Int(32, 128, 32);
-  public float waterLevel = 40f;
   public Material chunkMaterial;
   public bool debug;
 
@@ -216,9 +215,10 @@ public class QuadTreeTerrainManager : MonoBehaviour {
     ));
 
     // Set position and parent
+    float seaLevel = m_terrainNoise.seaLevel * chunkSize.y;
     gameObject.transform.position = new Vector3(
       transform.position.x,
-      -waterLevel,
+      -seaLevel,
       transform.position.z
     );
     gameObject.transform.SetParent(base.transform);

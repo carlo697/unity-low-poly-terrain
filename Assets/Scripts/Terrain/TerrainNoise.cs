@@ -17,6 +17,7 @@ public class TerrainNoise : ISamplerFactory {
   public Color sandColor = Color.yellow;
 
   [Header("Heights")]
+  public float seaLevel = 0.5f;
   public float snowHeight = 100f;
   public float sandHeight = 10f;
 
@@ -27,7 +28,6 @@ public class TerrainNoise : ISamplerFactory {
   public bool updateChunksInEditor = true;
 
   [Header("Falloff Settings")]
-  public float seaLevel = 0.5f;
   public float seaBorderBeforeThreshold = 0.05f;
   public float seaBorderAfterThreshold = 0.1f;
   public float landGap = 0.1f;
@@ -199,7 +199,8 @@ public class TerrainNoise : ISamplerFactory {
 
         // Use the land gredient to combine the base terrain noise with the falloff map
         float heightBelowSeaLevel = heightGradient - finalFalloff;
-        float heightAboveSeaLevel = heightGradient - 0.5f - (Normalize(noiseGrid[point.index]) * 0.5f);
+        float heightAboveSeaLevel =
+          heightGradient - seaLevel - (Normalize(noiseGrid[point.index]) * (1f - seaLevel));
         output = Mathf.Lerp(heightBelowSeaLevel, heightAboveSeaLevel, landGradient);
 
         if (useFalloffAsColor) {
@@ -247,14 +248,14 @@ public class TerrainNoise : ISamplerFactory {
               int index2D = z * grid.gridSize.x + x;
               point.color = Color.Lerp(Color.black, Color.white, debugFalloff[index2D]);
             } else {
-              float height = point.position.y + chunkWorldPosition.y;
+              float normalizedHeight = point.position.y / chunkWorldSize.y;
 
-              if (height >= snowHeight) {
+              if (normalizedHeight >= snowHeight) {
                 point.color = snowColor;
-              } else if (height <= sandHeight) {
+              } else if (normalizedHeight <= sandHeight) {
                 point.color = sandColor;
               } else {
-                float normalizedGrassHeight = Mathf.InverseLerp(sandHeight, snowHeight, height);
+                float normalizedGrassHeight = Mathf.InverseLerp(sandHeight, snowHeight, normalizedHeight);
                 point.color = Color.Lerp(grassColor, darkGrassColor, normalizedGrassHeight);
               }
             }
