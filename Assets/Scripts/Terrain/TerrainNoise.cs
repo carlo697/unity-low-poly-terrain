@@ -15,6 +15,7 @@ public class TerrainNoise : ISamplerFactory {
   public Color snowColor = Color.white;
   public Color dirtColor = Color.yellow;
   public Color sandColor = Color.yellow;
+  public Color darkSandColor = Color.Lerp(Color.yellow, Color.black, 0.5f);
 
   [Header("Heights")]
   public float seaLevel = 0.5f;
@@ -253,10 +254,11 @@ public class TerrainNoise : ISamplerFactory {
               if (normalizedHeight >= snowHeight) {
                 point.color = snowColor;
               } else if (normalizedHeight <= sandHeight) {
-                point.color = sandColor;
+                float t = Mathf.InverseLerp(0f, sandHeight, normalizedHeight);
+                point.color = Color.Lerp(darkSandColor, sandColor, t);
               } else {
-                float normalizedGrassHeight = Mathf.InverseLerp(sandHeight, snowHeight, normalizedHeight);
-                point.color = Color.Lerp(grassColor, darkGrassColor, normalizedGrassHeight);
+                float t = Mathf.InverseLerp(sandHeight, snowHeight, normalizedHeight);
+                point.color = Color.Lerp(grassColor, darkGrassColor, t);
               }
             }
 
