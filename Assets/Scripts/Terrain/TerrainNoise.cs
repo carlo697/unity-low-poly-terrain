@@ -124,7 +124,7 @@ public class TerrainNoise : ISamplerFactory {
         // Generate the falloff noise texture
         if (useFalloff) {
           falloffNoiseGrid = new float[gridLengthX * gridLengthZ];
-          noise.GenUniformGrid2D(
+          falloffNoise.GenUniformGrid2D(
             falloffNoiseGrid,
             xStart,
             zStart,
