@@ -81,6 +81,9 @@ public class TerrainNoise : ISamplerFactory {
     falloffNoise.Set("Octaves", falloffNoiseOctaves);
     float[] falloffNoiseGrid = null;
 
+    // Falloff map
+    float[] falloffOutputGrid = null;
+
     // Debug color texture
     float[] debugFalloff = null;
 
@@ -121,8 +124,8 @@ public class TerrainNoise : ISamplerFactory {
         int yStart = 0;
         int zStart = Mathf.RoundToInt(chunkWorldPosition.z / gridSizeNormalizer);
 
-        // Generate the falloff noise texture
         if (useFalloff) {
+          // Generate the falloff noise texture
           falloffNoiseGrid = new float[gridLengthX * gridLengthZ];
           falloffNoise.GenUniformGrid2D(
             falloffNoiseGrid,
@@ -133,6 +136,35 @@ public class TerrainNoise : ISamplerFactory {
             (noiseMultiplier * gridSizeNormalizer) / falloffNoiseSize,
             seed + 2
           );
+
+          // Generate the final falloff map
+          falloffOutputGrid = new float[gridLengthX * gridLengthZ];
+          for (int _y = 0; _y < gridLengthZ; _y++) {
+            for (int _x = 0; _x < gridLengthX; _x++) {
+              // Transform the coordinates
+              int _index2D = _y * gridLengthX + _x;
+              float localX = ((float)_x / chunk.resolution.x) * chunkWorldSize.x;
+              float localY = ((float)_y / chunk.resolution.z) * chunkWorldSize.z;
+
+              // Clamped coordinates for creating the falloff map
+              float posX = ((chunkWorldPosition.x + localX) / mapSize.x) * 0.5f;
+              posX = Mathf.Clamp01(Math.Abs(posX));
+              float posY = ((chunkWorldPosition.z + localY) / mapSize.y) * 0.5f;
+              posY = Mathf.Clamp01(Math.Abs(posY));
+
+              // Create the falloff map
+              float falloff = 1f - (1f - posX * posX) * (1f - posY * posY);
+              float curvedFalloff = 1f - falloffGradientCurve.Evaluate(falloff);
+
+              // Sample and normalize the noise
+              float falloffNoiseSample = Normalize(falloffNoiseGrid[_index2D]);
+
+              // Combine the falloff map and the noise
+              float finalFalloff = falloffNoiseSample * curvedFalloff;
+              finalFalloff = falloffOutputCurve.Evaluate(finalFalloff);
+              falloffOutputGrid[_index2D] = finalFalloff;
+            }
+          }
 
           if (useFalloffAsColor) {
             debugFalloff = new float[gridLengthX * gridLengthZ];
@@ -159,12 +191,12 @@ public class TerrainNoise : ISamplerFactory {
       // float finalY = (point.position.y * noiseMultiplier) + chunk.noiseOffset.y;
       // float finalZ = ((chunkWorldPosition.z + point.position.z) * noiseMultiplier) + chunk.noiseOffset.z;
 
-      // 3d coords inside the 3d grid
+      // Coords ford 3d maps
       int x = point.index / (gridLengthY * gridLengthX);
       // int y = (point.index / gridLengthX) % gridLengthY;
       int z = point.index % gridLengthX;
 
-      // 2d coords inside 2d grids
+      // Coords for 2d maps
       int index2D = z * gridLengthX + x;
 
       // Start sampling
@@ -172,22 +204,8 @@ public class TerrainNoise : ISamplerFactory {
       float heightGradient = point.position.y * inverseChunkWorldSize.y;
 
       if (useFalloff) {
-        // Clamped coordinates for creating the falloff texture
-        float posX = (chunkWorldPosition.x + point.position.x) / mapSize.x / 2f;
-        posX = Mathf.Clamp01(Math.Abs(posX));
-        float posY = (chunkWorldPosition.z + point.position.z) / mapSize.y / 2f;
-        posY = Mathf.Clamp01(Math.Abs(posY));
-
-        // Create the falloff map
-        float falloff = 1f - (1f - posX * posX) * (1f - posY * posY);
-        float curvedFalloff = 1f - falloffGradientCurve.Evaluate(falloff);
-
-        // Sample and normalize the noise
-        float falloffNoiseSample = Normalize(falloffNoiseGrid[index2D]);
-
-        // Combine the falloff map and the noise
-        float finalFalloff = falloffNoiseSample * curvedFalloff;
-        finalFalloff = falloffOutputCurve.Evaluate(finalFalloff);
+        // Sample the falloff map
+        float finalFalloff = falloffOutputGrid[index2D];
 
         // Land gradient
         float landGradient;
