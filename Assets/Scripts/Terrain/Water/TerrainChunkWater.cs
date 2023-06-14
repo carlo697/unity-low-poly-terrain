@@ -53,7 +53,7 @@ public class TerrainChunkWater : MonoBehaviour {
     mesh.RecalculateNormals();
   }
 
-  void Update() {
-
+  void OnDestroy() {
+    Destroy(m_meshFilter.sharedMesh);
   }
 }
