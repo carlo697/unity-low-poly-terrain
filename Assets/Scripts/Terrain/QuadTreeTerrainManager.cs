@@ -265,7 +265,7 @@ public class QuadTreeTerrainManager : MonoBehaviour {
     // Apply water component
     TerrainChunkWater water = waterObj.AddComponent<TerrainChunkWater>();
     water.seaLevel = m_terrainNoise.seaLevel;
-    water.resolution = new Vector2Int(chunkResolution.x, chunkResolution.z);
+    water.resolution = new Vector2Int(chunkResolution.x, chunkResolution.z) * 4;
     water.size = new Vector2(transform.size.x, transform.size.z);
     water.GetComponent<MeshRenderer>().sharedMaterial = waterMaterial;
   }
