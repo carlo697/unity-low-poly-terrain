@@ -170,14 +170,6 @@ public class TerrainChunk : MonoBehaviour {
           meshFilter.sharedMesh
         );
         mesh.name = gameObject.name;
-        mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
-
-        // Set vertices and triangles to the mesh
-        if (finalVertices.Length > 0) {
-          mesh.vertices = finalVertices;
-          mesh.triangles = finalTriangles;
-          mesh.RecalculateNormals();
-        }
 
         // Set mesh to the mesh filter
         m_meshFilter.sharedMesh = mesh;
