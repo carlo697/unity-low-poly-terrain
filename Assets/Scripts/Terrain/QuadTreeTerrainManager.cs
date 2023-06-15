@@ -66,8 +66,8 @@ class ChunkTree {
         )
       };
 
-      foreach (ChunkTree child in children) {
-        child.Build(cameraPosition, drawGizmos);
+      for (int i = 0; i < children.Length; i++) {
+        children[i].Build(cameraPosition, drawGizmos);
       }
     }
   }
@@ -77,8 +77,8 @@ class ChunkTree {
     list.Add(this);
 
     if (children != null) {
-      foreach (ChunkTree child in children) {
-        child.GetChunksRecursively(list);
+      for (int i = 0; i < children.Length; i++) {
+        children[i].GetChunksRecursively(list);
       }
     }
 
@@ -265,7 +265,7 @@ public class QuadTreeTerrainManager : MonoBehaviour {
     // Apply water component
     TerrainChunkWater water = waterObj.AddComponent<TerrainChunkWater>();
     water.seaLevel = m_terrainNoise.seaLevel;
-    water.resolution = new Vector2Int(chunkResolution.x, chunkResolution.z) * 4;
+    water.resolution = new Vector2Int(chunkResolution.x, chunkResolution.z);
     water.size = new Vector2(transform.size.x, transform.size.z);
     water.GetComponent<MeshRenderer>().sharedMaterial = waterMaterial;
   }
@@ -386,8 +386,8 @@ public class QuadTreeTerrainManager : MonoBehaviour {
   private List<ChunkTree> GetChunksFromTrees() {
     List<ChunkTree> list = new List<ChunkTree>();
 
-    foreach (ChunkTree child in m_chunkTrees) {
-      child.GetChunksRecursively(list);
+    for (int i = 0; i < m_chunkTrees.Count; i++) {
+      m_chunkTrees[i].GetChunksRecursively(list);
     }
 
     return list;
@@ -401,7 +401,9 @@ public class QuadTreeTerrainManager : MonoBehaviour {
 
     m_visibleChunkPositions.Clear();
     m_visibleChunkPositionsHashSet.Clear();
-    foreach (ChunkTree chunk in GetChunksFromTrees()) {
+    List<ChunkTree> chunks = GetChunksFromTrees();
+    for (int i = 0; i < chunks.Count; i++) {
+      ChunkTree chunk = chunks[i];
       if (chunk.children == null) {
         Vector3 closestPoint = chunk.bounds.ClosestPoint(cameraPosition);
 
@@ -567,7 +569,8 @@ public class QuadTreeTerrainManager : MonoBehaviour {
       UpdateVisibleChunkPositions(Camera.main, true);
 
       Gizmos.color = Color.white;
-      foreach (ChunkTransform chunk in m_visibleChunkPositions) {
+      for (int i = 0; i < m_visibleChunkPositions.Count; i++) {
+        ChunkTransform chunk = m_visibleChunkPositions[i];
         Gizmos.DrawWireCube(chunk.position + chunk.size / 2f, chunk.size);
       }
     }
