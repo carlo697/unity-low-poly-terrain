@@ -148,14 +148,6 @@ public class TerrainChunk : MonoBehaviour {
       // Complete the job
       m_handle.Value.Complete();
 
-      // Get the results
-      Vector3[] finalVertices = this.vertices.ToArray();
-      int[] finalTriangles = this.triangles.ToArray();
-      Color[] finalColors = this.colors.ToArray();
-
-      // Dispose memory
-      DisposeJob();
-
       // Flags
       isGenerating = false;
       hasEverBeenGenerated = true;
@@ -163,15 +155,15 @@ public class TerrainChunk : MonoBehaviour {
       if (!m_destroyFlag) {
         // Create a mesh
         Mesh mesh = CubeGrid.CreateMesh(
-          finalVertices,
-          finalTriangles,
-          finalColors,
+          vertices,
+          triangles,
+          colors,
           debug,
           meshFilter.sharedMesh
         );
         mesh.name = gameObject.name;
 
-        // Set mesh to the mesh filter
+        // Set mesh
         m_meshFilter.sharedMesh = mesh;
 
         timer.Stop();
@@ -197,6 +189,9 @@ public class TerrainChunk : MonoBehaviour {
             )
           );
       }
+
+      // Dispose memory
+      DisposeJob();
     }
   }
 

@@ -51,18 +51,16 @@ public class TerrainChunkWater : MonoBehaviour {
       // Complete the job
       m_handle.Value.Complete();
 
-      // Get the results
-      Vector3[] finalVertices = this.m_vertices.ToArray();
-      int[] finalTriangles = this.m_triangles.ToArray();
+      // Create mesh
+      Mesh mesh = new Mesh();
+      mesh.SetVertices<Vector3>(m_vertices);
+      mesh.SetIndices<int>(m_triangles, MeshTopology.Triangles, 0);
+      mesh.RecalculateNormals();
 
       // Dispose memory
       DisposeJob();
 
-      // Create mesh
-      Mesh mesh = new Mesh();
-      mesh.vertices = finalVertices;
-      mesh.triangles = finalTriangles;
-      mesh.RecalculateNormals();
+      // Apply mesh
       m_meshFilter.sharedMesh = mesh;
     }
   }

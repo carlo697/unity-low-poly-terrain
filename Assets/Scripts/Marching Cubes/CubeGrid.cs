@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using Unity.Collections;
 
 public delegate CubeGridPoint CubeGridSamplerFunc(CubeGridPoint point);
 public delegate void CubeGridPostProcessingFunc(CubeGrid grid);
@@ -221,9 +222,9 @@ public class CubeGrid {
   }
 
   public static Mesh CreateMesh(
-    Vector3[] vertices,
-    int[] triangles,
-    Color[] colors,
+    NativeList<Vector3> vertices,
+    NativeList<int> triangles,
+    NativeList<Color> colors,
     bool debug = false,
     Mesh meshToReuse = null
   ) {
@@ -243,9 +244,9 @@ public class CubeGrid {
     // Set vertices and triangles to the mesh
     mesh.Clear();
     if (vertices.Length > 0) {
-      mesh.vertices = vertices;
-      mesh.triangles = triangles;
-      mesh.colors = colors;
+      mesh.SetVertices<Vector3>(vertices);
+      mesh.SetIndices<int>(triangles, MeshTopology.Triangles, 0);
+      mesh.SetColors<Color>(colors);
       mesh.RecalculateNormals();
     }
 
