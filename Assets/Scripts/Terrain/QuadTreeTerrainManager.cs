@@ -1,91 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-class ChunkTree {
-  public List<float> levelDistances;
-  public int level;
-  public Vector2 position;
-  public Vector2 extents;
-  public ChunkTree[] children;
-  public Bounds bounds;
-
-  public ChunkTree(List<float> levelDistances, int level, Vector2 position, Vector2 extents) {
-    this.levelDistances = levelDistances;
-    this.level = level;
-    this.position = position;
-    this.extents = extents;
-    this.children = null;
-    this.bounds = new Bounds(
-      new Vector3(position.x, 0f, position.y),
-      new Vector3(extents.x * 2f, 1f, extents.y * 2f)
-    );
-  }
-
-  public void Build(Vector3 cameraPosition, bool drawGizmos = false) {
-    if (level > levelDistances.Count - 1)
-      return;
-
-    Vector3 closestPoint = bounds.ClosestPoint(cameraPosition);
-    float levelDistance = levelDistances[level];
-
-    if (drawGizmos) {
-      Gizmos.color = Color.red;
-      Gizmos.DrawWireSphere(cameraPosition, levelDistance);
-    }
-
-    if (Vector3.Distance(cameraPosition, closestPoint) <= levelDistance) {
-      Vector2 halfExtents = extents / 2f;
-      children = new ChunkTree[4] {
-        // North east
-        new ChunkTree(
-          levelDistances,
-          level + 1,
-          position + halfExtents,
-          halfExtents
-        ),
-        // South east
-        new ChunkTree(
-          levelDistances,
-          level + 1,
-          position + new Vector2(halfExtents.x, -halfExtents.y),
-          halfExtents
-        ),
-        // South west
-        new ChunkTree(
-          levelDistances,
-          level + 1,
-          position - halfExtents,
-          halfExtents
-        ),
-        // North west
-        new ChunkTree(
-          levelDistances,
-          level + 1,
-          position + new Vector2(-halfExtents.x, halfExtents.y),
-          halfExtents
-        )
-      };
-
-      for (int i = 0; i < children.Length; i++) {
-        children[i].Build(cameraPosition, drawGizmos);
-      }
-    }
-  }
-
-  public List<ChunkTree> GetChunksRecursively(List<ChunkTree> list = null) {
-    list = list ?? new List<ChunkTree>();
-    list.Add(this);
-
-    if (children != null) {
-      for (int i = 0; i < children.Length; i++) {
-        children[i].GetChunksRecursively(list);
-      }
-    }
-
-    return list;
-  }
-}
-
 public struct ChunkTransform {
   public Vector3 position;
   public Vector3 size;
@@ -174,7 +89,7 @@ public class QuadTreeTerrainManager : MonoBehaviour {
   public Material waterMaterial;
   public bool debug;
 
-  private List<ChunkTree> m_chunkTrees = new List<ChunkTree>();
+  private List<QuadtreeChunk> m_quadtreeChunks = new List<QuadtreeChunk>();
   private List<SpawnedChunk> m_spawnedChunks = new List<SpawnedChunk>();
   private List<SpawnedChunk> m_spawnedChunksToDelete = new List<SpawnedChunk>();
   private List<ChunkTransform> m_visibleChunkPositions = new List<ChunkTransform>();
@@ -196,12 +111,12 @@ public class QuadTreeTerrainManager : MonoBehaviour {
 
   [SerializeField] private TerrainNoise m_terrainNoise;
 
-  public float levelsOfDetail = 8f;
+  public int levelsOfDetail = 8;
   public float detailDistanceBase = 2f;
   public float detailDistanceMultiplier = 1f;
   public int detailDistanceDecreaseAtLevel = 1;
   public float detailDistanceConstantDecrease = 0f;
-  private List<float> m_levelDistances = new List<float>();
+  private List<float> m_levelDistances;
   [SerializeField] private int m_debugChunkCount;
 
   private void Awake() {
@@ -209,6 +124,7 @@ public class QuadTreeTerrainManager : MonoBehaviour {
       m_terrainNoise = GetComponent<TerrainNoise>();
     }
   }
+
   private void CreateChunk(ChunkTransform transform) {
     // Create empty GameObject
     GameObject gameObject = new GameObject(string.Format(
@@ -278,116 +194,11 @@ public class QuadTreeTerrainManager : MonoBehaviour {
     );
   }
 
-  private void UpdateChunkTrees(Vector3 cameraPosition, bool drawGizmos = false) {
-    m_levelDistances.Clear();
+  private List<QuadtreeChunk> GetChunksFromTrees() {
+    List<QuadtreeChunk> list = new List<QuadtreeChunk>();
 
-    // Calculate the whole size of the tree so that the minimun size of a chunk
-    // is equal to chunkSize.x
-    float minimunChunkSize = chunkSize.x;
-    float areaExtents = Mathf.Pow(2f, levelsOfDetail - 1f) * minimunChunkSize;
-    float areaSize = areaExtents * 2f;
-    Vector2 extents = new Vector2(areaExtents, areaExtents);
-
-    // Calculate the distances for the levels of detail
-    for (int i = 0; i < levelsOfDetail; i++) {
-      int decreaseLevel = Mathf.Max(0, i - detailDistanceDecreaseAtLevel);
-      m_levelDistances.Add(
-        (
-          (Mathf.Pow(detailDistanceBase, i + 1f) * minimunChunkSize)
-          / (1f + (float)decreaseLevel * detailDistanceConstantDecrease)
-        ) * detailDistanceMultiplier
-      );
-    }
-    m_levelDistances.Reverse();
-
-    // Harcoded distances for the levels of detail
-    // m_levelDistances = new List<float> {
-    //   8192f,
-    //   4096f,
-    //   2048f,
-    //   1024f,
-    //   512f,
-    //   256f,
-    //   128f,
-    //   64f
-    // };
-
-    // Create the tree
-    m_chunkTrees.Clear();
-
-    // Get the area the player is standing right now
-    Vector2 mainAreaCoords = new Vector2(
-      Mathf.Floor(cameraPosition.x / areaSize),
-      Mathf.Floor(cameraPosition.z / areaSize)
-    );
-    Vector2 mainAreaPosition = new Vector2(
-      mainAreaCoords.x * areaSize,
-      mainAreaCoords.y * areaSize
-    );
-
-    // ChunkTree newTree = new ChunkTree(
-    //   m_levelDistances,
-    //   0,
-    //   mainAreaPosition + extents,
-    //   extents
-    // );
-    // newTree.Build(cameraPosition, drawGizmos);
-    // m_chunkTrees.Add(newTree);
-
-    int visibleX = Mathf.CeilToInt(viewDistance / areaSize);
-    int visibleY = Mathf.CeilToInt(viewDistance / areaSize);
-
-    // Build a list of the coords of the visible chunks
-    for (
-      int y = (int)mainAreaCoords.y - visibleY;
-      y <= mainAreaCoords.y + visibleY;
-      y++) {
-      for (
-        int x = (int)mainAreaCoords.x - visibleX;
-        x <= mainAreaCoords.x + visibleX;
-        x++
-      ) {
-        Vector2 coords = new Vector3(x, y);
-        Vector2 position = new Vector2(
-          coords.x * areaSize + areaExtents,
-          coords.y * areaSize + areaExtents
-        );
-        Bounds bounds = new Bounds(
-          new Vector3(position.x, 0, position.y),
-          new Vector3(extents.x * 2f, chunkSize.y, extents.y * 2f)
-        );
-
-        // Check if a sphere of radius 'distance' is touching the chunk
-        float distanceToChunk = Mathf.Sqrt(bounds.SqrDistance(cameraPosition));
-        if (distanceToChunk > viewDistance) {
-          continue;
-        }
-
-        if (drawGizmos) {
-          Gizmos.color = Color.blue;
-          Gizmos.DrawWireCube(
-            new Vector3(position.x, 0, position.y),
-            new Vector3(extents.x * 2f, chunkSize.y, extents.y * 2f)
-          );
-        }
-
-        ChunkTree area = new ChunkTree(
-          m_levelDistances,
-          0,
-          position,
-          new Vector2(areaExtents, areaExtents)
-        );
-        area.Build(cameraPosition, drawGizmos);
-        m_chunkTrees.Add(area);
-      }
-    }
-  }
-
-  private List<ChunkTree> GetChunksFromTrees() {
-    List<ChunkTree> list = new List<ChunkTree>();
-
-    for (int i = 0; i < m_chunkTrees.Count; i++) {
-      m_chunkTrees[i].GetChunksRecursively(list);
+    for (int i = 0; i < m_quadtreeChunks.Count; i++) {
+      m_quadtreeChunks[i].GetChunksRecursively(list);
     }
 
     return list;
@@ -395,28 +206,43 @@ public class QuadTreeTerrainManager : MonoBehaviour {
 
   private void UpdateVisibleChunkPositions(Camera camera, bool drawGizmos = false) {
     Vector3 cameraPosition = FlatY(camera.transform.position);
-    UpdateChunkTrees(cameraPosition, drawGizmos);
 
-    float sqrViewDistance = viewDistance * viewDistance;
+    m_levelDistances = QuadtreeChunk.CalculateLevelDistances(
+     chunkSize.x,
+     levelsOfDetail,
+     detailDistanceBase,
+     detailDistanceMultiplier,
+     detailDistanceDecreaseAtLevel,
+     detailDistanceConstantDecrease
+   );
+
+    m_quadtreeChunks = QuadtreeChunk.CreateQuadtree(
+      cameraPosition,
+      chunkSize,
+      m_levelDistances,
+      viewDistance,
+      m_quadtreeChunks,
+      drawGizmos
+    );
+
+    List<QuadtreeChunk> visibleQuadtreeChunks = QuadtreeChunk.RetrieveVisibleChunks(
+      m_quadtreeChunks,
+      cameraPosition,
+      viewDistance
+    );
 
     m_visibleChunkPositions.Clear();
     m_visibleChunkPositionsHashSet.Clear();
-    List<ChunkTree> chunks = GetChunksFromTrees();
-    for (int i = 0; i < chunks.Count; i++) {
-      ChunkTree chunk = chunks[i];
-      if (chunk.children == null) {
-        Vector3 closestPoint = chunk.bounds.ClosestPoint(cameraPosition);
+    for (int i = 0; i < visibleQuadtreeChunks.Count; i++) {
+      QuadtreeChunk chunk = visibleQuadtreeChunks[i];
 
-        if (Vector3.Distance(closestPoint, cameraPosition) <= viewDistance) {
-          // Save the chunk
-          ChunkTransform transform = new ChunkTransform(
-            new Vector3(chunk.position.x - chunk.extents.x, 0f, chunk.position.y - chunk.extents.y),
-            new Vector3(chunk.extents.x * 2f, chunkSize.y, chunk.extents.y * 2f)
-          );
-          m_visibleChunkPositions.Add(transform);
-          m_visibleChunkPositionsHashSet.Add(transform);
-        }
-      }
+      // Save the chunk
+      ChunkTransform transform = new ChunkTransform(
+        new Vector3(chunk.position.x - chunk.extents.x, 0f, chunk.position.y - chunk.extents.y),
+        new Vector3(chunk.extents.x * 2f, chunkSize.y, chunk.extents.y * 2f)
+      );
+      m_visibleChunkPositions.Add(transform);
+      m_visibleChunkPositionsHashSet.Add(transform);
     }
 
     // Sort the array by measuring the distance from the chunk to the camera
