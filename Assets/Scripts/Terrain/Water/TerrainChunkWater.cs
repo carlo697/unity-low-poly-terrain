@@ -19,8 +19,6 @@ public class TerrainChunkWater : MonoBehaviour {
   }
 
   void Start() {
-
-
     // Create the lists for the job
     m_vertices = new NativeList<Vector3>(Allocator.TempJob);
     m_triangles = new NativeList<int>(Allocator.TempJob);
@@ -56,6 +54,11 @@ public class TerrainChunkWater : MonoBehaviour {
       mesh.SetVertices<Vector3>(m_vertices);
       mesh.SetIndices<int>(m_triangles, MeshTopology.Triangles, 0);
       mesh.RecalculateNormals();
+
+      // Extend bounds vertically
+      Bounds newBounds = mesh.bounds;
+      newBounds.size = new Vector3(newBounds.size.x, 2f, newBounds.size.z);
+      mesh.bounds = newBounds;
 
       // Dispose memory
       DisposeJob();
