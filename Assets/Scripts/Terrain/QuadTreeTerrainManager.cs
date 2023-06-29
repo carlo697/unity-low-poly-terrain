@@ -75,6 +75,7 @@ public class QuadTreeTerrainManager : MonoBehaviour {
 
   [SerializeField] private TerrainNoise m_terrainNoise;
 
+  public DistanceShape distanceShape;
   public int levelsOfDetail = 8;
   public float detailDistanceBase = 2f;
   public float detailDistanceMultiplier = 1f;
@@ -168,6 +169,7 @@ public class QuadTreeTerrainManager : MonoBehaviour {
       chunkSize,
       m_levelDistances,
       viewDistance,
+      distanceShape,
       m_quadtreeChunks,
       drawGizmos
     );

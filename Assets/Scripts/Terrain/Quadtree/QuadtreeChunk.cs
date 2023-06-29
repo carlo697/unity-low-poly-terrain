@@ -1,6 +1,11 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+public enum DistanceShape {
+  Square,
+  Circle
+}
+
 class QuadtreeChunk {
   public List<float> levelDistances;
   public int level;
@@ -8,12 +13,21 @@ class QuadtreeChunk {
   public Vector2 extents;
   public QuadtreeChunk[] children;
   public Bounds bounds;
+  public DistanceShape distanceShape;
 
-  public QuadtreeChunk(List<float> levelDistances, int level, Vector2 position, Vector2 extents) {
+  public QuadtreeChunk(
+    List<float> levelDistances,
+    int level,
+    Vector2 position,
+    Vector2 extents,
+    DistanceShape distanceShape = DistanceShape.Square
+  ) {
     this.levelDistances = levelDistances;
     this.level = level;
     this.position = position;
     this.extents = extents;
+    this.distanceShape = distanceShape;
+
     this.children = null;
     this.bounds = new Bounds(
       new Vector3(position.x, 0f, position.y),
@@ -33,7 +47,18 @@ class QuadtreeChunk {
       Gizmos.DrawWireSphere(cameraPosition, levelDistance);
     }
 
-    if (Vector3.Distance(cameraPosition, closestPoint) <= levelDistance) {
+    bool isInside = false;
+    if (distanceShape == DistanceShape.Square) {
+      Bounds cameraBounds = new Bounds(
+        cameraPosition,
+        Vector3.one * levelDistance * 2f
+      );
+      isInside = cameraBounds.Contains(closestPoint);
+    } else {
+      isInside = Vector3.Distance(cameraPosition, closestPoint) <= levelDistance;
+    }
+
+    if (isInside) {
       Vector2 halfExtents = extents / 2f;
       children = new QuadtreeChunk[4] {
         // North east
@@ -41,28 +66,32 @@ class QuadtreeChunk {
           levelDistances,
           level + 1,
           position + halfExtents,
-          halfExtents
+          halfExtents,
+          distanceShape
         ),
         // South east
         new QuadtreeChunk(
           levelDistances,
           level + 1,
           position + new Vector2(halfExtents.x, -halfExtents.y),
-          halfExtents
+          halfExtents,
+          distanceShape
         ),
         // South west
         new QuadtreeChunk(
           levelDistances,
           level + 1,
           position - halfExtents,
-          halfExtents
+          halfExtents,
+          distanceShape
         ),
         // North west
         new QuadtreeChunk(
           levelDistances,
           level + 1,
           position + new Vector2(-halfExtents.x, halfExtents.y),
-          halfExtents
+          halfExtents,
+          distanceShape
         )
       };
 
@@ -134,6 +163,7 @@ class QuadtreeChunk {
     Vector2 chunkSize,
     List<float> levelDistances,
     float viewDistance,
+    DistanceShape distanceShape = DistanceShape.Square,
     List<QuadtreeChunk> list = null,
     bool drawGizmos = false
   ) {
@@ -202,7 +232,8 @@ class QuadtreeChunk {
           levelDistances,
           0,
           position,
-          new Vector2(areaExtents, areaExtents)
+          new Vector2(areaExtents, areaExtents),
+          distanceShape
         );
         area.Build(cameraPosition, drawGizmos);
         list.Add(area);

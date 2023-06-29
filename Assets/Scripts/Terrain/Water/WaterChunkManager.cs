@@ -13,6 +13,7 @@ public class SpawnedWaterChunk {
 
 public class WaterChunkManager : MonoBehaviour {
   public float viewDistance = 100f;
+  public DistanceShape distanceShape;
   public Vector3 chunkSize = new Vector3(32f, 2f, 32f);
   public int chunkResolution = 32;
   public Material waterMaterial;
@@ -83,7 +84,9 @@ public class WaterChunkManager : MonoBehaviour {
 
     m_levelDistances = QuadtreeChunk.CalculateLevelDistances(
      chunkSize.x,
-     levelsOfDetail
+     levelsOfDetail,
+     2f,
+     2.5f
    );
 
     m_quadtreeChunks = QuadtreeChunk.CreateQuadtree(
@@ -91,6 +94,7 @@ public class WaterChunkManager : MonoBehaviour {
       chunkSize,
       m_levelDistances,
       viewDistance,
+      distanceShape,
       m_quadtreeChunks,
       drawGizmos
     );
