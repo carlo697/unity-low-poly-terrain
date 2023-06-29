@@ -159,16 +159,6 @@ public class QuadTreeTerrainManager : MonoBehaviour {
     );
   }
 
-  private List<QuadtreeChunk> GetChunksFromTrees() {
-    List<QuadtreeChunk> list = new List<QuadtreeChunk>();
-
-    for (int i = 0; i < m_quadtreeChunks.Count; i++) {
-      m_quadtreeChunks[i].GetChunksRecursively(list);
-    }
-
-    return list;
-  }
-
   private void UpdateVisibleChunkPositions(Camera camera, bool drawGizmos = false) {
     Vector3 cameraPosition = FlatY(camera.transform.position);
 
