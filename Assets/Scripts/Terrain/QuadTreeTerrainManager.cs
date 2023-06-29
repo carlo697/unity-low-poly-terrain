@@ -51,7 +51,6 @@ public class QuadTreeTerrainManager : MonoBehaviour {
   public Vector3 chunkSize = new Vector3(32f, 128f, 32f);
   public Vector3Int chunkResolution = new Vector3Int(32, 128, 32);
   public Material chunkMaterial;
-  public Material waterMaterial;
   public bool debug;
 
   private List<QuadtreeChunk> m_quadtreeChunks = new List<QuadtreeChunk>();
@@ -142,13 +141,6 @@ public class QuadTreeTerrainManager : MonoBehaviour {
       bounds.center.z - bounds.extents.z
     );
     waterObj.transform.SetParent(gameObject.transform);
-
-    // Apply water component
-    TerrainChunkWater water = waterObj.AddComponent<TerrainChunkWater>();
-    water.seaLevel = m_terrainNoise.seaLevel;
-    water.resolution = new Vector2Int(chunkResolution.x, chunkResolution.z);
-    water.size = new Vector2(bounds.size.x, bounds.size.z);
-    water.GetComponent<MeshRenderer>().sharedMaterial = waterMaterial;
   }
 
   private Vector3 FlatY(Vector3 worldPosition) {
