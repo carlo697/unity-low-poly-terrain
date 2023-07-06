@@ -1,6 +1,35 @@
 using UnityEngine;
 using System;
 
+public class TemporalChunkData {
+  public Vector3Int resolution;
+  public Vector3Int gridResolution;
+  public int gridSize;
+  public int grid2dSize;
+  public float noiseSize;
+  public float noiseMultiplier;
+  public Vector3 worldPosition;
+  public Vector3 worldSize;
+  public Vector3 inverseWorldSize;
+
+  public TemporalChunkData(TerrainNoise terrainNoise, TerrainChunk chunk) {
+    this.resolution = chunk.resolution;
+    this.gridResolution = chunk.resolution + Vector3Int.one;
+    this.gridSize = gridResolution.x * gridResolution.y * gridResolution.z;
+    this.grid2dSize = gridResolution.x * gridResolution.z;
+    this.noiseSize = chunk.noiseSize;
+    this.noiseMultiplier = 1 / (terrainNoise.noiseSize * this.noiseSize);
+
+    this.worldPosition = chunk.transform.position + chunk.noiseOffset;
+    this.worldSize = chunk.size;
+    this.inverseWorldSize = new Vector3(
+      1f / this.worldSize.x,
+      1f / this.worldSize.y,
+      1f / this.worldSize.z
+    );
+  }
+}
+
 public class TerrainNoise : ISamplerFactory {
   [Header("Size")]
   public Vector2 mapSize = Vector3.one * 16000f;
@@ -47,6 +76,70 @@ public class TerrainNoise : ISamplerFactory {
 
   private float Denormalize(float value) {
     return (value * 2f) - 1f;
+  }
+
+  private void GenerateChunkNoisePixels(
+    bool is3D,
+    TemporalChunkData chunk,
+    FastNoise noise,
+    ref float[] noisePixels,
+    int seed,
+    float frequencyMultiplier = 1f
+  ) {
+    // Variables needed to sample the point in world space
+    int gridSizeNormalizer = Mathf.RoundToInt(chunk.worldSize.x / 32f);
+
+    // Calculate offset
+    float offsetX = chunk.worldPosition.x / gridSizeNormalizer;
+    float offsetY = chunk.worldPosition.z / gridSizeNormalizer;
+
+    float noiseSize = chunk.noiseMultiplier * frequencyMultiplier;
+    float frequency = noiseSize * gridSizeNormalizer;
+
+    // Apply offset
+    FastNoise offsetNoise = new FastNoise("Domain Offset");
+    offsetNoise.Set("Source", noise);
+    if (is3D) {
+      offsetNoise.Set("OffsetX", chunk.worldPosition.z * noiseSize);
+      offsetNoise.Set("OffsetY", 0f);
+      offsetNoise.Set("OffsetZ", chunk.worldPosition.x * noiseSize);
+    } else {
+      offsetNoise.Set("OffsetX", chunk.worldPosition.x * noiseSize);
+      offsetNoise.Set("OffsetY", chunk.worldPosition.z * noiseSize);
+    }
+
+    // Apply scale
+    FastNoise scaleNoise = new FastNoise("Domain Axis Scale");
+    scaleNoise.Set("Source", offsetNoise);
+    scaleNoise.Set("ScaleX", frequency);
+    scaleNoise.Set("ScaleY", frequency);
+    scaleNoise.Set("ScaleZ", frequency);
+
+    if (is3D) {
+      noisePixels = new float[chunk.gridSize];
+      scaleNoise.GenUniformGrid3D(
+        noisePixels,
+        0,
+        0,
+        0,
+        chunk.gridResolution.x,
+        chunk.gridResolution.y,
+        chunk.gridResolution.x,
+        1f,
+        seed
+      );
+    } else {
+      noisePixels = new float[chunk.grid2dSize];
+      scaleNoise.GenUniformGrid2D(
+        noisePixels,
+        0,
+        0,
+        chunk.gridResolution.x,
+        chunk.gridResolution.z,
+        1f,
+        seed
+      );
+    }
   }
 
   public override void GetSampler(
@@ -101,15 +194,7 @@ public class TerrainNoise : ISamplerFactory {
     // cavesNoise.SetFractalType(FastNoiseLite.FractalType.FBm);
     // cavesNoise.SetFractalOctaves(2);
 
-    // Variables needed to sample the point in world space
-    float noiseMultiplier = 1 / (noiseSize * chunk.noiseSize);
-    Vector3 chunkWorldPosition = chunk.transform.position;
-    Vector3 chunkWorldSize = chunk.size;
-    Vector3 inverseChunkWorldSize = new Vector3(
-      1f / chunkWorldSize.x,
-      1f / chunkWorldSize.y,
-      1f / chunkWorldSize.z
-    );
+    TemporalChunkData chunkData = new TemporalChunkData(this, chunk);
 
     samplerFunc = (CubeGridPoint point) => {
       int gridLengthX = chunk.resolution.x + 1;
@@ -118,24 +203,9 @@ public class TerrainNoise : ISamplerFactory {
 
       // Generate the noise inside the sampler the first time it's called
       if (noiseGrid == null) {
-        int gridSizeNormalizer = Mathf.RoundToInt(chunkWorldSize.x / 32f);
-
-        int xStart = Mathf.RoundToInt(chunkWorldPosition.x / gridSizeNormalizer);
-        int yStart = 0;
-        int zStart = Mathf.RoundToInt(chunkWorldPosition.z / gridSizeNormalizer);
-
         if (useFalloff) {
           // Generate the falloff noise texture
-          falloffNoiseGrid = new float[gridLengthX * gridLengthZ];
-          falloffNoise.GenUniformGrid2D(
-            falloffNoiseGrid,
-            xStart,
-            zStart,
-            gridLengthX,
-            gridLengthZ,
-            (noiseMultiplier * gridSizeNormalizer) / falloffNoiseSize,
-            seed + 2
-          );
+          GenerateChunkNoisePixels(false, chunkData, falloffNoise, ref falloffNoiseGrid, seed + 2, 1f / falloffNoiseSize);
 
           // Generate the final falloff map
           falloffOutputGrid = new float[gridLengthX * gridLengthZ];
@@ -143,13 +213,13 @@ public class TerrainNoise : ISamplerFactory {
             for (int _x = 0; _x < gridLengthX; _x++) {
               // Transform the coordinates
               int _index2D = _y * gridLengthX + _x;
-              float localX = ((float)_x / chunk.resolution.x) * chunkWorldSize.x;
-              float localY = ((float)_y / chunk.resolution.z) * chunkWorldSize.z;
+              float localX = ((float)_x / chunk.resolution.x) * chunkData.worldSize.x;
+              float localY = ((float)_y / chunk.resolution.z) * chunkData.worldSize.z;
 
               // Clamped coordinates for creating the falloff map
-              float posX = ((chunkWorldPosition.x + localX) / mapSize.x) * 0.5f;
+              float posX = ((chunkData.worldPosition.x + localX) / mapSize.x) * 0.5f;
               posX = Mathf.Clamp01(Math.Abs(posX));
-              float posY = ((chunkWorldPosition.z + localY) / mapSize.y) * 0.5f;
+              float posY = ((chunkData.worldPosition.z + localY) / mapSize.y) * 0.5f;
               posY = Mathf.Clamp01(Math.Abs(posY));
 
               // Create the falloff map
@@ -172,18 +242,7 @@ public class TerrainNoise : ISamplerFactory {
         }
 
         // Generate the base terrain noise
-        noiseGrid = new float[gridLengthX * gridLengthY * gridLengthZ];
-        noise.GenUniformGrid3D(
-          noiseGrid,
-          zStart,
-          yStart,
-          xStart,
-          gridLengthX,
-          gridLengthY,
-          gridLengthZ,
-          noiseMultiplier * gridSizeNormalizer,
-          seed
-        );
+        GenerateChunkNoisePixels(true, chunkData, noise, ref noiseGrid, seed);
       }
 
       // Coordinates to sample the point in world space
@@ -201,7 +260,7 @@ public class TerrainNoise : ISamplerFactory {
 
       // Start sampling
       float output = 0;
-      float heightGradient = point.position.y * inverseChunkWorldSize.y;
+      float heightGradient = point.position.y * chunkData.inverseWorldSize.y;
 
       if (useFalloff) {
         // Sample the falloff map
@@ -267,7 +326,7 @@ public class TerrainNoise : ISamplerFactory {
               int index2D = z * grid.gridSize.x + x;
               point.color = Color.Lerp(Color.black, Color.white, debugFalloff[index2D]);
             } else {
-              float normalizedHeight = point.position.y / chunkWorldSize.y;
+              float normalizedHeight = point.position.y / chunkData.worldSize.y;
 
               if (normalizedHeight >= snowHeight) {
                 point.color = snowColor;
