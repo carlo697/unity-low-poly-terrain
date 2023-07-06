@@ -19,6 +19,22 @@ public struct CubeGridPoint {
     this.color = new Color();
   }
 
+  public Vector3Int GetCoords(TemporalChunkData chunk) {
+    int x = index / (chunk.gridSize.y * chunk.gridSize.x);
+    int y = (index / chunk.gridSize.x) % chunk.gridSize.y;
+    int z = index % chunk.gridSize.x;
+
+    return new Vector3Int(x, y, z);
+  }
+
+  public int Get2dIndex(TemporalChunkData chunk) {
+    int x = index / (chunk.gridSize.y * chunk.gridSize.x);
+    int z = index % chunk.gridSize.x;
+    int index2D = z * chunk.gridSize.x + x;
+
+    return index2D;
+  }
+
   public override string ToString() {
     return string.Format(
       "pos: {0}, value: {1}",
