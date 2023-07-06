@@ -187,7 +187,13 @@ public class CubeGrid {
 
     stepTimer.Stop();
     if (debug)
-      Debug.Log(string.Format("Grid: {0} ms", stepTimer.ElapsedMilliseconds));
+      Debug.Log(
+        string.Format(
+          "Grid: {0} ms, resolution: {1}",
+          stepTimer.ElapsedMilliseconds,
+          resolution
+        )
+      );
 
     stepTimer.Restart();
 
@@ -204,7 +210,13 @@ public class CubeGrid {
 
     stepTimer.Stop();
     if (debug)
-      Debug.Log(string.Format("Marching: {0} ms", stepTimer.ElapsedMilliseconds));
+      Debug.Log(
+        string.Format(
+          "Marching: {0} ms, resolution: {1}",
+          stepTimer.ElapsedMilliseconds,
+          resolution
+        )
+      );
 
     stepTimer.Restart();
 
