@@ -19,7 +19,7 @@ public struct CubeGridPoint {
     this.color = new Color();
   }
 
-  public Vector3Int GetCoords(TemporalChunkData chunk) {
+  public Vector3Int GetCoords(TerrainChunk chunk) {
     int x = index / (chunk.gridSize.y * chunk.gridSize.x);
     int y = (index / chunk.gridSize.x) % chunk.gridSize.y;
     int z = index % chunk.gridSize.x;
@@ -27,7 +27,7 @@ public struct CubeGridPoint {
     return new Vector3Int(x, y, z);
   }
 
-  public int Get2dIndex(TemporalChunkData chunk) {
+  public int Get2dIndex(TerrainChunk chunk) {
     int x = index / (chunk.gridSize.y * chunk.gridSize.x);
     int z = index % chunk.gridSize.x;
     int index2D = z * chunk.gridSize.x + x;

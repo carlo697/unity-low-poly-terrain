@@ -13,6 +13,18 @@ public class TerrainChunk : MonoBehaviour {
   public ISamplerFactory samplerFactory;
   public bool debug;
 
+  public Vector3Int gridSize { get { return m_gridSize; } }
+  private Vector3Int m_gridSize;
+
+  public Vector3 inverseSize { get { return m_inverseSize; } }
+  private Vector3 m_inverseSize;
+
+  public Vector3 position { get { return m_position; } }
+  private Vector3 m_position;
+
+  public Vector3 noisePosition { get { return m_noisePosition; } }
+  private Vector3 m_noisePosition;
+
   public float threshold = 0f;
   public bool useMiddlePoint = false;
 
@@ -53,11 +65,21 @@ public class TerrainChunk : MonoBehaviour {
   }
 
   void Start() {
+    UpdateCachedFields();
     GenerateIfNeeded();
+  }
+
+  public void UpdateCachedFields() {
+    m_gridSize = new Vector3Int(resolution.x + 1, resolution.y + 1, resolution.z + 1);
+    m_inverseSize = new Vector3(1f / size.x, 1f / size.y, 1f / size.z);
+    m_position = transform.position;
+    m_noisePosition = position + noiseOffset;
   }
 
   [ContextMenu("InstantRegenerate")]
   public void ScheduleRegeneration() {
+    UpdateCachedFields();
+
     if (m_handle.HasValue) {
       if (debug)
         Debug.Log("There was already a handle running");
