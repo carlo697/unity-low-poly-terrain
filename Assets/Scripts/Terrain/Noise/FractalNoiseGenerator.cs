@@ -15,7 +15,7 @@ public class FractalNoiseGenerator : TerrainNoiseGenerator {
     noise.Set("Gain", gain);
     noise.Set("Lacunarity", lacunarity);
     noise.Set("Octaves", octaves);
-    return TerrainNoise.GenerateFastNoiseForChunk(
+    return TerrainShape.GenerateFastNoiseForChunk(
       is3d,
       chunk,
       noise,

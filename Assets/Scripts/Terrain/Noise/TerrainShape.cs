@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 
-public class TerrainNoise : ISamplerFactory {
+public class TerrainShape : ISamplerFactory {
   [Header("Size")]
   public Vector2 mapSize = Vector3.one * 16000f;
 
@@ -235,7 +235,7 @@ public class TerrainNoise : ISamplerFactory {
     if (updateChunksInEditor) {
       TerrainChunk[] chunks = GameObject.FindObjectsOfType<TerrainChunk>();
       foreach (var chunk in chunks) {
-        if (chunk.terrainNoise == this) {
+        if (chunk.terrainShape == this) {
           chunk.GenerateOnEditor();
         }
       }

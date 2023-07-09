@@ -73,7 +73,7 @@ public class QuadTreeTerrainManager : MonoBehaviour {
 
   private Vector3 m_lastCameraPosition;
 
-  [SerializeField] private TerrainNoise m_terrainNoise;
+  [SerializeField] private TerrainShape m_terrainShape;
 
   public DistanceShape distanceShape;
   public int levelsOfDetail = 8;
@@ -85,8 +85,8 @@ public class QuadTreeTerrainManager : MonoBehaviour {
   [SerializeField] private int m_debugChunkCount;
 
   private void Awake() {
-    if (!m_terrainNoise) {
-      m_terrainNoise = GetComponent<TerrainNoise>();
+    if (!m_terrainShape) {
+      m_terrainShape = GetComponent<TerrainShape>();
     }
   }
 
@@ -97,7 +97,7 @@ public class QuadTreeTerrainManager : MonoBehaviour {
     ));
 
     // Set position and parent
-    float seaLevel = m_terrainNoise.seaLevel * chunkSize.y;
+    float seaLevel = m_terrainShape.seaLevel * chunkSize.y;
     gameObject.transform.position = new Vector3(
       bounds.center.x - bounds.extents.x,
       -seaLevel,
@@ -125,7 +125,7 @@ public class QuadTreeTerrainManager : MonoBehaviour {
     // Set variables
     chunk.drawGizmos = false;
     chunk.debug = debug;
-    chunk.terrainNoise = m_terrainNoise;
+    chunk.terrainShape = m_terrainShape;
     chunk.size = bounds.size;
     chunk.resolution = new Vector3Int(
       chunkResolution.x,

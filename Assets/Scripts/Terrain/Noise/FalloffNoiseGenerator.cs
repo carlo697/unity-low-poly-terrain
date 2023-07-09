@@ -29,7 +29,7 @@ public class FalloffNoiseGenerator {
     float[] falloffNoiseGrid = null;
 
     // Generate the falloff noise texture
-    falloffNoiseGrid = TerrainNoise.GenerateFastNoiseForChunk(
+    falloffNoiseGrid = TerrainShape.GenerateFastNoiseForChunk(
       false,
       chunk,
       falloffNoise,
@@ -47,9 +47,9 @@ public class FalloffNoiseGenerator {
         float localY = ((float)_y / chunk.resolution.z) * chunk.size.z;
 
         // Clamped coordinates for creating the falloff map
-        float posX = ((chunk.noisePosition.x + localX) / chunk.terrainNoise.mapSize.x) * 0.5f;
+        float posX = ((chunk.noisePosition.x + localX) / chunk.terrainShape.mapSize.x) * 0.5f;
         posX = Mathf.Clamp01(Math.Abs(posX));
-        float posY = ((chunk.noisePosition.z + localY) / chunk.terrainNoise.mapSize.y) * 0.5f;
+        float posY = ((chunk.noisePosition.z + localY) / chunk.terrainShape.mapSize.y) * 0.5f;
         posY = Mathf.Clamp01(Math.Abs(posY));
 
         // Create the falloff map
@@ -57,7 +57,7 @@ public class FalloffNoiseGenerator {
         float curvedFalloff = 1f - falloffGradientCurve.Evaluate(falloff);
 
         // Sample and normalize the noise
-        float falloffNoiseSample = TerrainNoise.Normalize(falloffNoiseGrid[_index2D]);
+        float falloffNoiseSample = TerrainShape.Normalize(falloffNoiseGrid[_index2D]);
 
         // Combine the falloff map and the noise
         float finalFalloff = falloffNoiseSample * curvedFalloff;

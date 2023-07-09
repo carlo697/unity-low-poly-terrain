@@ -33,14 +33,14 @@ public class WaterChunkManager : MonoBehaviour {
 
   public bool drawGizmos = true;
 
-  [SerializeField] private TerrainNoise m_terrainNoise;
+  [SerializeField] private TerrainShape m_terrainShape;
 
   public int levelsOfDetail = 8;
   private List<float> m_levelDistances;
 
   private void Awake() {
-    if (!m_terrainNoise) {
-      m_terrainNoise = GetComponent<TerrainNoise>();
+    if (!m_terrainShape) {
+      m_terrainShape = GetComponent<TerrainShape>();
     }
   }
 
@@ -60,7 +60,7 @@ public class WaterChunkManager : MonoBehaviour {
 
     // Apply water component
     TerrainChunkWater water = waterObj.AddComponent<TerrainChunkWater>();
-    water.seaLevel = m_terrainNoise.seaLevel;
+    water.seaLevel = m_terrainShape.seaLevel;
     water.resolution = new Vector2Int(chunkResolution, chunkResolution);
     water.size = new Vector2(bounds.size.x, bounds.size.z);
     water.GetComponent<MeshRenderer>().sharedMaterial = waterMaterial;

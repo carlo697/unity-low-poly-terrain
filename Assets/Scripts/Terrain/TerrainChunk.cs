@@ -10,7 +10,7 @@ public class TerrainChunk : MonoBehaviour {
   public Vector3 size = Vector3.one * 10;
   public float noiseSize = 1f;
   public Vector3 noiseOffset = Vector3.zero;
-  public TerrainNoise terrainNoise;
+  public TerrainShape terrainShape;
   public bool debug;
 
   public Vector3Int gridSize { get { return m_gridSize; } }
@@ -89,8 +89,8 @@ public class TerrainChunk : MonoBehaviour {
     // Create the delegates for sampling the noise
     CubeGridSamplerFunc samplerFunc;
     CubeGridPostProcessingFunc postProcessingFunc;
-    if (terrainNoise != null) {
-      terrainNoise.GetSampler(this, out samplerFunc, out postProcessingFunc);
+    if (terrainShape != null) {
+      terrainShape.GetSampler(this, out samplerFunc, out postProcessingFunc);
     } else {
       throw new Exception("No sampler found");
     }
