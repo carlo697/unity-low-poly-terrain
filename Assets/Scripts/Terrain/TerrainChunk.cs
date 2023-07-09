@@ -35,7 +35,7 @@ public class TerrainChunk : MonoBehaviour {
   public bool isGenerating { get; private set; } = false;
   public bool hasEverBeenGenerated { get; private set; } = false;
 
-  [SerializeField] private bool m_generateFlag;
+  private bool m_generateFlag;
   private bool m_destroyFlag;
 
   public MeshFilter meshFilter { get { return m_meshFilter; } }
