@@ -125,7 +125,7 @@ public class QuadTreeTerrainManager : MonoBehaviour {
     // Set variables
     chunk.drawGizmos = false;
     chunk.debug = debug;
-    chunk.samplerFactory = m_terrainNoise;
+    chunk.terrainNoise = m_terrainNoise;
     chunk.size = bounds.size;
     chunk.resolution = new Vector3Int(
       chunkResolution.x,
