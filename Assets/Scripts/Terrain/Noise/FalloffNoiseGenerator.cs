@@ -9,8 +9,6 @@ public class FalloffNoiseGenerator {
   public float lacunarity = 2f;
   public int octaves = 9;
 
-  public float seaBorderBeforeThreshold = 0.05f;
-  public float seaBorderAfterThreshold = 0.1f;
   public float landGap = 0.15f;
   public AnimationCurve falloffGradientCurve = AnimationCurve.Linear(-1f, -1f, 1f, 1f);
   public AnimationCurve falloffOutputCurve = AnimationCurve.Linear(0f, 0f, 1f, 1f);
