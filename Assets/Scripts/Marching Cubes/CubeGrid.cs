@@ -17,9 +17,11 @@ public class CubeGrid {
   public bool useMiddlePoint;
 
   public Vector3Int gridSize { get { return m_sizes; } }
+  public Vector3 resolutionSizeRatio { get { return m_resolutionSizeRatio; } }
   public CubeGridPoint[] gridPoints { get { return m_points; } }
 
   private Vector3Int m_sizes;
+  private Vector3 m_resolutionSizeRatio;
   private CubeGridPoint[] m_points;
 
   public CubeGrid(
@@ -71,9 +73,51 @@ public class CubeGrid {
     return z + y * (m_sizes.z) + x * (m_sizes.z) * (m_sizes.y);
   }
 
+  public Vector3 GetPointNormalApproximation(int x, int y, int z) {
+    CubeGridPoint point = GetPoint(x, y, z);
+
+    // Approximate normals
+    float sumX = 0;
+    float sumY = 0;
+    float sumZ = 0;
+
+    // Left
+    if (x > 0)
+      sumX += -1f * (point.value - GetPoint(x - 1, y, z).value) * resolutionSizeRatio.x;
+
+    // Right
+    if (x < gridSize.x - 1)
+      sumX += (point.value - GetPoint(x + 1, y, z).value) * resolutionSizeRatio.x;
+
+    // Down
+    if (y > 0)
+      sumY += -1f * (point.value - GetPoint(x, y - 1, z).value) * resolutionSizeRatio.y;
+
+    // Up
+    if (y < gridSize.y - 1)
+      sumY += (point.value - GetPoint(x, y + 1, z).value) * resolutionSizeRatio.y;
+
+    // Back
+    if (z > 0)
+      sumZ = -1f * (point.value - GetPoint(x, y, z - 1).value) * resolutionSizeRatio.z;
+
+    // Forward
+    if (z < gridSize.z - 1)
+      sumZ += (point.value - GetPoint(x, y, z + 1).value) * resolutionSizeRatio.z;
+
+    return new Vector3(-sumX, -sumY, -sumZ).normalized;
+  }
+
   private void InitializeGrid() {
     // Calculations needed to create the grid array
     m_sizes = new Vector3Int(resolution.x + 1, resolution.y + 1, resolution.z + 1);
+
+    // This value can be useful when the size of the chunk is different from the resolution 
+    m_resolutionSizeRatio = new Vector3(
+      resolution.x / size.x,
+      resolution.y / size.y,
+      resolution.z / size.z
+    );
 
     // Initialize the grid with points (all of them will start with a value = 0)
     m_points = new CubeGridPoint[m_sizes.x * m_sizes.y * m_sizes.z];

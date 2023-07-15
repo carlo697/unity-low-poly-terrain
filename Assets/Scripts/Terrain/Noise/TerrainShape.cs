@@ -16,6 +16,7 @@ public class TerrainShape : ISamplerFactory {
   public Color dirtColor = Color.yellow;
   public Color sandColor = Color.yellow;
   public Color darkSandColor = Color.Lerp(Color.yellow, Color.black, 0.5f);
+  public Color rockColor = new Color(0.5f, 0.5f, 0.5f);
 
   [Header("Heights")]
   public float seaLevel = 0.5f;
@@ -207,13 +208,18 @@ public class TerrainShape : ISamplerFactory {
             int index = grid.GetIndexFromCoords(x, y, z);
             CubeGridPoint point = grid.gridPoints[index];
 
+            // Approximate normals
+            Vector3 normal = grid.GetPointNormalApproximation(x, y, z);
+
             if (useFalloff && useFalloffAsColor) {
               int index2D = z * grid.gridSize.x + x;
               point.color = Color.Lerp(Color.black, Color.white, debugFalloff[index2D]);
             } else {
               float normalizedHeight = point.position.y / chunk.size.y;
 
-              if (normalizedHeight >= snowHeight) {
+              if (normal.y <= 0.85f) {
+                point.color = rockColor;
+              } else if (normalizedHeight >= snowHeight) {
                 point.color = snowColor;
               } else if (normalizedHeight <= sandHeight) {
                 float t = Mathf.InverseLerp(0f, sandHeight, normalizedHeight);
