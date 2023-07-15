@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using Unity.Collections;
+using System.Runtime.CompilerServices;
 
 public delegate CubeGridPoint CubeGridSamplerFunc(CubeGridPoint point);
 public delegate void CubeGridPostProcessingFunc(CubeGrid grid);
@@ -37,15 +38,18 @@ public class CubeGrid {
     this.useMiddlePoint = useMiddlePoint;
   }
 
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]
   public CubeGridPoint GetPoint(int index) {
     return m_points[index];
   }
 
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]
   public CubeGridPoint GetPoint(int x, int y, int z) {
     int index = GetIndexFromCoords(x, y, z);
     return m_points[index];
   }
 
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]
   public Vector3 GetPointPosition(int x, int y, int z) {
     return new Vector3(
       ((float)x / ((float)resolution.x)) * size.x,
@@ -54,6 +58,7 @@ public class CubeGrid {
     );
   }
 
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]
   public Vector3Int GetCoordsFromIndex(int index) {
     int z = index % m_sizes.x;
     int y = (index / m_sizes.x) % m_sizes.y;
@@ -61,8 +66,9 @@ public class CubeGrid {
     return new Vector3Int(x, y, z);
   }
 
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]
   public int GetIndexFromCoords(int x, int y, int z) {
-    return z + y * (resolution.z + 1) + x * (resolution.z + 1) * (resolution.y + 1);
+    return z + y * (m_sizes.z) + x * (m_sizes.z) * (m_sizes.y);
   }
 
   private void InitializeGrid() {
