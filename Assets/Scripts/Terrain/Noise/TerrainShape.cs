@@ -39,6 +39,7 @@ public class TerrainShape : ISamplerFactory {
   public FalloffNoiseGenerator falloffNoise = new FalloffNoiseGenerator();
 
   [Header("Debug")]
+  public bool useNormalsAsColor;
   public bool useFalloffAsColor;
 
   public static float Normalize(float value) {
@@ -211,7 +212,9 @@ public class TerrainShape : ISamplerFactory {
             // Approximate normals
             Vector3 normal = grid.GetPointNormalApproximation(x, y, z);
 
-            if (useFalloff && useFalloffAsColor) {
+            if (useNormalsAsColor) {
+              point.color = new Color(normal.x, normal.y, normal.z);
+            } else if (useFalloff && useFalloffAsColor) {
               int index2D = z * grid.gridSize.x + x;
               point.color = Color.Lerp(Color.black, Color.white, debugFalloff[index2D]);
             } else {
