@@ -208,6 +208,7 @@ public class TerrainShape : ISamplerFactory {
           for (int x = 0; x < grid.gridSize.x; x++) {
             int index = grid.GetIndexFromCoords(x, y, z);
             CubeGridPoint point = grid.gridPoints[index];
+            point.roughness = 0.1f;
 
             // Approximate normals
             Vector3 normal = grid.GetPointNormalApproximation(x, y, z);
@@ -221,13 +222,20 @@ public class TerrainShape : ISamplerFactory {
               float normalizedHeight = point.position.y / chunk.size.y;
 
               if (normal.y <= 0.85f) {
+                // Rock
                 point.color = rockColor;
+                point.roughness = 0.5f;
               } else if (normalizedHeight >= snowHeight) {
+                // Snow
                 point.color = snowColor;
+                point.roughness = 0.05f;
               } else if (normalizedHeight <= sandHeight) {
+                // Beach Sand
                 float t = Mathf.InverseLerp(0f, sandHeight, normalizedHeight);
                 point.color = Color.Lerp(darkSandColor, sandColor, t);
+                point.roughness = 0.05f;
               } else {
+                // Grass
                 float t = Mathf.InverseLerp(sandHeight, snowHeight, normalizedHeight);
                 point.color = Color.Lerp(grassColor, darkGrassColor, t);
               }

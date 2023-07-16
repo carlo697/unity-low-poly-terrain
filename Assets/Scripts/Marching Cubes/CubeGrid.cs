@@ -24,6 +24,21 @@ public class CubeGrid {
   private Vector3 m_resolutionSizeRatio;
   private CubeGridPoint[] m_points;
 
+  public static readonly Vector3[] roughnessVectors;
+
+  static CubeGrid() {
+    System.Random random = new System.Random(7091999);
+
+    roughnessVectors = new Vector3[1000];
+    for (int i = 0; i < roughnessVectors.Length; i++) {
+      roughnessVectors[i] = new Vector3(
+        ((float)random.NextDouble() * 2f - 1f),
+        0f,
+        ((float)random.NextDouble() * 2f - 1f)
+      ).normalized;
+    }
+  }
+
   public CubeGrid(
     CubeGridSamplerFunc samplerFunc,
     CubeGridPostProcessingFunc postProcessingFunc,
@@ -127,8 +142,16 @@ public class CubeGrid {
           // Get 1D index from the coords
           int index = GetIndexFromCoords(x, y, z);
 
-          // Get the position of the point and set it
+          // Get the position of the point
           Vector3 pointPosition = GetPointPosition(x, y, z);
+
+          // // Apply a random position to get a rougher mesh
+          // if (x > 0 && x < m_sizes.x - 1 && y > 0 && y < m_sizes.y - 1 && z > 0 && z < m_sizes.z - 1) {
+          //   int randomVectorIndex = index % RandomVectors.vectors.Length;
+          //   pointPosition += RandomVectors.vectors[randomVectorIndex] * m_roughness;
+          // }
+
+          // Create the point and store it
           m_points[index] = samplerFunc(new CubeGridPoint(
             index,
             pointPosition,
@@ -166,27 +189,22 @@ public class CubeGrid {
     if (caseIndex == 0 || caseIndex == 0xFF)
       return;
 
+    Vector3Int coords = new Vector3Int(x, y, z);
+
     if (useMiddlePoint) {
       // Use the found case to add the vertices and triangles
       for (int i = 0; i <= 16; i++) {
         int edgeIndex = MarchingCubesConsts.cases[caseIndex, i];
         if (edgeIndex == -1) return;
 
-        Vector3Int coordsA = MarchingCubesConsts.edgeVerticesIndexes[edgeIndex, 0];
-        int indexA = GetIndexFromCoords(
-          x + coordsA.x,
-          y + coordsA.y,
-          z + coordsA.z
-        );
+        Vector3Int coordsA = coords + MarchingCubesConsts.edgeVerticesIndexes[edgeIndex, 0];
+        int indexA = GetIndexFromCoords(coordsA.x, coordsA.y, coordsA.z);
         Vector3 positionA = m_points[indexA].position;
 
-        Vector3Int coordsB = MarchingCubesConsts.edgeVerticesIndexes[edgeIndex, 1];
-        int indexB = GetIndexFromCoords(
-          x + coordsB.x,
-          y + coordsB.y,
-          z + coordsB.z
-        );
+        Vector3Int coordsB = coords + MarchingCubesConsts.edgeVerticesIndexes[edgeIndex, 1];
+        int indexB = GetIndexFromCoords(coordsB.x, coordsB.y, coordsB.z);
         Vector3 positionB = m_points[indexB].position;
+
         Vector3 middlePoint = (positionA + positionB) / 2;
 
         vertices.Add(middlePoint);
@@ -196,23 +214,29 @@ public class CubeGrid {
         int edgeIndex = MarchingCubesConsts.cases[caseIndex, i];
         if (edgeIndex == -1) return;
 
-        Vector3Int coordsA = MarchingCubesConsts.edgeVerticesIndexes[edgeIndex, 0];
-        int indexA = GetIndexFromCoords(
-          x + coordsA.x,
-          y + coordsA.y,
-          z + coordsA.z
-        );
+        Vector3Int coordsA = coords + MarchingCubesConsts.edgeVerticesIndexes[edgeIndex, 0];
+        int indexA = GetIndexFromCoords(coordsA.x, coordsA.y, coordsA.z);
         float sampleA = m_points[indexA].value;
         Vector3 positionA = m_points[indexA].position;
 
-        Vector3Int coordsB = MarchingCubesConsts.edgeVerticesIndexes[edgeIndex, 1];
-        int indexB = GetIndexFromCoords(
-          x + coordsB.x,
-          y + coordsB.y,
-          z + coordsB.z
-        );
+        Vector3Int coordsB = coords + MarchingCubesConsts.edgeVerticesIndexes[edgeIndex, 1];
+        int indexB = GetIndexFromCoords(coordsB.x, coordsB.y, coordsB.z);
         float sampleB = m_points[indexB].value;
         Vector3 positionB = m_points[indexB].position;
+
+        // Apply a random position to get a rougher mesh
+        if (coordsA.x > 0 && coordsA.x < m_sizes.x - 1
+          && coordsA.y > 0 && coordsA.y < m_sizes.y - 1
+          && coordsA.z > 0 && coordsA.z < m_sizes.z - 1
+        ) {
+          positionA += roughnessVectors[indexA % roughnessVectors.Length] * m_points[indexA].roughness;
+        }
+        if (coordsB.x > 0 && coordsB.x < m_sizes.x - 1
+          && coordsB.y > 0 && coordsB.y < m_sizes.y - 1
+          && coordsB.z > 0 && coordsB.z < m_sizes.z - 1
+        ) {
+          positionB += roughnessVectors[indexB % roughnessVectors.Length] * m_points[indexB].roughness;
+        }
 
         // Calculate the difference and interpolate
         float interpolant = (threshold - sampleA) / (sampleB - sampleA);

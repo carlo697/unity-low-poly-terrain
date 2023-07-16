@@ -6,6 +6,7 @@ public struct CubeGridPoint {
   public float value;
   // public byte material;
   public Color color;
+  public float roughness;
 
   public CubeGridPoint(
     int index,
@@ -17,6 +18,7 @@ public struct CubeGridPoint {
     this.value = value;
     // this.material = 0;
     this.color = new Color();
+    this.roughness = 0;
   }
 
   public Vector3Int GetCoords(TerrainChunk chunk) {
