@@ -64,9 +64,19 @@ public class TerrainShape : ISamplerFactory {
   };
 
   [Header("Debug")]
-  public bool useNormalsAsColor;
-  public bool useFalloffAsColor;
-  public bool usePlateauMaskAsColor;
+  public DebugMode debugMode = DebugMode.None;
+
+  public enum DebugMode {
+    None,
+    Value,
+    Normals,
+    Slope,
+    Falloff,
+    PlateauMask,
+    PlateauShape,
+    PlateauShapeAndMask,
+    PlateauGround,
+  }
 
   public static float Normalize(float value) {
     return ((value + 1f) / 2f);
@@ -169,7 +179,7 @@ public class TerrainShape : ISamplerFactory {
         if (useFalloff) {
           falloffPixels = falloffNoise.GenerateNoise(chunk, noiseFrequency, terrainSeed);
 
-          if (useFalloffAsColor) {
+          if (debugMode == DebugMode.Falloff) {
             debugFalloff = new float[chunk.gridSize.x * chunk.gridSize.z];
           }
         }
@@ -195,11 +205,7 @@ public class TerrainShape : ISamplerFactory {
 
       // Overall shape of Plateaus
       float plateauMaskNoise = Normalize(plateauMaskPixels[index2D]);
-      float plateauShapeNoise = Mathf.LerpUnclamped(
-        0f,
-        Normalize(plateauShapePixels[index2D]),
-        plateauMaskNoise
-      );
+      float plateauShapeNoise = Normalize(plateauShapePixels[index2D]) * plateauMaskNoise;
 
       // The height of the terrain on top of plateaus
       float plateauGroundNoise = Normalize(plateauGroundPixels[index2D]);
@@ -227,7 +233,7 @@ public class TerrainShape : ISamplerFactory {
         float heightAboveSeaLevel = heightGradient - seaLevel - (terrainHeight * (1f - seaLevel));
         output = Mathf.Lerp(heightBelowSeaLevel, heightAboveSeaLevel, landGradient);
 
-        if (useFalloffAsColor) {
+        if (debugMode == DebugMode.Falloff) {
           debugFalloff[index2D] = 1f - output;
         }
 
@@ -260,12 +266,25 @@ public class TerrainShape : ISamplerFactory {
             // Approximate normals
             Vector3 normal = grid.GetPointNormalApproximation(x, y, z);
 
-            if (useNormalsAsColor) {
+            if (debugMode == DebugMode.Value) {
+              point.color = Color.Lerp(Color.black, Color.white, point.value * 100f);
+            } else if (debugMode == DebugMode.Normals) {
               point.color = new Color(normal.x, normal.y, normal.z);
-            } else if (useFalloff && useFalloffAsColor) {
+            } else if (debugMode == DebugMode.Slope) {
+              point.color = Color.Lerp(Color.black, Color.white, normal.y);
+            } else if (useFalloff && debugMode == DebugMode.Falloff) {
               point.color = Color.Lerp(Color.black, Color.white, debugFalloff[index2D]);
-            } else if (usePlateauMaskAsColor) {
+            } else if (debugMode == DebugMode.PlateauMask) {
               point.color = Color.Lerp(Color.black, Color.white, plateauMaskPixels[index2D]);
+            } else if (debugMode == DebugMode.PlateauShape) {
+              point.color = Color.Lerp(Color.black, Color.white, plateauShapePixels[index2D]);
+            } else if (debugMode == DebugMode.PlateauShapeAndMask) {
+              float plateauMaskNoise = Normalize(plateauMaskPixels[index2D]);
+              float plateauShapeNoise = Normalize(plateauShapePixels[index2D]) * plateauMaskNoise;
+
+              point.color = Color.Lerp(Color.black, Color.white, plateauShapeNoise);
+            } else if (debugMode == DebugMode.PlateauGround) {
+              point.color = Color.Lerp(Color.black, Color.white, plateauGroundPixels[index2D]);
             } else {
               float normalizedHeight = point.position.y / chunk.size.y;
 
