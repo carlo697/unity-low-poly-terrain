@@ -6,6 +6,7 @@ public class FractalNoiseGenerator : TerrainNoiseGenerator {
   public bool is3d = false;
   public int seed = 0;
   public float scale = 1f;
+  public float amplitude = 1f;
   public NoiseType noiseType = NoiseType.Simplex;
   public float gain = 0.5f;
   public float lacunarity = 2f;
@@ -34,6 +35,13 @@ public class FractalNoiseGenerator : TerrainNoiseGenerator {
     noise.Set("Gain", gain);
     noise.Set("Lacunarity", lacunarity);
     noise.Set("Octaves", octaves);
+
+    if (amplitude != 1f) {
+      FastNoise multiply = new FastNoise("Multiply");
+      multiply.Set("LHS", noise);
+      multiply.Set("RHS", amplitude);
+      noise = multiply;
+    }
 
     float[] pixels = TerrainShape.GenerateFastNoiseForChunk(
       is3d,
