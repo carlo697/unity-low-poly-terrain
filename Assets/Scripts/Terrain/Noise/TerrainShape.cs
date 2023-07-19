@@ -38,9 +38,35 @@ public class TerrainShape : ISamplerFactory {
   public bool useFalloff;
   public FalloffNoiseGenerator falloffNoise = new FalloffNoiseGenerator();
 
+  [Header("Plateaus")]
+  public FractalNoiseGenerator plateauMask = new FractalNoiseGenerator {
+    is3d = false,
+    seed = 20,
+    scale = 1f,
+    noiseType = FractalNoiseGenerator.NoiseType.OpenSimplex2S,
+    octaves = 2,
+    useCurve = true
+  };
+  public FractalNoiseGenerator plateauShape = new FractalNoiseGenerator {
+    is3d = false,
+    seed = 22,
+    scale = 0.15f,
+    noiseType = FractalNoiseGenerator.NoiseType.OpenSimplex2S,
+    octaves = 5,
+    useCurve = true
+  };
+  public FractalNoiseGenerator plateauGround = new FractalNoiseGenerator {
+    is3d = false,
+    seed = 24,
+    scale = 2.5f,
+    noiseType = FractalNoiseGenerator.NoiseType.OpenSimplex2S,
+    octaves = 4
+  };
+
   [Header("Debug")]
   public bool useNormalsAsColor;
   public bool useFalloffAsColor;
+  public bool usePlateauMaskAsColor;
 
   public static float Normalize(float value) {
     return ((value + 1f) / 2f);
@@ -127,6 +153,9 @@ public class TerrainShape : ISamplerFactory {
     // Pixels of noises
     float[] baseTerrainPixels = null;
     float[] falloffPixels = null;
+    float[] plateauMaskPixels = null;
+    float[] plateauShapePixels = null;
+    float[] plateauGroundPixels = null;
 
     // Debug pixels
     float[] debugFalloff = null;
@@ -134,13 +163,11 @@ public class TerrainShape : ISamplerFactory {
     samplerFunc = (CubeGridPoint point) => {
       // Generate the noise inside the sampler the first time it's called
       if (baseTerrainPixels == null) {
+        float noiseFrequency = 1f / noiseScale;
+
         // Generate the falloff map
         if (useFalloff) {
-          falloffPixels = falloffNoise.GenerateNoise(
-            chunk,
-            (1f / noiseScale),
-            terrainSeed
-          );
+          falloffPixels = falloffNoise.GenerateNoise(chunk, noiseFrequency, terrainSeed);
 
           if (useFalloffAsColor) {
             debugFalloff = new float[chunk.gridSize.x * chunk.gridSize.z];
@@ -148,11 +175,12 @@ public class TerrainShape : ISamplerFactory {
         }
 
         // Generate the base terrain noise
-        baseTerrainPixels = baseNoise.GenerateNoise(
-          chunk,
-          (1f / noiseScale),
-          terrainSeed
-        );
+        baseTerrainPixels = baseNoise.GenerateNoise(chunk, noiseFrequency, terrainSeed);
+
+        // Generate the noises for plateous
+        plateauMaskPixels = plateauMask.GenerateNoise(chunk, noiseFrequency, terrainSeed);
+        plateauGroundPixels = plateauGround.GenerateNoise(chunk, noiseFrequency, terrainSeed);
+        plateauShapePixels = plateauShape.GenerateNoise(chunk, noiseFrequency, terrainSeed);
       }
 
       // Coords for 2d maps
@@ -161,6 +189,25 @@ public class TerrainShape : ISamplerFactory {
       // Start sampling
       float output = 0;
       float heightGradient = point.position.y * chunk.inverseSize.y;
+
+      // Land output
+      float terrainHeight = Normalize(baseTerrainPixels[point.index]);
+
+      // Overall shape of Plateaus
+      float plateauMaskNoise = Normalize(plateauMaskPixels[index2D]);
+      float plateauShapeNoise = Mathf.LerpUnclamped(
+        0f,
+        Normalize(plateauShapePixels[index2D]),
+        plateauMaskNoise
+      );
+
+      // The height of the terrain on top of plateaus
+      float plateauGroundNoise = Normalize(plateauGroundPixels[index2D]);
+      float plateauHeight = Mathf.LerpUnclamped(terrainHeight, plateauGroundNoise, 0.25f);
+
+      // Use plateauHeight only if it's taller than terrainHeight
+      if (terrainHeight <= plateauHeight)
+        terrainHeight = Mathf.LerpUnclamped(terrainHeight, plateauHeight, plateauShapeNoise);
 
       if (useFalloff) {
         // Sample the falloff map
@@ -175,10 +222,9 @@ public class TerrainShape : ISamplerFactory {
           landGradient = Mathf.SmoothStep(0f, 1f, (finalFalloff - start) / (falloffNoise.landGap));
         }
 
-        // Use the land gredient to combine the base terrain noise with the falloff map
+        // Use the land gradient to combine the base terrain noise with the falloff map
         float heightBelowSeaLevel = heightGradient - finalFalloff;
-        float heightAboveSeaLevel =
-          heightGradient - seaLevel - (Normalize(baseTerrainPixels[point.index]) * (1f - seaLevel));
+        float heightAboveSeaLevel = heightGradient - seaLevel - (terrainHeight * (1f - seaLevel));
         output = Mathf.Lerp(heightBelowSeaLevel, heightAboveSeaLevel, landGradient);
 
         if (useFalloffAsColor) {
@@ -192,7 +238,7 @@ public class TerrainShape : ISamplerFactory {
         // height = heightGradient - (landGradient * 0.8f);
         // height = Mathf.Lerp(height, heightGradient - seaLevel, borderGradient);
       } else {
-        output = heightGradient - Normalize(baseTerrainPixels[point.index]);
+        output = heightGradient - terrainHeight;
       }
 
       point.value = output;
@@ -207,6 +253,7 @@ public class TerrainShape : ISamplerFactory {
         for (int y = 0; y < grid.gridSize.y; y++) {
           for (int x = 0; x < grid.gridSize.x; x++) {
             int index = grid.GetIndexFromCoords(x, y, z);
+            int index2D = z * grid.gridSize.x + x;
             CubeGridPoint point = grid.gridPoints[index];
             point.roughness = 0.1f;
 
@@ -216,8 +263,9 @@ public class TerrainShape : ISamplerFactory {
             if (useNormalsAsColor) {
               point.color = new Color(normal.x, normal.y, normal.z);
             } else if (useFalloff && useFalloffAsColor) {
-              int index2D = z * grid.gridSize.x + x;
               point.color = Color.Lerp(Color.black, Color.white, debugFalloff[index2D]);
+            } else if (usePlateauMaskAsColor) {
+              point.color = Color.Lerp(Color.black, Color.white, plateauMaskPixels[index2D]);
             } else {
               float normalizedHeight = point.position.y / chunk.size.y;
 
