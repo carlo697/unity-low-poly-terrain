@@ -211,9 +211,14 @@ public class TerrainShape : ISamplerFactory {
       float plateauGroundNoise = Normalize(plateauGroundPixels[index2D]);
       float plateauHeight = Mathf.LerpUnclamped(terrainHeight, plateauGroundNoise, 0.25f);
 
+      // 2nd Mask
+      float threshold = 0.02f;
+      float plateau2ndMask = plateauMaskNoise - terrainHeight;
+      plateau2ndMask = Mathf.SmoothStep(0f, 1f, plateau2ndMask / threshold);
+      plateauShapeNoise *= plateau2ndMask;
+
       // Use plateauHeight only if it's taller than terrainHeight
-      if (terrainHeight <= plateauHeight)
-        terrainHeight = Mathf.LerpUnclamped(terrainHeight, plateauHeight, plateauShapeNoise);
+      terrainHeight = Mathf.LerpUnclamped(terrainHeight, plateauHeight, plateauShapeNoise);
 
       if (useFalloff) {
         // Sample the falloff map
