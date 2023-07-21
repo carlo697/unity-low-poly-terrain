@@ -39,6 +39,7 @@ public class TerrainShape : ISamplerFactory {
   public FalloffNoiseGenerator falloffNoise = new FalloffNoiseGenerator();
 
   [Header("Plateaus")]
+  public float absoluteMaximunPlateauHeight = 48f;
   public FractalNoiseGenerator plateauMask = new FractalNoiseGenerator {
     is3d = false,
     seed = 20,
@@ -170,6 +171,9 @@ public class TerrainShape : ISamplerFactory {
     // Debug pixels
     float[] debugFalloff = null;
 
+    // Plateaus
+    float relativeMaximunPlateauHeight = (1f / chunk.size.y) * absoluteMaximunPlateauHeight;
+
     samplerFunc = (CubeGridPoint point) => {
       // Generate the noise inside the sampler the first time it's called
       if (baseTerrainPixels == null) {
@@ -209,7 +213,11 @@ public class TerrainShape : ISamplerFactory {
 
       // The height of the terrain on top of plateaus
       float plateauGroundNoise = Normalize(plateauGroundPixels[index2D]);
-      float plateauHeight = Mathf.LerpUnclamped(terrainHeight, plateauGroundNoise, 0.25f);
+      float plateauHeight = Mathf.LerpUnclamped(
+        terrainHeight,
+        plateauGroundNoise,
+        relativeMaximunPlateauHeight
+      );
 
       // 2nd Mask
       float threshold = 0.02f;
