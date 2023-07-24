@@ -95,12 +95,12 @@ public class TerrainShape : ISamplerFactory {
     float frequency = 1f
   ) {
     // Variables needed to sample the point in world space
-    int gridSizeNormalizer = Mathf.RoundToInt(chunk.size.x / 32f);
+    float gridSizeNormalizer = chunk.size.x / 32f;
 
     // Calculate offset
     float offsetX = chunk.noisePosition.x / gridSizeNormalizer;
     float offsetY = chunk.noisePosition.z / gridSizeNormalizer;
-    float noiseSize = (1 / (chunk.noiseSize)) * frequency;
+    float noiseSize = (1f / chunk.noiseSize) * frequency;
 
     // Apply offset
     FastNoise offsetNoise = new FastNoise("Domain Offset");
