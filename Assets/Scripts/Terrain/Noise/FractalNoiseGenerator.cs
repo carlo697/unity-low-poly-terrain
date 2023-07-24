@@ -14,6 +14,9 @@ public class FractalNoiseGenerator : TerrainNoiseGenerator {
   public FractalType fractalType = FractalType.FractalFBm;
   public bool useCurve = false;
   public AnimationCurve curve = AnimationCurve.Linear(-1f, -1f, 1f, 1f);
+  public bool useDomainWarp = false;
+  public float domainWarpAmplitude = 1f;
+  public float domainWarpFrequency = 0.5f;
 
   public enum FractalType {
     [InspectorName("Fractal FBm")]
@@ -41,6 +44,14 @@ public class FractalNoiseGenerator : TerrainNoiseGenerator {
       multiply.Set("LHS", noise);
       multiply.Set("RHS", amplitude);
       noise = multiply;
+    }
+
+    if (useDomainWarp) {
+      FastNoise domainWarp = new FastNoise("Domain Warp Gradient");
+      domainWarp.Set("Source", noise);
+      domainWarp.Set("Warp Amplitude", domainWarpAmplitude);
+      domainWarp.Set("Warp Frequency", domainWarpFrequency);
+      noise = domainWarp;
     }
 
     float[] pixels = TerrainShape.GenerateFastNoiseForChunk(
