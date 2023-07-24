@@ -9,6 +9,7 @@ public class FractalNoiseGenerator : TerrainNoiseGenerator {
   public float amplitude = 1f;
   public NoiseType noiseType = NoiseType.Simplex;
   public float gain = 0.5f;
+  public float weightedStrength = 0f;
   public float lacunarity = 2f;
   public int octaves = 1;
   public FractalType fractalType = FractalType.FractalFBm;
@@ -36,6 +37,7 @@ public class FractalNoiseGenerator : TerrainNoiseGenerator {
     FastNoise noise = new FastNoise(fractalType.ToString());
     noise.Set("Source", new FastNoise(noiseType.ToString()));
     noise.Set("Gain", gain);
+    noise.Set("Weighted Strength", weightedStrength);
     noise.Set("Lacunarity", lacunarity);
     noise.Set("Octaves", octaves);
 
