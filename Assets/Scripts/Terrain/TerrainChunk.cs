@@ -312,10 +312,31 @@ public class TerrainChunk : MonoBehaviour {
       timer.Stop();
 
       if (debug) {
-        Debug.Log(timer.ElapsedMilliseconds);
-        Debug.Log(timer.ElapsedTicks);
-        Debug.Log(totalHits);
+        Debug.LogFormat("{0} ms", timer.ElapsedMilliseconds);
+        Debug.LogFormat("Total hits: {0}", totalHits);
       }
+    }
+  }
+
+  [ContextMenu("Test Looping Points")]
+  public void TestLoopingPoints() {
+    System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
+    timer.Start();
+
+    float total = 0;
+
+    for (int i = 0; i < 20; i++) {
+      for (int j = 0; j < m_points.Length; j++) {
+        CubeGridPoint point = m_points[j];
+        total += point.value;
+      }
+    }
+
+    timer.Stop();
+
+    if (debug) {
+      Debug.LogFormat("{0} ms", timer.ElapsedMilliseconds);
+      Debug.LogFormat("Total value: {0}", total);
     }
   }
 }
