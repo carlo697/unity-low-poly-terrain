@@ -14,10 +14,12 @@ public class CubeGrid {
   public bool useMiddlePoint;
 
   public Vector3Int gridSize { get { return m_sizes; } }
+  public int gridPointCount { get { return m_pointCount; } }
   public Vector3 resolutionSizeRatio { get { return m_resolutionSizeRatio; } }
   public CubeGridPoint[] gridPoints { get { return m_points; } }
 
   private Vector3Int m_sizes;
+  private int m_pointCount;
   private Vector3 m_resolutionSizeRatio;
   private CubeGridPoint[] m_points;
 
@@ -49,6 +51,7 @@ public class CubeGrid {
 
     // Calculations needed to create the grid array
     m_sizes = new Vector3Int(resolution.x + 1, resolution.y + 1, resolution.z + 1);
+    m_pointCount = m_sizes.x * m_sizes.y * m_sizes.z;
 
     // This value can be useful when the size of the chunk is different from the resolution 
     m_resolutionSizeRatio = new Vector3(
@@ -131,7 +134,7 @@ public class CubeGrid {
     CubeGridPostProcessingFunc postProcessingFunc = null
   ) {
     // Initialize the grid with points (all of them will start with a value = 0)
-    m_points = new CubeGridPoint[m_sizes.x * m_sizes.y * m_sizes.z];
+    m_points = new CubeGridPoint[m_pointCount];
     for (int z = 0; z < m_sizes.z; z++) {
       for (int y = 0; y < m_sizes.y; y++) {
         for (int x = 0; x < m_sizes.x; x++) {
