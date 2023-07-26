@@ -7,6 +7,8 @@ using Unity.Jobs;
 
 [ExecuteInEditMode]
 public class TerrainChunk : MonoBehaviour {
+  public static DateTime lastUpdatedAt = DateTime.Now;
+
   public Vector3Int resolution = Vector3Int.one * 10;
   public Vector3 size = Vector3.one * 10;
   public float noiseSize = 1f;
@@ -171,7 +173,11 @@ public class TerrainChunk : MonoBehaviour {
   }
 
   void LateUpdate() {
-    if (m_handle.HasValue && m_handle.Value.IsCompleted) {
+    bool shouldUpdate = !Application.isPlaying || DateTime.Now > lastUpdatedAt.AddSeconds(1d / 32);
+
+    if (m_handle.HasValue && m_handle.Value.IsCompleted && shouldUpdate) {
+      lastUpdatedAt = DateTime.Now;
+
       System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
       timer.Start();
 
