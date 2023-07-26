@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Unity.Collections;
 using Unity.Jobs;
@@ -45,10 +46,13 @@ public class TerrainChunk : MonoBehaviour {
 
   private GCHandle samplerHandle;
   private GCHandle postProcessingHandle;
-  private NativeList<Vector3> vertices;
-  private NativeList<int> triangles;
-  private NativeList<Color> colors;
+  private NativeList<Vector3> m_jobVertices;
+  private NativeList<int> m_jobTriangles;
+  private NativeList<Color> m_jobColors;
+  private NativeList<CubeGridPoint> m_jobPoints;
   JobHandle? m_handle;
+
+  private CubeGridPoint[] m_points;
 
   void Awake() {
     // Add a mesh filter
@@ -100,19 +104,21 @@ public class TerrainChunk : MonoBehaviour {
     postProcessingHandle = GCHandle.Alloc(postProcessingFunc);
 
     // Create the lists for the job
-    vertices = new NativeList<Vector3>(Allocator.Persistent);
-    triangles = new NativeList<int>(Allocator.Persistent);
-    colors = new NativeList<Color>(Allocator.Persistent);
+    m_jobVertices = new NativeList<Vector3>(Allocator.Persistent);
+    m_jobTriangles = new NativeList<int>(Allocator.Persistent);
+    m_jobColors = new NativeList<Color>(Allocator.Persistent);
+    m_jobPoints = new NativeList<CubeGridPoint>(Allocator.Persistent);
 
     // Create job
     CubeGridJob job = new CubeGridJob(
-      vertices,
-      triangles,
-      colors,
-      samplerHandle,
-      postProcessingHandle,
+      m_jobVertices,
+      m_jobTriangles,
+      m_jobColors,
+      m_jobPoints,
       size,
       resolution,
+      samplerHandle,
+      postProcessingHandle,
       threshold,
       useMiddlePoint,
       debug
@@ -144,9 +150,10 @@ public class TerrainChunk : MonoBehaviour {
   }
 
   void DisposeJob() {
-    vertices.Dispose();
-    triangles.Dispose();
-    colors.Dispose();
+    m_jobVertices.Dispose();
+    m_jobTriangles.Dispose();
+    m_jobColors.Dispose();
+    m_jobPoints.Dispose();
     samplerHandle.Free();
     postProcessingHandle.Free();
     m_handle = null;
@@ -154,9 +161,10 @@ public class TerrainChunk : MonoBehaviour {
 
   void CancelJob() {
     m_handle.Value.Complete();
-    vertices.Dispose();
-    triangles.Dispose();
-    colors.Dispose();
+    m_jobVertices.Dispose();
+    m_jobTriangles.Dispose();
+    m_jobColors.Dispose();
+    m_jobPoints.Dispose();
     samplerHandle.Free();
     postProcessingHandle.Free();
     m_handle = null;
@@ -170,6 +178,9 @@ public class TerrainChunk : MonoBehaviour {
       // Complete the job
       m_handle.Value.Complete();
 
+      // Copy points
+      m_points = m_jobPoints.ToArray();
+
       // Flags
       isGenerating = false;
       hasEverBeenGenerated = true;
@@ -177,9 +188,9 @@ public class TerrainChunk : MonoBehaviour {
       if (!m_destroyFlag) {
         // Create a mesh
         Mesh mesh = CubeGrid.CreateMesh(
-          vertices,
-          triangles,
-          colors,
+          m_jobVertices,
+          m_jobTriangles,
+          m_jobColors,
           debug,
           meshFilter.sharedMesh
         );

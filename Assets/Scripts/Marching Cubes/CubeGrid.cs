@@ -8,9 +8,6 @@ public delegate CubeGridPoint CubeGridSamplerFunc(CubeGridPoint point);
 public delegate void CubeGridPostProcessingFunc(CubeGrid grid);
 
 public class CubeGrid {
-  public CubeGridSamplerFunc samplerFunc;
-  public CubeGridPostProcessingFunc postProcessingFunc;
-
   public Vector3 size;
   public Vector3Int resolution;
   public float threshold;
@@ -40,19 +37,25 @@ public class CubeGrid {
   }
 
   public CubeGrid(
-    CubeGridSamplerFunc samplerFunc,
-    CubeGridPostProcessingFunc postProcessingFunc,
     Vector3 size,
     Vector3Int resolution,
     float threshold = 0f,
     bool useMiddlePoint = false
   ) {
-    this.samplerFunc = samplerFunc;
-    this.postProcessingFunc = postProcessingFunc;
     this.size = size;
     this.resolution = resolution;
     this.threshold = threshold;
     this.useMiddlePoint = useMiddlePoint;
+
+    // Calculations needed to create the grid array
+    m_sizes = new Vector3Int(resolution.x + 1, resolution.y + 1, resolution.z + 1);
+
+    // This value can be useful when the size of the chunk is different from the resolution 
+    m_resolutionSizeRatio = new Vector3(
+      resolution.x / size.x,
+      resolution.y / size.y,
+      resolution.z / size.z
+    );
   }
 
   [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -123,17 +126,10 @@ public class CubeGrid {
     return new Vector3(-sumX, -sumY, -sumZ).normalized;
   }
 
-  private void InitializeGrid() {
-    // Calculations needed to create the grid array
-    m_sizes = new Vector3Int(resolution.x + 1, resolution.y + 1, resolution.z + 1);
-
-    // This value can be useful when the size of the chunk is different from the resolution 
-    m_resolutionSizeRatio = new Vector3(
-      resolution.x / size.x,
-      resolution.y / size.y,
-      resolution.z / size.z
-    );
-
+  public void InitializeGrid(
+    CubeGridSamplerFunc samplerFunc = null,
+    CubeGridPostProcessingFunc postProcessingFunc = null
+  ) {
     // Initialize the grid with points (all of them will start with a value = 0)
     m_points = new CubeGridPoint[m_sizes.x * m_sizes.y * m_sizes.z];
     for (int z = 0; z < m_sizes.z; z++) {
@@ -152,20 +148,29 @@ public class CubeGrid {
           // }
 
           // Create the point and store it
-          m_points[index] = samplerFunc(new CubeGridPoint(
-            index,
-            pointPosition,
-            0
-          ));
+          if (samplerFunc != null) {
+            m_points[index] = samplerFunc(new CubeGridPoint(
+              index,
+              pointPosition,
+              0
+            ));
+          } else {
+            m_points[index] = new CubeGridPoint(
+              index,
+              pointPosition,
+              0
+            );
+          }
         }
       }
     }
 
     // Call post processing
-    postProcessingFunc(this);
+    if (postProcessingFunc != null)
+      postProcessingFunc(this);
   }
 
-  public void MarchCube(
+  public void MarchSingleCube(
     ICollection<Vector3> vertices,
     ICollection<Color> colors,
     int x,
@@ -252,12 +257,14 @@ public class CubeGrid {
     out Vector3[] outputVertices,
     out int[] outputTriangles,
     out Color[] outputColors,
+    CubeGridSamplerFunc samplerFunc = null,
+    CubeGridPostProcessingFunc postProcessingFunc = null,
     bool debug = false
   ) {
     var stepTimer = new System.Diagnostics.Stopwatch();
     stepTimer.Start();
 
-    InitializeGrid();
+    InitializeGrid(samplerFunc, postProcessingFunc);
 
     stepTimer.Stop();
     if (debug)
@@ -277,7 +284,7 @@ public class CubeGrid {
     for (int z = 0; z < m_sizes.z - 1; z++) {
       for (int y = 0; y < m_sizes.y - 1; y++) {
         for (int x = 0; x < m_sizes.x - 1; x++) {
-          MarchCube(vertices, colors, x, y, z);
+          MarchSingleCube(vertices, colors, x, y, z);
         }
       }
     }
