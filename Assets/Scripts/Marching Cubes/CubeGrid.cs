@@ -16,7 +16,18 @@ public class CubeGrid {
   public Vector3Int gridSize { get { return m_sizes; } }
   public int gridPointCount { get { return m_pointCount; } }
   public Vector3 resolutionSizeRatio { get { return m_resolutionSizeRatio; } }
-  public CubeGridPoint[] gridPoints { get { return m_points; } }
+  public CubeGridPoint[] gridPoints {
+    get {
+      return m_points;
+    }
+    set {
+      if (value.Length != m_pointCount) {
+        throw new Exception("The new array don't have the correct amount of points");
+      }
+
+      m_points = value;
+    }
+  }
 
   private Vector3Int m_sizes;
   private int m_pointCount;
