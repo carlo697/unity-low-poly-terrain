@@ -284,7 +284,7 @@ public class TerrainChunk : MonoBehaviour {
   }
 
   [ContextMenu("Test Raycasts")]
-  public void TestRaycast(bool debug) {
+  public void TestRaycast() {
     // Check if it has a mesh collider
     MeshCollider collider = GetComponent<MeshCollider>();
 
