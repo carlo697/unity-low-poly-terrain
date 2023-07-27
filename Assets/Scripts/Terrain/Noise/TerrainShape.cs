@@ -174,7 +174,7 @@ public class TerrainShape : ISamplerFactory {
     // Plateaus
     float relativeMaximunPlateauHeight = (1f / chunk.size.y) * absoluteMaximunPlateauHeight;
 
-    samplerFunc = (CubeGridPoint point) => {
+    samplerFunc = (ref CubeGridPoint point) => {
       // Generate the noise inside the sampler the first time it's called
       if (baseTerrainPixels == null) {
         float noiseFrequency = 1f / noiseScale;
@@ -261,7 +261,6 @@ public class TerrainShape : ISamplerFactory {
       }
 
       point.value = output;
-      return point;
     };
 
     // Add color to the grid volume
@@ -273,7 +272,7 @@ public class TerrainShape : ISamplerFactory {
           for (int x = 0; x < grid.gridSize.x; x++) {
             int index = grid.GetIndexFromCoords(x, y, z);
             int index2D = z * grid.gridSize.x + x;
-            CubeGridPoint point = grid.gridPoints[index];
+            ref CubeGridPoint point = ref grid.gridPoints[index];
             point.roughness = 0.1f;
 
             // Approximate normals
@@ -320,8 +319,6 @@ public class TerrainShape : ISamplerFactory {
                 point.color = Color.Lerp(grassColor, darkGrassColor, t);
               }
             }
-
-            grid.gridPoints[index] = point;
           }
         }
       }

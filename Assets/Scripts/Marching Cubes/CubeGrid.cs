@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using System.Runtime.CompilerServices;
 
-public delegate CubeGridPoint CubeGridSamplerFunc(CubeGridPoint point);
+public delegate void CubeGridSamplerFunc(ref CubeGridPoint point);
 public delegate void CubeGridPostProcessingFunc(CubeGrid grid);
 
 public class CubeGrid {
@@ -84,6 +84,12 @@ public class CubeGrid {
   }
 
   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+  public ref CubeGridPoint GetPointRef(int x, int y, int z) {
+    int index = GetIndexFromCoords(x, y, z);
+    return ref m_points[index];
+  }
+
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]
   public Vector3 GetPointPosition(int x, int y, int z) {
     return new Vector3(
       ((float)x / ((float)resolution.x)) * size.x,
@@ -106,7 +112,7 @@ public class CubeGrid {
   }
 
   public Vector3 GetPointNormalApproximation(int x, int y, int z) {
-    CubeGridPoint point = GetPoint(x, y, z);
+    float value = GetPointRef(x, y, z).value;
 
     // Approximate normals
     float sumX = 0;
@@ -115,27 +121,27 @@ public class CubeGrid {
 
     // Left
     if (x > 0)
-      sumX += -1f * (point.value - GetPoint(x - 1, y, z).value) * resolutionSizeRatio.x;
+      sumX += -1f * (value - GetPointRef(x - 1, y, z).value) * resolutionSizeRatio.x;
 
     // Right
     if (x < gridSize.x - 1)
-      sumX += (point.value - GetPoint(x + 1, y, z).value) * resolutionSizeRatio.x;
+      sumX += (value - GetPointRef(x + 1, y, z).value) * resolutionSizeRatio.x;
 
     // Down
     if (y > 0)
-      sumY += -1f * (point.value - GetPoint(x, y - 1, z).value) * resolutionSizeRatio.y;
+      sumY += -1f * (value - GetPointRef(x, y - 1, z).value) * resolutionSizeRatio.y;
 
     // Up
     if (y < gridSize.y - 1)
-      sumY += (point.value - GetPoint(x, y + 1, z).value) * resolutionSizeRatio.y;
+      sumY += (value - GetPointRef(x, y + 1, z).value) * resolutionSizeRatio.y;
 
     // Back
     if (z > 0)
-      sumZ = -1f * (point.value - GetPoint(x, y, z - 1).value) * resolutionSizeRatio.z;
+      sumZ = -1f * (value - GetPointRef(x, y, z - 1).value) * resolutionSizeRatio.z;
 
     // Forward
     if (z < gridSize.z - 1)
-      sumZ += (point.value - GetPoint(x, y, z + 1).value) * resolutionSizeRatio.z;
+      sumZ += (value - GetPointRef(x, y, z + 1).value) * resolutionSizeRatio.z;
 
     return new Vector3(-sumX, -sumY, -sumZ).normalized;
   }
@@ -161,18 +167,17 @@ public class CubeGrid {
           //   pointPosition += RandomVectors.vectors[randomVectorIndex] * m_roughness;
           // }
 
+          CubeGridPoint point = new CubeGridPoint {
+            index = index,
+            position = pointPosition
+          };
+
           // Create the point and store it
           if (samplerFunc != null) {
-            m_points[index] = samplerFunc(new CubeGridPoint {
-              index = index,
-              position = pointPosition
-            });
-          } else {
-            m_points[index] = new CubeGridPoint {
-              index = index,
-              position = pointPosition
-            };
+            samplerFunc(ref point);
           }
+
+          m_points[index] = point;
         }
       }
     }
