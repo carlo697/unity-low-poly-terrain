@@ -163,17 +163,15 @@ public class CubeGrid {
 
           // Create the point and store it
           if (samplerFunc != null) {
-            m_points[index] = samplerFunc(new CubeGridPoint(
-              index,
-              pointPosition,
-              0
-            ));
+            m_points[index] = samplerFunc(new CubeGridPoint {
+              index = index,
+              position = pointPosition
+            });
           } else {
-            m_points[index] = new CubeGridPoint(
-              index,
-              pointPosition,
-              0
-            );
+            m_points[index] = new CubeGridPoint {
+              index = index,
+              position = pointPosition
+            };
           }
         }
       }
