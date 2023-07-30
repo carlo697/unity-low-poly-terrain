@@ -1,6 +1,5 @@
 using UnityEngine;
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Unity.Collections;
 using Unity.Jobs;
@@ -54,6 +53,7 @@ public class TerrainChunk : MonoBehaviour {
   private NativeList<CubeGridPoint> m_jobPoints;
   JobHandle? m_handle;
 
+  public CubeGridPoint[] points { get { return m_points; } }
   private CubeGridPoint[] m_points;
 
   void Awake() {
@@ -279,70 +279,5 @@ public class TerrainChunk : MonoBehaviour {
     //     }
     //   }
     // }
-  }
-
-  public static Vector3 RandomPointInBounds(Bounds bounds) {
-    return new Vector3(
-      UnityEngine.Random.Range(bounds.min.x, bounds.max.x),
-      bounds.max.y,
-      UnityEngine.Random.Range(bounds.min.z, bounds.max.z)
-    );
-  }
-
-  [ContextMenu("Test Raycasts")]
-  public void TestRaycast() {
-    // Check if it has a mesh collider
-    MeshCollider collider = GetComponent<MeshCollider>();
-
-    if (collider) {
-      System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
-      timer.Start();
-
-      Bounds bounds = collider.bounds;
-      RaycastHit[] hits = new RaycastHit[10];
-      float distance = collider.bounds.size.y;
-      int totalHits = 0;
-
-      if (collider) {
-        for (int i = 0; i < 10000; i++) {
-          Ray ray = new Ray(RandomPointInBounds(bounds), Vector3.down);
-          int hitCount = Physics.RaycastNonAlloc(ray, hits, distance);
-
-          for (int j = 0; j < hitCount; j++) {
-            RaycastHit hit = hits[j];
-            totalHits++;
-          }
-        }
-      }
-
-      timer.Stop();
-
-      if (debug) {
-        Debug.LogFormat("{0} ms", timer.ElapsedMilliseconds);
-        Debug.LogFormat("Total hits: {0}", totalHits);
-      }
-    }
-  }
-
-  [ContextMenu("Test Looping Points")]
-  public void TestLoopingPoints() {
-    System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
-    timer.Start();
-
-    float total = 0;
-
-    for (int i = 0; i < 20; i++) {
-      for (int j = 0; j < m_points.Length; j++) {
-        CubeGridPoint point = m_points[j];
-        total += point.value;
-      }
-    }
-
-    timer.Stop();
-
-    if (debug) {
-      Debug.LogFormat("{0} ms", timer.ElapsedMilliseconds);
-      Debug.LogFormat("Total value: {0}", total);
-    }
   }
 }
