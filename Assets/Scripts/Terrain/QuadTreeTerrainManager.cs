@@ -133,15 +133,6 @@ public class QuadTreeTerrainManager : MonoBehaviour {
       chunkResolution.z
     );
     chunk.GetComponent<MeshRenderer>().sharedMaterial = chunkMaterial;
-
-    // Create water object
-    GameObject waterObj = new GameObject("Water");
-    waterObj.transform.position = new Vector3(
-      bounds.center.x - bounds.extents.x,
-      0f,
-      bounds.center.z - bounds.extents.z
-    );
-    waterObj.transform.SetParent(gameObject.transform);
   }
 
   private Vector3 FlatY(Vector3 worldPosition) {
