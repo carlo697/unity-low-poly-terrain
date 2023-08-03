@@ -15,6 +15,7 @@ static class PreventSavingTerrainChunkMeshes {
 
   static void OnSceneSaving(Scene scene, string path) {
     cachedMeshes.Clear();
+    cachedColliders.Clear();
 
     TerrainChunk[] components = Resources.FindObjectsOfTypeAll<TerrainChunk>();
     foreach (TerrainChunk chunk in components) {
