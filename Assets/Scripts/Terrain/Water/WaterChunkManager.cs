@@ -83,15 +83,16 @@ public class WaterChunkManager : MonoBehaviour {
     Vector3 cameraPosition = FlatY(camera.transform.position);
 
     m_levelDistances = QuadtreeChunk.CalculateLevelDistances(
-     chunkSize.x,
-     levelsOfDetail,
-     2f,
-     2.5f
-   );
+      chunkSize.x,
+      levelsOfDetail,
+      2f,
+      2.5f
+    );
 
     m_quadtreeChunks = QuadtreeChunk.CreateQuadtree(
       cameraPosition,
       chunkSize,
+      Vector3.zero,
       m_levelDistances,
       viewDistance,
       distanceShape,

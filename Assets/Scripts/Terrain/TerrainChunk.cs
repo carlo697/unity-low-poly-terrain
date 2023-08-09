@@ -8,8 +8,27 @@ using Unity.Jobs;
 public class TerrainChunk : MonoBehaviour {
   public static DateTime lastUpdatedAt = DateTime.Now;
 
-  public Vector3Int resolution = Vector3Int.one * 10;
-  public Vector3 size = Vector3.one * 10;
+  public Vector3Int resolution {
+    get {
+      return m_resolution;
+    }
+    set {
+      m_resolution = value;
+      UpdateCachedFields();
+    }
+  }
+  [SerializeField] private Vector3Int m_resolution = Vector3Int.one * 10;
+
+  public Vector3 size {
+    get {
+      return m_size;
+    }
+    set {
+      m_size = value;
+      UpdateCachedFields();
+    }
+  }
+  [SerializeField] private Vector3 m_size = Vector3.one * 10;
   public float noiseSize = 1f;
   public Vector3 noiseOffset = Vector3.zero;
   public TerrainShape terrainShape;
@@ -26,6 +45,9 @@ public class TerrainChunk : MonoBehaviour {
 
   public Vector3 noisePosition { get { return m_noisePosition; } }
   private Vector3 m_noisePosition;
+
+  public Bounds bounds { get { return m_bounds; } }
+  private Bounds m_bounds;
 
   public float threshold = 0f;
   public bool useMiddlePoint = false;
@@ -56,7 +78,7 @@ public class TerrainChunk : MonoBehaviour {
   public CubeGridPoint[] points { get { return m_points; } }
   private CubeGridPoint[] m_points;
 
-  void Awake() {
+  private void Awake() {
     // Add a mesh filter
     m_meshFilter = GetComponent<MeshFilter>();
     if (!m_meshFilter) {
@@ -68,18 +90,21 @@ public class TerrainChunk : MonoBehaviour {
     if (!m_meshRenderer) {
       m_meshRenderer = gameObject.AddComponent<MeshRenderer>();
     }
+
+    UpdateCachedFields();
   }
 
-  void Start() {
+  private void Start() {
     UpdateCachedFields();
     GenerateIfNeeded();
   }
 
   public void UpdateCachedFields() {
-    m_gridSize = new Vector3Int(resolution.x + 1, resolution.y + 1, resolution.z + 1);
-    m_inverseSize = new Vector3(1f / size.x, 1f / size.y, 1f / size.z);
+    m_gridSize = new Vector3Int(m_resolution.x + 1, m_resolution.y + 1, m_resolution.z + 1);
+    m_inverseSize = new Vector3(1f / m_size.x, 1f / m_size.y, 1f / m_size.z);
     m_position = transform.position;
-    m_noisePosition = position + noiseOffset;
+    m_noisePosition = m_position + noiseOffset;
+    m_bounds = new Bounds(m_position + m_size / 2f, m_size);
   }
 
   [ContextMenu("InstantRegenerate")]
@@ -247,6 +272,8 @@ public class TerrainChunk : MonoBehaviour {
 
   private void OnValidate() {
     GenerateOnEditor();
+    m_size = size;
+    m_resolution = resolution;
   }
 
   private void GenerateIfNeeded() {
@@ -262,10 +289,7 @@ public class TerrainChunk : MonoBehaviour {
     if (!drawGizmos) return;
 
     Gizmos.color = Color.white;
-    Gizmos.DrawWireCube(
-      transform.position + size / 2f,
-      size
-    );
+    Gizmos.DrawWireCube(m_bounds.center, m_bounds.size);
 
     // for (int z = 0; z < m_grid.resolution.z; z++) {
     //   for (int y = 0; y < m_grid.resolution.y; y++) {

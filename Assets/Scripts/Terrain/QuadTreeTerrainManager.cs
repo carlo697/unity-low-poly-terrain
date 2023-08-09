@@ -1,22 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class SpawnedChunk {
-  public Bounds bounds;
-  public TerrainChunk component;
-  public GameObject gameObject;
-  public bool needsUpdate = true;
-
-  public SpawnedChunk(
-    Bounds bounds,
-    TerrainChunk component
-  ) {
-    this.bounds = bounds;
-    this.component = component;
-    this.gameObject = component.gameObject;
-  }
-}
-
 struct DistanceToCameraComparer : IComparer<Bounds> {
   public Vector3 cameraPosition;
   public Plane[] cameraPlanes;
@@ -47,19 +31,24 @@ struct DistanceToCameraComparer : IComparer<Bounds> {
 }
 
 public class QuadTreeTerrainManager : MonoBehaviour {
+  public Camera usedCamera { get { return Camera.main; } }
+
   public float viewDistance = 100f;
   public Vector3 chunkSize = new Vector3(32f, 128f, 32f);
   public Vector3Int chunkResolution = new Vector3Int(32, 128, 32);
   public Material chunkMaterial;
   public bool debug;
 
+  public float seaWorldLevel { get { return m_terrainShape.seaLevel * chunkSize.y; } }
+
   private List<QuadtreeChunk> m_quadtreeChunks = new List<QuadtreeChunk>();
-  private List<SpawnedChunk> m_spawnedChunks = new List<SpawnedChunk>();
-  private List<SpawnedChunk> m_spawnedChunksToDelete = new List<SpawnedChunk>();
-  private List<Bounds> m_visibleChunkPositions = new List<Bounds>();
-  private Dictionary<Bounds, SpawnedChunk> m_chunkDictionary =
-    new Dictionary<Bounds, SpawnedChunk>();
-  private HashSet<Bounds> m_visibleChunkPositionsHashSet =
+  private List<TerrainChunk> m_spawnedChunks = new List<TerrainChunk>();
+  private List<TerrainChunk> m_spawnedChunksToDelete = new List<TerrainChunk>();
+  private Dictionary<Bounds, TerrainChunk> m_spawnedChunksDictionary =
+    new Dictionary<Bounds, TerrainChunk>();
+
+  private List<Bounds> m_visibleChunkBounds = new List<Bounds>();
+  private HashSet<Bounds> m_visibleChunkBoundsHashSet =
     new HashSet<Bounds>();
 
   public float updatePeriod = 0.3f;
@@ -97,12 +86,7 @@ public class QuadTreeTerrainManager : MonoBehaviour {
     ));
 
     // Set position and parent
-    float seaLevel = m_terrainShape.seaLevel * chunkSize.y;
-    gameObject.transform.position = new Vector3(
-      bounds.center.x - bounds.extents.x,
-      -seaLevel,
-      bounds.center.z - bounds.extents.z
-    );
+    gameObject.transform.position = bounds.center - bounds.extents;
     gameObject.transform.SetParent(this.transform);
 
     // Create chunk component
@@ -112,9 +96,8 @@ public class QuadTreeTerrainManager : MonoBehaviour {
     chunk.meshRenderer.enabled = false;
 
     // Add to the list
-    SpawnedChunk data = new SpawnedChunk(bounds, chunk);
-    m_spawnedChunks.Add(data);
-    m_chunkDictionary.Add(bounds, data);
+    m_spawnedChunks.Add(chunk);
+    m_spawnedChunksDictionary.Add(bounds, chunk);
 
     // Add mesh collider
     gameObject.AddComponent<MeshCollider>();
@@ -145,19 +128,21 @@ public class QuadTreeTerrainManager : MonoBehaviour {
 
   private void UpdateVisibleChunkPositions(Camera camera, bool drawGizmos = false) {
     Vector3 cameraPosition = FlatY(camera.transform.position);
+    Vector3 quadChunkOffset = new Vector3(0f, -seaWorldLevel + chunkSize.y / 2f, 0f);
 
     m_levelDistances = QuadtreeChunk.CalculateLevelDistances(
-     chunkSize.x,
-     levelsOfDetail,
-     detailDistanceBase,
-     detailDistanceMultiplier,
-     detailDistanceDecreaseAtLevel,
-     detailDistanceConstantDecrease
-   );
+      chunkSize.x,
+      levelsOfDetail,
+      detailDistanceBase,
+      detailDistanceMultiplier,
+      detailDistanceDecreaseAtLevel,
+      detailDistanceConstantDecrease
+    );
 
     m_quadtreeChunks = QuadtreeChunk.CreateQuadtree(
       cameraPosition,
       chunkSize,
+      quadChunkOffset,
       m_levelDistances,
       viewDistance,
       distanceShape,
@@ -171,24 +156,20 @@ public class QuadTreeTerrainManager : MonoBehaviour {
       viewDistance
     );
 
-    m_visibleChunkPositions.Clear();
-    m_visibleChunkPositionsHashSet.Clear();
+    m_visibleChunkBounds.Clear();
+    m_visibleChunkBoundsHashSet.Clear();
     for (int i = 0; i < visibleQuadtreeChunks.Count; i++) {
       QuadtreeChunk chunk = visibleQuadtreeChunks[i];
 
       // Save the chunk
-      Bounds bounds = new Bounds(
-        chunk.bounds.center,
-        new Vector3(chunk.bounds.size.x, chunkSize.y, chunk.bounds.size.z)
-      );
-      m_visibleChunkPositions.Add(bounds);
-      m_visibleChunkPositionsHashSet.Add(bounds);
+      m_visibleChunkBounds.Add(chunk.bounds);
+      m_visibleChunkBoundsHashSet.Add(chunk.bounds);
     }
 
     // Sort the array by measuring the distance from the chunk to the camera
     m_lastCameraPosition = cameraPosition;
-    m_visibleChunkPositions.Sort(new DistanceToCameraComparer(camera));
-    m_debugChunkCount = m_visibleChunkPositions.Count;
+    m_visibleChunkBounds.Sort(new DistanceToCameraComparer(camera));
+    m_debugChunkCount = m_visibleChunkBounds.Count;
 
     // Set camera fog
     RenderSettings.fogStartDistance = 100f;
@@ -197,8 +178,9 @@ public class QuadTreeTerrainManager : MonoBehaviour {
 
   private void UpdateFollowingVisibleChunks() {
     // Check if the chunks are already there
-    foreach (Bounds bounds in m_visibleChunkPositions) {
-      bool foundChunk = m_chunkDictionary.ContainsKey(bounds);
+    for (int i = 0; i < m_visibleChunkBounds.Count; i++) {
+      Bounds bounds = m_visibleChunkBounds[i];
+      bool foundChunk = m_spawnedChunksDictionary.ContainsKey(bounds);
 
       if (!foundChunk) {
         CreateChunk(bounds);
@@ -207,22 +189,22 @@ public class QuadTreeTerrainManager : MonoBehaviour {
 
     // Delete chunks that are out of view
     for (int i = m_spawnedChunks.Count - 1; i >= 0; i--) {
-      SpawnedChunk chunk = m_spawnedChunks[i];
+      TerrainChunk chunk = m_spawnedChunks[i];
       Bounds chunkBounds = chunk.bounds;
       // Find a chunk with the same position
-      bool foundPosition = m_visibleChunkPositionsHashSet.Contains(
+      bool foundPosition = m_visibleChunkBoundsHashSet.Contains(
         chunkBounds
       );
 
       if (!foundPosition) {
         m_spawnedChunks.Remove(chunk);
-        m_chunkDictionary.Remove(chunk.bounds);
+        m_spawnedChunksDictionary.Remove(chunk.bounds);
         chunk.gameObject.name = string.Format("(To Delete) {0}", chunk.gameObject.name);
 
-        if (chunk.component.hasEverBeenGenerated) {
+        if (chunk.hasEverBeenGenerated) {
           m_spawnedChunksToDelete.Add(chunk);
         } else {
-          chunk.component.DestroyOnNextFrame();
+          chunk.DestroyOnNextFrame();
         }
       }
     }
@@ -231,9 +213,9 @@ public class QuadTreeTerrainManager : MonoBehaviour {
   private void RequestChunksGeneration() {
     int totalInProgress = 0;
     for (int index = 0; index < m_spawnedChunks.Count; index++) {
-      SpawnedChunk chunk = m_spawnedChunks[index];
+      TerrainChunk chunk = m_spawnedChunks[index];
 
-      if (chunk.component.isGenerating) {
+      if (chunk.isGenerating) {
         totalInProgress++;
       }
     }
@@ -246,16 +228,15 @@ public class QuadTreeTerrainManager : MonoBehaviour {
 
     // Tell chunks to generate their meshes
     // Check if the chunks are already there
-    for (int index = 0; index < m_visibleChunkPositions.Count; index++) {
-      Bounds bounds = m_visibleChunkPositions[index];
+    for (int index = 0; index < m_visibleChunkBounds.Count; index++) {
+      Bounds bounds = m_visibleChunkBounds[index];
 
-      if (m_chunkDictionary.ContainsKey(bounds)) {
-        SpawnedChunk chunk = m_chunkDictionary[bounds];
+      if (m_spawnedChunksDictionary.ContainsKey(bounds)) {
+        TerrainChunk chunk = m_spawnedChunksDictionary[bounds];
 
         // Tell the chunk to start generating if the budget is available
-        if (chunk.needsUpdate) {
-          chunk.component.GenerateOnNextFrame();
-          chunk.needsUpdate = false;
+        if (!chunk.hasEverBeenGenerated && !chunk.isGenerating) {
+          chunk.GenerateOnNextFrame();
           requestsOnThisFrame++;
           totalInProgress++;
         }
@@ -273,20 +254,20 @@ public class QuadTreeTerrainManager : MonoBehaviour {
   private void DeleteChunks() {
     // Delete chunks that are out of view
     for (int i = m_spawnedChunksToDelete.Count - 1; i >= 0; i--) {
-      SpawnedChunk chunkToDelete = m_spawnedChunksToDelete[i];
+      TerrainChunk chunkToDelete = m_spawnedChunksToDelete[i];
 
-      if (chunkToDelete.component.isJobInProgress) {
+      if (chunkToDelete.isJobInProgress) {
         continue;
       }
 
       // Find the chunks intersecting this chunk
       bool areAllReady = true;
       for (int j = 0; j < m_spawnedChunks.Count; j++) {
-        SpawnedChunk chunkB = m_spawnedChunks[j];
+        TerrainChunk chunkB = m_spawnedChunks[j];
 
         if (
           chunkB.bounds.Intersects(chunkToDelete.bounds)
-          && !chunkB.component.hasEverBeenGenerated
+          && !chunkB.hasEverBeenGenerated
         ) {
           areAllReady = false;
           break;
@@ -301,9 +282,9 @@ public class QuadTreeTerrainManager : MonoBehaviour {
 
     // Show chunks that are completed
     for (int j = 0; j < m_spawnedChunks.Count; j++) {
-      SpawnedChunk chunk = m_spawnedChunks[j];
-      if (chunk.component.hasEverBeenGenerated)
-        chunk.component.meshRenderer.enabled = true;
+      TerrainChunk chunk = m_spawnedChunks[j];
+      if (chunk.hasEverBeenGenerated)
+        chunk.meshRenderer.enabled = true;
     }
   }
 
@@ -315,13 +296,12 @@ public class QuadTreeTerrainManager : MonoBehaviour {
       RequestChunksGeneration();
     }
 
-    Camera camera = Camera.main;
-    if (camera) {
+    if (usedCamera) {
       m_updateTimer += Time.deltaTime;
       if (m_updateTimer > updatePeriod) {
         m_updateTimer = 0f;
 
-        UpdateVisibleChunkPositions(camera);
+        UpdateVisibleChunkPositions(usedCamera);
         UpdateFollowingVisibleChunks();
       }
     }
@@ -335,8 +315,8 @@ public class QuadTreeTerrainManager : MonoBehaviour {
       UpdateVisibleChunkPositions(Camera.main, true);
 
       Gizmos.color = Color.white;
-      for (int i = 0; i < m_visibleChunkPositions.Count; i++) {
-        Bounds bounds = m_visibleChunkPositions[i];
+      for (int i = 0; i < m_visibleChunkBounds.Count; i++) {
+        Bounds bounds = m_visibleChunkBounds[i];
         Gizmos.DrawWireCube(bounds.center, bounds.size);
       }
     }

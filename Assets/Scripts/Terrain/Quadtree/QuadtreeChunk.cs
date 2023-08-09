@@ -9,8 +9,8 @@ public enum DistanceShape {
 class QuadtreeChunk {
   public List<float> levelDistances;
   public int level;
-  public Vector2 position;
-  public Vector2 extents;
+  public Vector3 position;
+  public Vector3 extents;
   public QuadtreeChunk[] children;
   public Bounds bounds;
   public DistanceShape distanceShape;
@@ -18,8 +18,8 @@ class QuadtreeChunk {
   public QuadtreeChunk(
     List<float> levelDistances,
     int level,
-    Vector2 position,
-    Vector2 extents,
+    Vector3 position,
+    Vector3 extents,
     DistanceShape distanceShape = DistanceShape.Square
   ) {
     this.levelDistances = levelDistances;
@@ -29,10 +29,7 @@ class QuadtreeChunk {
     this.distanceShape = distanceShape;
 
     this.children = null;
-    this.bounds = new Bounds(
-      new Vector3(position.x, 0f, position.y),
-      new Vector3(extents.x * 2f, 1f, extents.y * 2f)
-    );
+    this.bounds = new Bounds(position, extents * 2f);
   }
 
   public void Build(Vector3 cameraPosition, bool drawGizmos = false) {
@@ -59,13 +56,14 @@ class QuadtreeChunk {
     }
 
     if (isInside) {
-      Vector2 halfExtents = extents / 2f;
+      Vector3 halfExtents = new Vector3(extents.x / 2f, extents.y, extents.z / 2f);
+
       children = new QuadtreeChunk[4] {
         // North east
         new QuadtreeChunk(
           levelDistances,
           level + 1,
-          position + halfExtents,
+          position + new Vector3(halfExtents.x, 0f, halfExtents.z),
           halfExtents,
           distanceShape
         ),
@@ -73,7 +71,7 @@ class QuadtreeChunk {
         new QuadtreeChunk(
           levelDistances,
           level + 1,
-          position + new Vector2(halfExtents.x, -halfExtents.y),
+          position + new Vector3(halfExtents.x, 0f, -halfExtents.z),
           halfExtents,
           distanceShape
         ),
@@ -81,7 +79,7 @@ class QuadtreeChunk {
         new QuadtreeChunk(
           levelDistances,
           level + 1,
-          position - halfExtents,
+          position + new Vector3(-halfExtents.x, 0f, -halfExtents.z),
           halfExtents,
           distanceShape
         ),
@@ -89,7 +87,7 @@ class QuadtreeChunk {
         new QuadtreeChunk(
           levelDistances,
           level + 1,
-          position + new Vector2(-halfExtents.x, halfExtents.y),
+          position + new Vector3(-halfExtents.x, 0f, halfExtents.z),
           halfExtents,
           distanceShape
         )
@@ -160,19 +158,22 @@ class QuadtreeChunk {
 
   public static List<QuadtreeChunk> CreateQuadtree(
     Vector3 cameraPosition,
-    Vector2 chunkSize,
+    Vector3 chunkSize,
+    Vector3 chunkOffset,
     List<float> levelDistances,
     float viewDistance,
     DistanceShape distanceShape = DistanceShape.Square,
     List<QuadtreeChunk> list = null,
     bool drawGizmos = false
   ) {
+    cameraPosition.y = chunkOffset.y;
+
     // Calculate the whole size of the tree so that the minimun size of a chunk
     // is equal to chunkSize.x
-    float minimunChunkSize = chunkSize.x;
-    float areaExtents = Mathf.Pow(2f, levelDistances.Count - 1f) * minimunChunkSize;
-    float areaSize = areaExtents * 2f;
-    Vector2 extents = new Vector2(areaExtents, areaExtents);
+    float quadMinimunSize = chunkSize.x;
+    float treeExtents = Mathf.Pow(2f, levelDistances.Count - 1f) * quadMinimunSize;
+    float treeSize = treeExtents * 2f;
+    Vector2 treeExtents2d = new Vector2(treeExtents, treeExtents);
 
     // Create the tree
     if (list == null) {
@@ -183,36 +184,38 @@ class QuadtreeChunk {
 
     // Get the area the player is standing right now
     Vector2 mainAreaCoords = new Vector2(
-      Mathf.Floor(cameraPosition.x / areaSize),
-      Mathf.Floor(cameraPosition.z / areaSize)
+      Mathf.Floor(cameraPosition.x / treeSize),
+      Mathf.Floor(cameraPosition.z / treeSize)
     );
     Vector2 mainAreaPosition = new Vector2(
-      mainAreaCoords.x * areaSize,
-      mainAreaCoords.y * areaSize
+      mainAreaCoords.x * treeSize,
+      mainAreaCoords.y * treeSize
     );
 
-    int visibleX = Mathf.CeilToInt(viewDistance / areaSize);
-    int visibleY = Mathf.CeilToInt(viewDistance / areaSize);
+    int visibleX = Mathf.CeilToInt(viewDistance / treeSize);
+    int visibleY = Mathf.CeilToInt(viewDistance / treeSize);
 
     // Build a list of the coords of the visible chunks
     for (
       int y = (int)mainAreaCoords.y - visibleY;
       y <= mainAreaCoords.y + visibleY;
-      y++) {
+      y++
+    ) {
       for (
         int x = (int)mainAreaCoords.x - visibleX;
         x <= mainAreaCoords.x + visibleX;
         x++
       ) {
-        Vector2 coords = new Vector3(x, y);
-        Vector2 position = new Vector2(
-          coords.x * areaSize + areaExtents,
-          coords.y * areaSize + areaExtents
+        Vector3 coords2d = new Vector3(x, y);
+        Vector3 position2d = new Vector2(
+          coords2d.x * treeSize + treeExtents,
+          coords2d.y * treeSize + treeExtents
         );
-        Bounds bounds = new Bounds(
-          new Vector3(position.x, 0, position.y),
-          new Vector3(extents.x * 2f, chunkSize.y, extents.y * 2f)
-        );
+
+        Vector3 position3d = new Vector3(position2d.x, 0, position2d.y) + chunkOffset;
+        Vector3 size3d = new Vector3(treeExtents2d.x * 2f, chunkSize.y, treeExtents2d.y * 2f);
+
+        Bounds bounds = new Bounds(position3d, size3d);
 
         // Check if a sphere of radius 'distance' is touching the chunk
         float distanceToChunk = Mathf.Sqrt(bounds.SqrDistance(cameraPosition));
@@ -220,23 +223,21 @@ class QuadtreeChunk {
           continue;
         }
 
-        if (drawGizmos) {
-          Gizmos.color = Color.blue;
-          Gizmos.DrawWireCube(
-            new Vector3(position.x, 0, position.y),
-            new Vector3(extents.x * 2f, chunkSize.y, extents.y * 2f)
-          );
-        }
-
-        QuadtreeChunk area = new QuadtreeChunk(
+        QuadtreeChunk tree = new QuadtreeChunk(
           levelDistances,
           0,
-          position,
-          new Vector2(areaExtents, areaExtents),
+          position3d,
+          size3d / 2f,
           distanceShape
         );
-        area.Build(cameraPosition, drawGizmos);
-        list.Add(area);
+
+        if (drawGizmos) {
+          Gizmos.color = Color.blue;
+          Gizmos.DrawWireCube(tree.bounds.center, tree.bounds.size);
+        }
+
+        tree.Build(cameraPosition, drawGizmos);
+        list.Add(tree);
       }
     }
 
