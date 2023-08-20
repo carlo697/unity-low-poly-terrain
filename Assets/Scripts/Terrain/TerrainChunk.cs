@@ -58,6 +58,7 @@ public class TerrainChunk : MonoBehaviour {
   public bool isJobInProgress { get { return m_handle.HasValue; } }
   public bool isGenerating { get; private set; } = false;
   public bool hasEverBeenGenerated { get; private set; } = false;
+  public event Action GenerationCompleted;
 
   private bool m_generateFlag;
   private bool m_destroyFlag;
@@ -161,7 +162,7 @@ public class TerrainChunk : MonoBehaviour {
     }
   }
 
-  public void DestroyOnNextFrame() {
+  public void ScheduleDestroy() {
     m_destroyFlag = true;
   }
 
@@ -209,14 +210,14 @@ public class TerrainChunk : MonoBehaviour {
       // Complete the job
       m_handle.Value.Complete();
 
-      // Copy points
-      m_points = m_jobPoints.ToArray();
-
       // Flags
       isGenerating = false;
       hasEverBeenGenerated = true;
 
       if (!m_destroyFlag) {
+        // Copy points
+        m_points = m_jobPoints.ToArray();
+
         // Create a mesh
         Mesh mesh = CubeGrid.CreateMesh(
           m_jobVertices,
@@ -252,6 +253,9 @@ public class TerrainChunk : MonoBehaviour {
               "Total to apply collider: {0} ms", timer.ElapsedMilliseconds
             )
           );
+
+        // Call events
+        GenerationCompleted?.Invoke();
       }
 
       // Dispose memory
