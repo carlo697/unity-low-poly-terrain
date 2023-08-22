@@ -64,6 +64,10 @@ public class TerrainShape : ISamplerFactory {
     octaves = 4
   };
 
+  [Header("Details")]
+  public bool useDetails;
+  public DetailSpawner[] detailSpawners;
+
   [Header("Debug")]
   public DebugMode debugMode = DebugMode.None;
 

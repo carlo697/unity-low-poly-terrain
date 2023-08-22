@@ -1,0 +1,14 @@
+
+using UnityEngine;
+
+[CreateAssetMenu(menuName = "Terrain/Detail", order = 1)]
+public class DetailAsset : Detail {
+  public override string id { get { return m_id; } }
+  [SerializeField] private string m_id = "Example";
+
+  public override GameObject[] prefabs { get { return m_prefabs; } }
+  [SerializeField] private GameObject[] m_prefabs;
+
+  public override int preAllocateCount { get { return m_preAllocateCount; } }
+  [SerializeField] private int m_preAllocateCount = 100;
+}

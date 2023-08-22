@@ -80,6 +80,8 @@ public class TerrainChunk : MonoBehaviour {
   private CubeGridPoint[] m_points;
 
   private void Awake() {
+    gameObject.layer = LayerMask.NameToLayer("Ground");
+
     // Add a mesh filter
     m_meshFilter = GetComponent<MeshFilter>();
     if (!m_meshFilter) {
