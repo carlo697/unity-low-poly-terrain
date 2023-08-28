@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ExampleObjectSpawner
   m_EditorClassIdentifier: 
   seed: 0
-  populationDensity: 10
+  populationDensity: 6
   scaleCurve:
     serializedVersion: 2
     m_Curve:

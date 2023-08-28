@@ -2,9 +2,14 @@
 using UnityEngine;
 using Unity.Collections;
 using Unity.Jobs;
-using System;
 using System.Collections;
 using System.Collections.Generic;
+
+public enum DetailsChunkStatus {
+  Spawned,
+  Generating,
+  Generated
+}
 
 public class DetailsChunk : MonoBehaviour {
   private static int updatesThisFrame;
@@ -13,10 +18,16 @@ public class DetailsChunk : MonoBehaviour {
   public Bounds bounds;
   public TerrainShape terrainShape;
 
+  public DetailsChunkStatus status = DetailsChunkStatus.Spawned;
+
   private float m_levelOfDetail = 1f;
-  private bool m_updateFlag;
-  private bool m_isGenerating;
   private List<DetailInstance> m_instances = new List<DetailInstance>();
+
+  private bool m_updateFlag;
+  private bool m_destroyFlag;
+  private JobHandle? m_handle;
+  private NativeArray<RaycastHit> m_results;
+  private NativeArray<RaycastCommand> m_commands;
 
   private void Update() {
     if (lastFrameCount != Time.frameCount) {
@@ -24,12 +35,14 @@ public class DetailsChunk : MonoBehaviour {
       lastFrameCount = Time.frameCount;
     }
 
-    if (m_updateFlag && !m_isGenerating && updatesThisFrame < 2) {
-      m_isGenerating = true;
+    if (m_destroyFlag) {
+      if (status != DetailsChunkStatus.Generating) {
+        Destroy(gameObject);
+      }
+    } else if (m_updateFlag && status != DetailsChunkStatus.Generating && updatesThisFrame < 2) {
       m_updateFlag = false;
+      status = DetailsChunkStatus.Generating;
       StartCoroutine(PlaceDetails());
-
-      updatesThisFrame++;
     }
   }
 
@@ -39,6 +52,9 @@ public class DetailsChunk : MonoBehaviour {
   }
 
   public IEnumerator PlaceDetails() {
+    // Let's copy this value in case it's updated while the chunk is still generating
+    float levelOfDetail = m_levelOfDetail;
+
     yield return null;
 
     // Record time taken to generate and spawn the details
@@ -54,7 +70,7 @@ public class DetailsChunk : MonoBehaviour {
       DetailSpawner spawner = terrainShape.detailSpawners[i];
 
       // Call the "Spawn" method to create the temporal instances
-      List<TempDetailInstance> spawnResults = spawner.Spawn(seed, bounds, m_levelOfDetail);
+      List<TempDetailInstance> spawnResults = spawner.Spawn(seed, bounds, levelOfDetail);
 
       // Add them to the main array
       tempInstances.AddRange(spawnResults);
@@ -68,15 +84,15 @@ public class DetailsChunk : MonoBehaviour {
     // }
 
     // Create the arrays needed to schedule the job for the raycasts
-    var results = new NativeArray<RaycastHit>(tempInstances.Count, Allocator.Persistent);
-    var commands = new NativeArray<RaycastCommand>(tempInstances.Count, Allocator.Persistent);
+    m_results = new NativeArray<RaycastHit>(tempInstances.Count, Allocator.Persistent);
+    m_commands = new NativeArray<RaycastCommand>(tempInstances.Count, Allocator.Persistent);
 
     QueryParameters parameters = QueryParameters.Default;
     parameters.hitBackfaces = true;
 
     // Transfer the raycast commands from the temporal instances to the "commands" array
     for (int i = 0; i < tempInstances.Count; i++) {
-      commands[i] = tempInstances[i].raycastCommand;
+      m_commands[i] = tempInstances[i].raycastCommand;
     }
 
     // if (bounds.center.x == -304f && bounds.center.z == -112f) {
@@ -85,29 +101,33 @@ public class DetailsChunk : MonoBehaviour {
     // }
 
     // Schedule the raycast commands
-    JobHandle handle = RaycastCommand.ScheduleBatch(
-      commands,
-      results,
+    m_handle = RaycastCommand.ScheduleBatch(
+      m_commands,
+      m_results,
       1000,
       1
     );
 
+    timer.Stop();
+
     // Wait for the job to be completed
-    while (!handle.IsCompleted) {
-      timer.Stop();
+    while (!m_handle.Value.IsCompleted) {
       yield return new WaitForSeconds(.1f);
     }
 
     timer.Start();
 
     // Complete the job
-    handle.Complete();
+    m_handle.Value.Complete();
+
+    // Delete the old game objects
+    DestroyInstances();
 
     // Get the final instances and register them
     m_instances.Clear();
-    for (int i = 0; i < results.Length; i++) {
-      if (results[i].collider != null) {
-        DetailInstance? instance = tempInstances[i].GetFinalInstance(results[i]);
+    for (int i = 0; i < m_results.Length; i++) {
+      if (m_results[i].collider != null) {
+        DetailInstance? instance = tempInstances[i].GetFinalInstance(m_results[i]);
 
         if (instance.HasValue)
           m_instances.Add(instance.Value);
@@ -119,46 +139,45 @@ public class DetailsChunk : MonoBehaviour {
     //   Debug.Break();
     // }
 
-    // Dispose the buffers
-    results.Dispose();
-    commands.Dispose();
-
-    // Delete the old game objects
-    int childCount = transform.childCount;
-    for (int i = childCount - 1; i >= 0; i--) {
-      // GameObject.Destroy(transform.GetChild(i).gameObject);
-
-      PrefabPool.Release(transform.GetChild(i).gameObject);
-    }
+    // Dispose the job
+    DisposeJob();
 
     // Instantiate new game objects
     for (int i = 0; i < m_instances.Count; i++) {
       DetailInstance instance = m_instances[i];
 
-      // GameObject obj = GameObject.Instantiate(
-      //   instance.prefab,
-      //   instance.position,
-      //   instance.rotation,
-      //   transform
-      // );
-
       GameObject obj = PrefabPool.Get(instance.prefab);
-      obj.transform.SetParent(transform);
-      obj.transform.position = instance.position;
-      obj.transform.rotation = instance.rotation;
+      obj.transform.SetPositionAndRotation(instance.position, instance.rotation);
       obj.transform.localScale = instance.scale;
+      // obj.transform.SetParent(transform, false);
+      obj.SetActive(true);
+      instance.spawnedObject = obj;
+      m_instances[i] = instance;
     }
 
     timer.Stop();
-    Debug.Log(
-      string.Format(
-        "Time: {0} ms, instances: {1}",
-        timer.ElapsedMilliseconds,
-        m_instances.Count
-      )
-    );
 
-    m_isGenerating = false;
+    // Debug.Log(
+    //   string.Format(
+    //     "Time: {0} ms, instances: {1}",
+    //     timer.ElapsedMilliseconds,
+    //     m_instances.Count
+    //   )
+    // );
+
+    status = DetailsChunkStatus.Generated;
+  }
+
+  private void DestroyInstances() {
+    // Delete the spawned game objects
+    for (int i = 0; i < m_instances.Count; i++) {
+      if (m_instances[i].spawnedObject) {
+        PrefabPool.Release(m_instances[i].spawnedObject);
+      }
+    }
+
+    // Clear array
+    m_instances.Clear();
   }
 
   public static Vector3 RandomPointInBounds(Bounds bounds) {
@@ -284,5 +303,29 @@ public class DetailsChunk : MonoBehaviour {
   private void OnDrawGizmosSelected() {
     Gizmos.color = Color.white;
     Gizmos.DrawWireCube(bounds.center, bounds.size);
+  }
+
+  public void ScheduleDestroy() {
+    m_destroyFlag = true;
+  }
+
+  private void DisposeJob() {
+    m_results.Dispose();
+    m_commands.Dispose();
+    m_handle = null;
+  }
+
+  private void CancelJob() {
+    m_handle.Value.Complete();
+    DisposeJob();
+  }
+
+  private void OnDestroy() {
+    if (m_handle.HasValue) {
+      Debug.Log("Details Chunk destroyed and there was a job running");
+      CancelJob();
+    }
+
+    DestroyInstances();
   }
 }

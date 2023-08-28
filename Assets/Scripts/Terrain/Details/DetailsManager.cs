@@ -165,7 +165,7 @@ public class DetailsManager : MonoBehaviour {
       if (!foundBounds) {
         m_spawnedChunks.Remove(chunk);
         m_spawnedChunksDictionary.Remove(chunk.bounds);
-        Destroy(chunk.gameObject);
+        chunk.ScheduleDestroy();
       }
     }
 
@@ -192,6 +192,13 @@ public class DetailsManager : MonoBehaviour {
     // Set variables
     chunk.bounds = bounds;
     chunk.terrainShape = terrainShape;
+
+    // Request update
+    float levelOfDetail = GetLevelOfDetail(
+      m_terrainManager.usedCamera.transform.position,
+      chunk.bounds.center
+    );
+    chunk.RequestUpdate(levelOfDetail);
   }
 
   public float GetLevelOfDetail(Vector3 cameraPosition, Vector3 chunkCenter) {

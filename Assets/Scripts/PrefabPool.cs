@@ -52,10 +52,10 @@ public static class PrefabPool {
     }
 
     // Return an instantiated prefab from the stack
-    GameObject gameObject = gameObject = stack.Pop();
+    GameObject gameObject = stack.Pop();
 
     // Enable the instantiated prefab and return it
-    gameObject.SetActive(true);
+    // gameObject.SetActive(true);
     return gameObject;
   }
 

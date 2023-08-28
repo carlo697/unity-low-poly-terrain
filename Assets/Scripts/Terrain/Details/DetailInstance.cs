@@ -6,4 +6,5 @@ public struct DetailInstance {
   public Quaternion rotation;
   public Vector3 scale;
   public GameObject prefab;
+  public GameObject spawnedObject;
 }
