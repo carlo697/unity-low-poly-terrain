@@ -124,11 +124,7 @@ public class DetailsManager : MonoBehaviour {
         }
 
         if (drawGizmos) {
-          Gizmos.color = Color.Lerp(
-            Color.black,
-            Color.white,
-            GetLevelOfDetail(camera3dPosition, bounds.center)
-          );
+          Gizmos.color = Color.white;
           Gizmos.DrawCube(bounds.center, bounds.size);
         }
 
@@ -202,15 +198,14 @@ public class DetailsManager : MonoBehaviour {
   }
 
   public float GetLevelOfDetail(Vector3 cameraPosition, Vector3 chunkCenter) {
-    cameraPosition.y = 0;
-    float distanceToCamera = Vector3.Distance(cameraPosition, chunkCenter);
-    float normalizedDistanceToCamera = Mathf.Clamp01(distanceToCamera / viewDistance);
+    TerrainChunk terrainChunk = m_terrainManager.GetChunkAt(chunkCenter);
 
-    // float levelOfDetail = 1 - Mathf.Exp(-3f * (1f - normalizedDistanceToCamera));
-    // if (levelOfDetail > 0.9f)
-    //   levelOfDetail = 1f;
+    if (terrainChunk) {
+      float normalizedLevel = 1f / (terrainChunk.size.x / m_terrainManager.chunkSize.x);
+      return levelOfDetailCurve.Evaluate(normalizedLevel);
+    }
 
-    return levelOfDetailCurve.Evaluate(normalizedDistanceToCamera);
+    return 0f;
   }
 
   private void OnDrawGizmos() {
