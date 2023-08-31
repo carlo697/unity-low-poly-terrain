@@ -353,4 +353,14 @@ public class QuadTreeTerrainManager : MonoBehaviour {
       }
     }
   }
+
+  public TerrainChunk GetChunkAt(Vector3 position) {
+    QuadtreeChunk chunk = QuadtreeChunk.GetChunkAt(m_quadtreeChunks, position);
+
+    if (chunk != null) {
+      return m_spawnedChunksDictionary.GetValueOrDefault(chunk.bounds);
+    }
+
+    return null;
+  }
 }

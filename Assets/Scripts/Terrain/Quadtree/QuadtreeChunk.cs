@@ -112,6 +112,32 @@ class QuadtreeChunk {
     return list;
   }
 
+  public QuadtreeChunk GetChunkAt(Vector3 position) {
+    if (children != null) {
+      for (int i = 0; i < children.Length; i++) {
+        QuadtreeChunk chunk = children[i];
+
+        if (chunk.bounds.Contains(position)) {
+          return chunk.GetChunkAt(position);
+        }
+      }
+    }
+
+    return this;
+  }
+
+  public static QuadtreeChunk GetChunkAt(List<QuadtreeChunk> chunks, Vector3 position) {
+    for (int i = 0; i < chunks.Count; i++) {
+      QuadtreeChunk chunk = chunks[i];
+
+      if (chunk.bounds.Contains(position)) {
+        return chunk.GetChunkAt(position);
+      }
+    }
+
+    return null;
+  }
+
   public static List<float> CalculateLevelDistances(
     float baseChunkSize,
     int levelsOfDetail = 8,
