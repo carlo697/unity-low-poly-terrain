@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 686b362ee6521e34eb42b3f3b2fda3fb, type: 3}
+  m_Name: Pine
+  m_EditorClassIdentifier: 
+  m_id: Example
+  m_prefabs:
+  - {fileID: 9000620536312750102, guid: cd17dde0ce0aee7458214c05f96f0ae7, type: 3}
+  m_preAllocateCount: 25000
+  m_submeshes:
+  - mesh: {fileID: 3581466079261191796, guid: 8687953b64fc18040bec5e169eda71d9, type: 3}
+    material: {fileID: 2100000, guid: ce8366b872a3bce4db7b1ab131d71eb3, type: 2}
+    submeshIndex: 0
+  - mesh: {fileID: 3581466079261191796, guid: 8687953b64fc18040bec5e169eda71d9, type: 3}
+    material: {fileID: 2100000, guid: e239b7b822cd94b4d91fc1459bdd9284, type: 2}
+    submeshIndex: 1

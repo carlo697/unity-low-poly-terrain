@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e1ee44cece33d6c42b19dd4e8b66b2e4, type: 3}
-  m_Name: ExampleObjectSpawner
+  m_Name: PineSpawner
   m_EditorClassIdentifier: 
   seed: 0
   populationDensity: 6

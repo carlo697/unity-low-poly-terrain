@@ -7,4 +7,5 @@ public struct DetailInstance {
   public Vector3 scale;
   public GameObject prefab;
   public GameObject spawnedObject;
+  public Matrix4x4 matrix;
 }

@@ -78,7 +78,9 @@ public class DetailSpawnerAsset : DetailSpawner {
           position = position,
           rotation = rotation,
           scale = scale,
-          prefab = prefab
+          prefab = prefab,
+          detail = detail,
+          matrix = Matrix4x4.TRS(position, rotation, scale)
         };
       };
 

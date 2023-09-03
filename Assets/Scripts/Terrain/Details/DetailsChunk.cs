@@ -17,10 +17,13 @@ public class DetailsChunk : MonoBehaviour {
 
   public Bounds bounds;
   public TerrainShape terrainShape;
+  public bool useMeshInstancing;
 
   public DetailsChunkStatus status = DetailsChunkStatus.Spawned;
 
   private float m_levelOfDetail = 1f;
+
+  public List<DetailInstance> instances { get { return m_instances; } }
   private List<DetailInstance> m_instances = new List<DetailInstance>();
 
   private bool m_updateFlag;
@@ -28,6 +31,8 @@ public class DetailsChunk : MonoBehaviour {
   private JobHandle? m_handle;
   private NativeArray<RaycastHit> m_results;
   private NativeArray<RaycastCommand> m_commands;
+
+  // private Dictionary<DetailSubmesh, List<Matrix4x4>> m_instancingBatches = new();
 
   private void Update() {
     if (lastFrameCount != Time.frameCount) {
@@ -39,10 +44,16 @@ public class DetailsChunk : MonoBehaviour {
       if (status != DetailsChunkStatus.Generating) {
         Destroy(gameObject);
       }
-    } else if (m_updateFlag && status != DetailsChunkStatus.Generating && updatesThisFrame < 2) {
-      m_updateFlag = false;
-      status = DetailsChunkStatus.Generating;
-      StartCoroutine(PlaceDetails());
+    } else {
+      if (m_updateFlag && status != DetailsChunkStatus.Generating && updatesThisFrame < 2) {
+        m_updateFlag = false;
+        status = DetailsChunkStatus.Generating;
+        StartCoroutine(PlaceDetails());
+      }
+
+      // if (useMeshInstancing) {
+      //   Render();
+      // }
     }
   }
 
@@ -146,13 +157,36 @@ public class DetailsChunk : MonoBehaviour {
     for (int i = 0; i < m_instances.Count; i++) {
       DetailInstance instance = m_instances[i];
 
-      GameObject obj = PrefabPool.Get(instance.prefab);
-      obj.transform.SetPositionAndRotation(instance.position, instance.rotation);
-      obj.transform.localScale = instance.scale;
-      // obj.transform.SetParent(transform, false);
-      obj.SetActive(true);
-      instance.spawnedObject = obj;
-      m_instances[i] = instance;
+      if (!useMeshInstancing) {
+        GameObject obj = PrefabPool.Get(instance.prefab);
+        obj.transform.SetPositionAndRotation(instance.position, instance.rotation);
+        obj.transform.localScale = instance.scale;
+        // obj.transform.SetParent(transform, false);
+        obj.SetActive(true);
+        instance.spawnedObject = obj;
+        m_instances[i] = instance;
+      }
+
+      // Add GPU instancing batches
+      // if (useMeshInstancing) {
+      //   if (instance.detail.submeshes.Length > 0 && m_instances.Count > 0) {
+      //     for (int j = 0; j < instance.detail.submeshes.Length; j++) {
+      //       DetailSubmesh batch = instance.detail.submeshes[j];
+
+      //       // Get the list
+      //       List<Matrix4x4> matrices;
+      //       m_instancingBatches.TryGetValue(batch, out matrices);
+
+      //       // Create the list if it doesn't exist
+      //       if (matrices == null) {
+      //         matrices = m_instancingBatches[batch] = new();
+      //       }
+
+      //       // Add the matrix
+      //       matrices.Add(instance.matrix);
+      //     }
+      //   }
+      // }
     }
 
     timer.Stop();
@@ -169,15 +203,22 @@ public class DetailsChunk : MonoBehaviour {
   }
 
   private void DestroyInstances() {
-    // Delete the spawned game objects
-    for (int i = 0; i < m_instances.Count; i++) {
-      if (m_instances[i].spawnedObject) {
-        PrefabPool.Release(m_instances[i].spawnedObject);
+    if (!useMeshInstancing) {
+      // Delete the spawned game objects
+      for (int i = 0; i < m_instances.Count; i++) {
+        if (m_instances[i].spawnedObject) {
+          PrefabPool.Release(m_instances[i].spawnedObject);
+        }
       }
     }
 
     // Clear array
     m_instances.Clear();
+
+    // Clear batches for GPU instancing
+    // foreach (var batch in m_instancingBatches) {
+    //   batch.Value.Clear();
+    // }
   }
 
   public static Vector3 RandomPointInBounds(Bounds bounds) {
@@ -328,4 +369,18 @@ public class DetailsChunk : MonoBehaviour {
 
     DestroyInstances();
   }
+
+  // private void Render() {
+  //   // Iterate the batches to draw them
+  //   foreach (var batch in m_instancingBatches) {
+  //     if (batch.Value.Count > 0) {
+  //       Graphics.DrawMeshInstanced(
+  //         batch.Key.mesh,
+  //         batch.Key.submeshIndex,
+  //         batch.Key.material,
+  //         batch.Value
+  //       );
+  //     }
+  //   }
+  // }
 }
