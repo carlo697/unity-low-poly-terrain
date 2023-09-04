@@ -153,20 +153,7 @@ public class DetailsChunk : MonoBehaviour {
     // Dispose the job
     DisposeJob();
 
-    // Instantiate new game objects
-    for (int i = 0; i < m_instances.Count; i++) {
-      DetailInstance instance = m_instances[i];
-
-      if (!useMeshInstancing) {
-        GameObject obj = PrefabPool.Get(instance.prefab);
-        obj.transform.SetPositionAndRotation(instance.position, instance.rotation);
-        obj.transform.localScale = instance.scale;
-        // obj.transform.SetParent(transform, false);
-        obj.SetActive(true);
-        instance.spawnedObject = obj;
-        m_instances[i] = instance;
-      }
-
+    if (useMeshInstancing) {
       // Add GPU instancing batches
       // if (useMeshInstancing) {
       //   if (instance.detail.submeshes.Length > 0 && m_instances.Count > 0) {
@@ -187,6 +174,19 @@ public class DetailsChunk : MonoBehaviour {
       //     }
       //   }
       // }
+    } else {
+      // Instantiate new game objects
+      for (int i = 0; i < m_instances.Count; i++) {
+        DetailInstance instance = m_instances[i];
+
+        GameObject obj = PrefabPool.Get(instance.prefab);
+        obj.transform.SetPositionAndRotation(instance.position, instance.rotation);
+        obj.transform.localScale = instance.scale;
+        // obj.transform.SetParent(transform, false);
+        obj.SetActive(true);
+        instance.spawnedObject = obj;
+        m_instances[i] = instance;
+      }
     }
 
     timer.Stop();
