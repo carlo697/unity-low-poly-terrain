@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   seed: 0
   populationDensity: 6
+  minimumDistance: 0
+  m_detail: {fileID: 11400000, guid: 8e4701495890e3f41adc4ce9939f6103, type: 2}
   scaleCurve:
     serializedVersion: 2
     m_Curve:
@@ -38,5 +40,5 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  m_detail: {fileID: 11400000, guid: 8e4701495890e3f41adc4ce9939f6103, type: 2}
-  minimumDistance: 0
+  applyNormalRotation: 0
+  randomRotation: {x: 3, y: 360, z: 3}

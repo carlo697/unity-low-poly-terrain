@@ -5,16 +5,23 @@ using System.Collections.Generic;
 
 [CreateAssetMenu(menuName = "Terrain/Detail Spawner", order = 2)]
 public class DetailSpawnerAsset : DetailSpawner {
+  [Header("Distribution")]
   public uint seed;
   public float populationDensity = 5f;
+  public float minimumDistance;
+
+  public override Detail detail { get { return m_detail; } }
+  [Header("Detail")]
+  [SerializeField] private Detail m_detail;
+
+  [Header("Scale")]
   public AnimationCurve scaleCurve = new AnimationCurve(
     new Keyframe[] { new Keyframe(0f, 0.75f), new Keyframe(1f, 1f) }
   );
 
-  public override Detail detail { get { return m_detail; } }
-  [SerializeField] private Detail m_detail;
-
-  public float minimumDistance;
+  [Header("Rotation")]
+  public bool applyNormalRotation;
+  public Vector3 randomRotation = new Vector3(0f, 360f, 0);
 
   public override List<TempDetailInstance> Spawn(ulong seed, Bounds bounds, float levelOfDetail) {
     // Random number generators
@@ -61,8 +68,17 @@ public class DetailSpawnerAsset : DetailSpawner {
         Vector3 position = hit.point;
 
         // Generate rotation using the normal of the raycast hit and applying a random Y rotation
-        Quaternion rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
-        rotation *= Quaternion.Euler(0f, (float)instanceRng.NextDouble() * 360f, 0f);
+        Quaternion rotation;
+        if (applyNormalRotation) {
+          rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
+        } else {
+          rotation = Quaternion.identity;
+        }
+        rotation *= Quaternion.Euler(
+          randomRotation.x > 0 ? (float)instanceRng.NextDouble() * randomRotation.x : 0f,
+          randomRotation.y > 0 ? (float)instanceRng.NextDouble() * randomRotation.y : 0f,
+          randomRotation.z > 0 ? (float)instanceRng.NextDouble() * randomRotation.z : 0f
+        );
 
         // Generate a scale vector
         float scaleResult = scaleCurve.Evaluate((float)instanceRng.NextDouble());
