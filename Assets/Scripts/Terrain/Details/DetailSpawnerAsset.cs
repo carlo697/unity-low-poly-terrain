@@ -24,7 +24,7 @@ public class DetailSpawnerAsset : DetailSpawner {
     // Calculate how many details are inside the chunk
     float populationX = bounds.size.x / populationDensity + 1;
     float populationZ = bounds.size.z / populationDensity + 1;
-    int totalPopulation = Mathf.RoundToInt(populationX * populationZ);
+    int totalPopulation = Mathf.RoundToInt(populationX * populationZ * levelOfDetail);
 
     // Get the layer mask of the terrain
     int groundLayer = LayerMask.NameToLayer("Ground");
@@ -42,9 +42,6 @@ public class DetailSpawnerAsset : DetailSpawner {
         start.z + (float)positionRng.NextDouble() * bounds.size.z
       );
       ulong instanceSeed = lodRng.Sample();
-
-      // See if we need to skip this instance
-      if ((float)lodRng.NextDouble() >= levelOfDetail) continue;
 
       // Create a raycast command
       QueryParameters parameters = QueryParameters.Default;
