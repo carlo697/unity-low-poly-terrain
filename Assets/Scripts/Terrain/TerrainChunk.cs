@@ -191,13 +191,7 @@ public class TerrainChunk : MonoBehaviour {
 
   void CancelJob() {
     m_handle.Value.Complete();
-    m_jobVertices.Dispose();
-    m_jobTriangles.Dispose();
-    m_jobColors.Dispose();
-    m_jobPoints.Dispose();
-    samplerHandle.Free();
-    postProcessingHandle.Free();
-    m_handle = null;
+    DisposeJob();
   }
 
   void LateUpdate() {
