@@ -58,8 +58,12 @@ public class DetailsChunk : MonoBehaviour {
   }
 
   public void RequestUpdate(float levelOfDetail) {
-    m_updateFlag = true;
-    m_levelOfDetail = levelOfDetail;
+    // Only update if the level of detail changed or if the chunk
+    // has 0 detail instances
+    if (levelOfDetail != m_levelOfDetail || m_instances.Count == 0) {
+      m_updateFlag = true;
+      m_levelOfDetail = levelOfDetail;
+    }
   }
 
   public IEnumerator PlaceDetails() {
