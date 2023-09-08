@@ -46,6 +46,7 @@ public class DetailsChunk : MonoBehaviour {
       }
     } else {
       if (m_updateFlag && status != DetailsChunkStatus.Generating && updatesThisFrame < 2) {
+        updatesThisFrame++;
         m_updateFlag = false;
         status = DetailsChunkStatus.Generating;
         StartCoroutine(PlaceDetails());
@@ -80,18 +81,12 @@ public class DetailsChunk : MonoBehaviour {
     ulong seed = (ulong)(terrainShape.terrainSeed + bounds.center.GetHashCode());
 
     // Create a list of temporal instances using the spawners
-    List<TempDetailInstance> tempInstances = new List<TempDetailInstance>();
+    List<TempDetailInstance> tempInstances = new List<TempDetailInstance>(1000);
     for (int i = 0; i < terrainShape.detailSpawners.Length; i++) {
       DetailSpawner spawner = terrainShape.detailSpawners[i];
 
-      // Call the "Spawn" method to create the temporal instances
-      List<TempDetailInstance> spawnResults = spawner.Spawn(seed, bounds, levelOfDetail);
-
-      // Add them to the main array
-      tempInstances.AddRange(spawnResults);
-      // for (int resultIndex = 0; resultIndex < spawnResults.Count; resultIndex++) {
-      //   tempInstances.Add(spawnResults[resultIndex]);
-      // }
+      // Call the "Spawn" method to add the temporal instances to the list
+      spawner.Spawn(tempInstances, seed, bounds, levelOfDetail);
     }
 
     // if (bounds.center.x == -304f && bounds.center.z == -112f) {
@@ -139,7 +134,6 @@ public class DetailsChunk : MonoBehaviour {
     DestroyInstances();
 
     // Get the final instances and register them
-    m_instances.Clear();
     for (int i = 0; i < m_results.Length; i++) {
       if (m_results[i].collider != null) {
         DetailInstance? instance = tempInstances[i].GetFinalInstance(m_results[i]);

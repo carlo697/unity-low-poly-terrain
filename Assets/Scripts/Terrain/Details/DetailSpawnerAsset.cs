@@ -23,7 +23,12 @@ public class DetailSpawnerAsset : DetailSpawner {
   public bool applyNormalRotation;
   public Vector3 randomRotation = new Vector3(0f, 360f, 0);
 
-  public override List<TempDetailInstance> Spawn(ulong seed, Bounds bounds, float levelOfDetail) {
+  public override void Spawn(
+    List<TempDetailInstance> instances,
+    ulong seed,
+    Bounds bounds,
+    float levelOfDetail
+  ) {
     // Random number generators
     XorshiftStar positionRng = new XorshiftStar(seed + this.seed);
     XorshiftStar lodRng = new XorshiftStar(seed + this.seed + 1);
@@ -38,7 +43,6 @@ public class DetailSpawnerAsset : DetailSpawner {
     int layerMask = 1 << groundLayer;
 
     // Create a list of temporal instances
-    List<TempDetailInstance> results = new List<TempDetailInstance>(totalPopulation);
     Vector3 start = bounds.center - bounds.extents;
     for (int i = 0; i < totalPopulation; i++) {
       // To maintain a stable sequence of random numbers, we need to always generate
@@ -98,13 +102,11 @@ public class DetailSpawnerAsset : DetailSpawner {
       };
 
       // Add a temporal instance to the list
-      results.Add(new TempDetailInstance {
+      instances.Add(new TempDetailInstance {
         raycastCommand = raycastCommand,
         GetFinalInstance = GetFinalInstance
       });
     }
-
-    return results;
   }
 
   // public override (Vector3, Quaternion) GetFinalTransform(
