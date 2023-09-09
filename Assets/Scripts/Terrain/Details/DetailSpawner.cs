@@ -8,6 +8,7 @@ public abstract class DetailSpawner : ScriptableObject {
     List<TempDetailInstance> instances,
     ulong seed,
     Bounds bounds,
-    float levelOfDetail
+    int integerLevelOfDetail,
+    float normalizedLevelOfDetail
   );
 }

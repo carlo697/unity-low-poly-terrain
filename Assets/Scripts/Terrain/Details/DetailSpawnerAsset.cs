@@ -8,7 +8,7 @@ public class DetailSpawnerAsset : DetailSpawner {
   [Header("Distribution")]
   public uint seed;
   public float populationDensity = 5f;
-  public float minimumDistance;
+  public int maximumLevelOfDetail = 8;
 
   public override Detail detail { get { return m_detail; } }
   [Header("Detail")]
@@ -27,8 +27,13 @@ public class DetailSpawnerAsset : DetailSpawner {
     List<TempDetailInstance> instances,
     ulong seed,
     Bounds bounds,
-    float levelOfDetail
+    int integerLevelOfDetail,
+    float normalizedLevelOfDetail
   ) {
+    if (integerLevelOfDetail > maximumLevelOfDetail) {
+      return;
+    }
+
     // Random number generators
     XorshiftStar positionRng = new XorshiftStar(seed + this.seed);
     XorshiftStar lodRng = new XorshiftStar(seed + this.seed + 1);
@@ -36,7 +41,7 @@ public class DetailSpawnerAsset : DetailSpawner {
     // Calculate how many details are inside the chunk
     float populationX = bounds.size.x / populationDensity + 1;
     float populationZ = bounds.size.z / populationDensity + 1;
-    int totalPopulation = Mathf.RoundToInt(populationX * populationZ * levelOfDetail);
+    int totalPopulation = Mathf.RoundToInt(populationX * populationZ * normalizedLevelOfDetail);
 
     // Get the layer mask of the terrain
     int groundLayer = LayerMask.NameToLayer("Ground");

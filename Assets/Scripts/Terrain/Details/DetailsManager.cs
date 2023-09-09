@@ -73,7 +73,8 @@ public class DetailsManager : MonoBehaviour {
     for (int i = 0; i < m_spawnedChunks.Count; i++) {
       DetailsChunk chunk = m_spawnedChunks[i];
       if (chunk.bounds.IsInside(bounds)) {
-        chunk.RequestUpdate(GetLevelOfDetail(cameraPosition, chunk.bounds.center));
+        (int integer, float normalized) = GetLevelOfDetail(cameraPosition, chunk.bounds.center);
+        chunk.RequestUpdate(integer, normalized);
       }
     }
   }
@@ -203,22 +204,23 @@ public class DetailsManager : MonoBehaviour {
     chunk.useMeshInstancing = useMeshInstancing;
 
     // Request update
-    float levelOfDetail = GetLevelOfDetail(
+    (int integer, float normalized) = GetLevelOfDetail(
       m_terrainManager.usedCamera.transform.position,
       chunk.bounds.center
     );
-    chunk.RequestUpdate(levelOfDetail);
+    chunk.RequestUpdate(integer, normalized);
   }
 
-  public float GetLevelOfDetail(Vector3 cameraPosition, Vector3 chunkCenter) {
+  public (int, float) GetLevelOfDetail(Vector3 cameraPosition, Vector3 chunkCenter) {
     TerrainChunk terrainChunk = m_terrainManager.GetChunkAt(chunkCenter);
 
     if (terrainChunk) {
-      float normalizedLevel = 1f / (terrainChunk.size.x / m_terrainManager.chunkSize.x);
-      return levelOfDetailCurve.Evaluate(normalizedLevel);
+      int integer = (int)(terrainChunk.size.x / m_terrainManager.chunkSize.x);
+      float normalized = levelOfDetailCurve.Evaluate(1f / integer);
+      return (integer, normalized);
     }
 
-    return 0f;
+    return (0, 0f);
   }
 
   private void OnDrawGizmos() {
@@ -278,7 +280,6 @@ public class DetailsManager : MonoBehaviour {
   private IEnumerator PrepareMeshInstancing() {
     yield return null;
 
-    // Third try
     if (useMeshInstancing) {
       // Swap the two grids because we are about to edit the copy
       SimpleGrid2<InstancingCell> gridA = m_instancingGridCopy;

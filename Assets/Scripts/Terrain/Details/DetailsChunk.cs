@@ -21,7 +21,8 @@ public class DetailsChunk : MonoBehaviour {
 
   public DetailsChunkStatus status = DetailsChunkStatus.Spawned;
 
-  private float m_levelOfDetail = 1f;
+  private int m_integerLevelOfDetail;
+  private float m_normalizedLevelOfDetail;
 
   public List<DetailInstance> instances { get { return m_instances; } }
   private List<DetailInstance> m_instances = new List<DetailInstance>();
@@ -58,18 +59,21 @@ public class DetailsChunk : MonoBehaviour {
     }
   }
 
-  public void RequestUpdate(float levelOfDetail) {
+  public void RequestUpdate(int integerLevelOfDetail, float normalizedLevelOfDetail) {
     // Only update if the level of detail changed or if the chunk
     // has 0 detail instances
-    if (levelOfDetail != m_levelOfDetail || m_instances.Count == 0) {
+    if (integerLevelOfDetail != m_integerLevelOfDetail || m_instances.Count == 0) {
       m_updateFlag = true;
-      m_levelOfDetail = levelOfDetail;
+      m_integerLevelOfDetail = integerLevelOfDetail;
+      m_normalizedLevelOfDetail = normalizedLevelOfDetail;
     }
   }
 
   public IEnumerator PlaceDetails() {
-    // Let's copy this value in case it's updated while the chunk is still generating
-    float levelOfDetail = m_levelOfDetail;
+    // Let's copy the level of details in case they are updated while the chunk
+    // is still generating
+    int integerLevelOfDetail = m_integerLevelOfDetail;
+    float normalizedLevelOfDetail = m_normalizedLevelOfDetail;
 
     yield return null;
 
@@ -86,7 +90,7 @@ public class DetailsChunk : MonoBehaviour {
       DetailSpawner spawner = terrainShape.detailSpawners[i];
 
       // Call the "Spawn" method to add the temporal instances to the list
-      spawner.Spawn(tempInstances, seed, bounds, levelOfDetail);
+      spawner.Spawn(tempInstances, seed, bounds, integerLevelOfDetail, normalizedLevelOfDetail);
     }
 
     // if (bounds.center.x == -304f && bounds.center.z == -112f) {
