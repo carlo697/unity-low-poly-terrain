@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 686b362ee6521e34eb42b3f3b2fda3fb, type: 3}
   m_Name: Pine
   m_EditorClassIdentifier: 
-  m_id: Example
+  m_id: Pine
   m_prefabs:
   - {fileID: 9000620536312750102, guid: cd17dde0ce0aee7458214c05f96f0ae7, type: 3}
   m_preAllocateCount: 25000
