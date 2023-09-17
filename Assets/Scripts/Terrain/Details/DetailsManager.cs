@@ -26,6 +26,7 @@ public class DetailsManager : MonoBehaviour {
 
   [Header("Debug")]
   public bool drawGizmos;
+  public bool debugMeshInstancing;
 
   private void Start() {
     if (m_terrainShape.useDetails) {
@@ -286,6 +287,9 @@ public class DetailsManager : MonoBehaviour {
     yield return null;
 
     if (useMeshInstancing) {
+      System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
+      timer.Start();
+
       // Swap the two grids because we are about to edit the copy
       SimpleGrid2<InstancingCell> gridA = m_instancingGridCopy;
       m_instancingGridCopy = m_instancingGrid;
@@ -308,6 +312,8 @@ public class DetailsManager : MonoBehaviour {
 
       // Iterate the spawned chunks
       int instancePauseCount = 0;
+      int totalFrames = 1;
+      int totalInstanceCount = 0;
       for (int i = 0; i < m_spawnedChunks.Count; i++) {
         DetailsChunk chunk = m_spawnedChunks[i];
 
@@ -325,8 +331,11 @@ public class DetailsManager : MonoBehaviour {
             // keep updating the next frame
             instancePauseCount += instance.detail.submeshes.Length;
             if (instancePauseCount > 4000) {
+              timer.Stop();
               yield return new WaitForSeconds(0.01f);
+              timer.Start();
               instancePauseCount = 0;
+              totalFrames++;
             }
 
             // Iterate the submeshes
@@ -360,6 +369,7 @@ public class DetailsManager : MonoBehaviour {
 
               // Add the matrix
               currentList.Add(instance.matrix);
+              totalInstanceCount++;
 
               // Increase the index when the limit of 1023 is passed
               if (currentList.Count >= 1023) {
@@ -368,6 +378,17 @@ public class DetailsManager : MonoBehaviour {
             }
           }
         }
+      }
+
+      if (debugMeshInstancing) {
+        Debug.Log(
+          string.Format(
+            "Time: {0} ms to prepare {1} instances for GPU instancing in {2} frames",
+            timer.ElapsedMilliseconds,
+            totalInstanceCount,
+            totalFrames
+          )
+        );
       }
     }
   }
