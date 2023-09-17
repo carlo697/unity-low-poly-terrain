@@ -1,7 +1,6 @@
 using UnityEngine;
 using Unity.Jobs;
 using Unity.Collections;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 public struct CubeGridJob : IJob {
@@ -54,22 +53,14 @@ public struct CubeGridJob : IJob {
       useMiddlePoint
     );
 
-    List<Vector3> vertices;
-    List<int> triangles;
-    List<Color> colors;
-    grid.Generate(out vertices, out triangles, out colors, samplerFunc, postProcessingFunc, debug);
-
-    for (int i = 0; i < vertices.Count; i++) {
-      this.vertices.Add(vertices[i]);
-    }
-
-    for (int i = 0; i < vertices.Count; i++) {
-      this.triangles.Add(triangles[i]);
-    }
-
-    for (int i = 0; i < colors.Count; i++) {
-      this.colors.Add(colors[i]);
-    }
+    grid.Generate(
+      ref vertices,
+      ref triangles,
+      ref colors,
+      samplerFunc,
+      postProcessingFunc,
+      debug
+    );
 
     for (int i = 0; i < grid.gridPoints.Length; i++) {
       this.points.Add(grid.gridPoints[i]);

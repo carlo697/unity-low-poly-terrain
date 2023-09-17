@@ -188,8 +188,8 @@ public class CubeGrid {
   }
 
   public void MarchSingleCube(
-    ICollection<Vector3> vertices,
-    ICollection<Color> colors,
+    NativeList<Vector3> vertices,
+    NativeList<Color> colors,
     int x,
     int y,
     int z
@@ -271,9 +271,9 @@ public class CubeGrid {
   }
 
   public void Generate(
-    out List<Vector3> outputVertices,
-    out List<int> outputTriangles,
-    out List<Color> outputColors,
+    ref NativeList<Vector3> outputVertices,
+    ref NativeList<int> outputTriangles,
+    ref NativeList<Color> outputColors,
     CubeGridSamplerFunc samplerFunc = null,
     CubeGridPostProcessingFunc postProcessingFunc = null,
     bool debug = false
@@ -296,8 +296,6 @@ public class CubeGrid {
     stepTimer.Restart();
 
     // Loop through the points to generate the vertices and colors
-    outputVertices = new List<Vector3>();
-    outputColors = new List<Color>();
     for (int z = 0; z < m_sizes.z - 1; z++) {
       for (int y = 0; y < m_sizes.y - 1; y++) {
         for (int x = 0; x < m_sizes.x - 1; x++) {
@@ -307,8 +305,7 @@ public class CubeGrid {
     }
 
     // Loop through the vertices to generate the triangles
-    outputTriangles = new List<int>(outputVertices.Count * 3);
-    for (int i = 0; i < outputVertices.Count; i += 3) {
+    for (int i = 0; i < outputVertices.Length; i += 3) {
       outputTriangles.Add(i);
       outputTriangles.Add(i + 1);
       outputTriangles.Add(i + 2);

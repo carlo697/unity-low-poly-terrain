@@ -137,7 +137,8 @@ public class TerrainChunk : MonoBehaviour {
     m_jobVertices = new NativeList<Vector3>(Allocator.Persistent);
     m_jobTriangles = new NativeList<int>(Allocator.Persistent);
     m_jobColors = new NativeList<Color>(Allocator.Persistent);
-    m_jobPoints = new NativeList<CubeGridPoint>(Allocator.Persistent);
+    int pointCount = (resolution.x + 1) * (resolution.y + 1) * (resolution.z + 1);
+    m_jobPoints = new NativeList<CubeGridPoint>(pointCount, Allocator.Persistent);
 
     // Create job
     CubeGridJob job = new CubeGridJob(
