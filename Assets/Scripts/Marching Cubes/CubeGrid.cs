@@ -306,6 +306,14 @@ public class CubeGrid {
       }
     }
 
+    // Loop through the vertices to generate the triangles
+    outputTriangles = new List<int>(outputVertices.Count * 3);
+    for (int i = 0; i < outputVertices.Count; i += 3) {
+      outputTriangles.Add(i);
+      outputTriangles.Add(i + 1);
+      outputTriangles.Add(i + 2);
+    }
+
     stepTimer.Stop();
     if (debug)
       Debug.Log(
@@ -315,16 +323,6 @@ public class CubeGrid {
           resolution
         )
       );
-
-    stepTimer.Restart();
-
-    // Loop through the vertices to generate the triangles
-    outputTriangles = new List<int>();
-    for (int i = 0; i < outputVertices.Count; i += 3) {
-      outputTriangles.Add(i);
-      outputTriangles.Add(i + 1);
-      outputTriangles.Add(i + 2);
-    }
   }
 
   public static Mesh CreateMesh(
