@@ -2,36 +2,11 @@ using UnityEngine;
 using System;
 
 [Serializable]
-public class FractalNoiseGenerator : TerrainNoiseGenerator {
+public class FractalNoiseGenerator : BasicNoiseSettings, TerrainNoiseGenerator {
   public bool is3d = false;
-  public int seed = 0;
-  public float scale = 1f;
-  public float amplitude = 1f;
-  public NoiseType noiseType = NoiseType.Simplex;
-  public float gain = 0.5f;
-  public float weightedStrength = 0f;
-  public float lacunarity = 2f;
-  public int octaves = 1;
-  public FractalType fractalType = FractalType.FractalFBm;
-  public bool useCurve = false;
-  public AnimationCurve curve = AnimationCurve.Linear(-1f, -1f, 1f, 1f);
   public bool useDomainWarp = false;
   public float domainWarpAmplitude = 1f;
   public float domainWarpFrequency = 0.5f;
-
-  public enum FractalType {
-    [InspectorName("Fractal FBm")]
-    FractalFBm,
-    FractalRidged
-  };
-
-  public enum NoiseType {
-    Value,
-    Perlin,
-    Simplex,
-    OpenSimplex2,
-    OpenSimplex2S
-  };
 
   public float[] GenerateNoise(TerrainChunk chunk, float frequency, int seed) {
     FastNoise noise = new FastNoise(fractalType.ToString());

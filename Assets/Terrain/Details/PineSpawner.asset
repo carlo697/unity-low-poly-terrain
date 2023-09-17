@@ -42,3 +42,47 @@ MonoBehaviour:
     m_RotationOrder: 4
   applyNormalRotation: 0
   randomRotation: {x: 3, y: 360, z: 3}
+  useNoise: 1
+  noiseSettings:
+    seed: 0
+    scale: 200
+    noiseType: 2
+    gain: 0.5
+    weightedStrength: 0
+    lacunarity: 2
+    octaves: 1
+    fractalType: 0
+    useCurve: 1
+    curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.51813155
+        value: 0.36543107
+        inSlope: 1.4724033
+        outSlope: 1.4724033
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4

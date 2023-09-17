@@ -23,6 +23,10 @@ public class DetailSpawnerAsset : DetailSpawner {
   public bool applyNormalRotation;
   public Vector3 randomRotation = new Vector3(0f, 360f, 0);
 
+  [Header("Noise")]
+  public bool useNoise;
+  public DetailSpawnerNoise noiseSettings;
+
   public override void Spawn(
     List<TempDetailInstance> instances,
     ulong seed,
@@ -37,6 +41,10 @@ public class DetailSpawnerAsset : DetailSpawner {
     // Random number generators
     XorshiftStar positionRng = new XorshiftStar(seed + this.seed);
     XorshiftStar lodRng = new XorshiftStar(seed + this.seed + 1);
+    XorshiftStar noiseRng = new XorshiftStar(seed + this.seed + 3);
+
+    // Noise generator
+    DetailSpawnerNoise.Generator noise = useNoise ? noiseSettings.GetGenerator() : null;
 
     // Calculate how many details are inside the chunk
     float populationX = bounds.size.x / populationDensity + 1;
@@ -58,6 +66,19 @@ public class DetailSpawnerAsset : DetailSpawner {
         start.z + (float)positionRng.NextDouble() * bounds.size.z
       );
       ulong instanceSeed = lodRng.Sample();
+
+      // Generate noise
+      if (useNoise) {
+        float value = noise.Generate(
+          position.x,
+          position.z,
+          (int)this.seed
+        );
+
+        if (noiseRng.NextDouble() > value) {
+          continue;
+        }
+      }
 
       // Create a raycast command
       QueryParameters parameters = QueryParameters.Default;

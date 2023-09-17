@@ -44,7 +44,7 @@ public class TerrainShape : ISamplerFactory {
     is3d = false,
     seed = 20,
     scale = 1f,
-    noiseType = FractalNoiseGenerator.NoiseType.OpenSimplex2S,
+    noiseType = NoiseType.OpenSimplex2S,
     octaves = 2,
     useCurve = true
   };
@@ -52,7 +52,7 @@ public class TerrainShape : ISamplerFactory {
     is3d = false,
     seed = 22,
     scale = 0.15f,
-    noiseType = FractalNoiseGenerator.NoiseType.OpenSimplex2S,
+    noiseType = NoiseType.OpenSimplex2S,
     octaves = 5,
     useCurve = true
   };
@@ -60,7 +60,7 @@ public class TerrainShape : ISamplerFactory {
     is3d = false,
     seed = 24,
     scale = 2.5f,
-    noiseType = FractalNoiseGenerator.NoiseType.OpenSimplex2S,
+    noiseType = NoiseType.OpenSimplex2S,
     octaves = 4
   };
 
