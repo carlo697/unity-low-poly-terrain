@@ -271,9 +271,9 @@ public class CubeGrid {
   }
 
   public void Generate(
-    out Vector3[] outputVertices,
-    out int[] outputTriangles,
-    out Color[] outputColors,
+    out List<Vector3> outputVertices,
+    out List<int> outputTriangles,
+    out List<Color> outputColors,
     CubeGridSamplerFunc samplerFunc = null,
     CubeGridPostProcessingFunc postProcessingFunc = null,
     bool debug = false
@@ -295,13 +295,13 @@ public class CubeGrid {
 
     stepTimer.Restart();
 
-    // Loop through the points to generate the vertices
-    List<Vector3> vertices = new List<Vector3>();
-    List<Color> colors = new List<Color>();
+    // Loop through the points to generate the vertices and colors
+    outputVertices = new List<Vector3>();
+    outputColors = new List<Color>();
     for (int z = 0; z < m_sizes.z - 1; z++) {
       for (int y = 0; y < m_sizes.y - 1; y++) {
         for (int x = 0; x < m_sizes.x - 1; x++) {
-          MarchSingleCube(vertices, colors, x, y, z);
+          MarchSingleCube(outputVertices, outputColors, x, y, z);
         }
       }
     }
@@ -319,16 +319,12 @@ public class CubeGrid {
     stepTimer.Restart();
 
     // Loop through the vertices to generate the triangles
-    List<int> triangles = new List<int>();
-    for (int i = 0; i < vertices.Count; i += 3) {
-      triangles.Add(i);
-      triangles.Add(i + 1);
-      triangles.Add(i + 2);
+    outputTriangles = new List<int>();
+    for (int i = 0; i < outputVertices.Count; i += 3) {
+      outputTriangles.Add(i);
+      outputTriangles.Add(i + 1);
+      outputTriangles.Add(i + 2);
     }
-
-    outputVertices = vertices.ToArray();
-    outputTriangles = triangles.ToArray();
-    outputColors = colors.ToArray();
   }
 
   public static Mesh CreateMesh(
