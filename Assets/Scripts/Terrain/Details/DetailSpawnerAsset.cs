@@ -71,7 +71,7 @@ public class DetailSpawnerAsset : DetailSpawner {
       );
 
       // Function to instance the final detail when the raycast is done
-      Func<RaycastHit, DetailInstance?> GetFinalInstance = (RaycastHit hit) => {
+      Func<RaycastHit, DetailInstance> GetFinalInstance = (RaycastHit hit) => {
         XorshiftStar instanceRng = new XorshiftStar(instanceSeed);
 
         Vector3 position = hit.point;

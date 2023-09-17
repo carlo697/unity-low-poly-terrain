@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public struct DetailInstance {
+public class DetailInstance {
   public Detail detail;
   public Vector3 position;
   public Quaternion rotation;
