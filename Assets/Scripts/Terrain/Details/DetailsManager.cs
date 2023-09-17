@@ -396,7 +396,7 @@ public class DetailsManager : MonoBehaviour {
   private void Update() {
     // We'll call DrawMeshInstanced using the grid build by the
     // PrepareMeshInstancing coroutine
-    if (useMeshInstancing) {
+    if (m_terrainShape.useDetails && useMeshInstancing) {
       // Iterate the cells of the grid
       for (int i = 0; i < m_instancingGrid.cells.Length; i++) {
         InstancingCell cell = m_instancingGrid.cells[i];
