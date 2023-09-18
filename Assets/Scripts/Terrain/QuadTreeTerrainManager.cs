@@ -38,6 +38,7 @@ public class QuadTreeTerrainManager : MonoBehaviour {
   public Vector3Int chunkResolution = new Vector3Int(32, 128, 32);
   public Material chunkMaterial;
   public bool debug;
+  public bool debugConsecutiveChunksGenerations;
 
   public float seaWorldLevel { get { return m_terrainShape.seaLevel * chunkSize.y; } }
 
@@ -59,8 +60,7 @@ public class QuadTreeTerrainManager : MonoBehaviour {
   private float m_updateTimer = 0.0f;
   public float generatePeriod = 0.02f;
   private float m_generateTimer = 0.0f;
-  public int maxConsecutiveChunks = 2;
-  public int maxConsecutiveChunksAtOneFrame = 2;
+  public int maxConsecutiveChunks = 8;
 
   public bool drawGizmos = true;
 
@@ -216,36 +216,43 @@ public class QuadTreeTerrainManager : MonoBehaviour {
   }
 
   private void RequestChunksGeneration() {
+    // Count the number of chunks that are being generated
     int totalInProgress = 0;
+    int totalSpawned = 0;
     for (int index = 0; index < m_spawnedChunks.Count; index++) {
       TerrainChunk chunk = m_spawnedChunks[index];
-
-      if (chunk.isGenerating) {
+      if (chunk.status == TerrainChunkStatus.Generating) {
         totalInProgress++;
+      }
+
+      if (chunk.status == TerrainChunkStatus.Spawned) {
+        totalSpawned++;
       }
     }
 
+    if (debugConsecutiveChunksGenerations) {
+      Debug.LogFormat("totalInProgress: {0}, totalSpawned: {1}", totalInProgress, totalSpawned);
+    }
+
+    // Skip if we reach the limit of consecutive updates
     if (totalInProgress >= maxConsecutiveChunks) {
       return;
     }
 
-    int requestsOnThisFrame = 0;
-
-    // Tell chunks to generate their meshes
-    // Check if the chunks are already there
+    // Iterate the chunks to tell them to generate their meshes.
+    // We use the "m_visibleChunkBounds" list because it's sorted.
     for (int index = 0; index < m_visibleChunkBounds.Count; index++) {
       Bounds bounds = m_visibleChunkBounds[index];
 
+      // Check if the bounds is a spawned chunked
       if (m_spawnedChunksDictionary.ContainsKey(bounds)) {
         TerrainChunk chunk = m_spawnedChunksDictionary[bounds];
 
-        // Tell the chunk to start generating if the budget is available
-        if (!chunk.hasEverBeenGenerated && !chunk.isGenerating) {
-          chunk.GenerateOnNextFrame();
-          requestsOnThisFrame++;
-          totalInProgress++;
+        // Tell the chunk to start generation
+        if (chunk.status == TerrainChunkStatus.Spawned) {
+          chunk.RequestUpdate();
 
-          // Event to call when the chunk is generated
+          // Event to call when the chunk is ready
           void GenerationCompleted() {
             chunk.GenerationCompleted -= GenerationCompleted;
             chunk.meshRenderer.enabled = true;
@@ -270,14 +277,8 @@ public class QuadTreeTerrainManager : MonoBehaviour {
 
           // Attach event handler
           chunk.GenerationCompleted += GenerationCompleted;
+          return;
         }
-      }
-
-      if (
-        requestsOnThisFrame >= maxConsecutiveChunksAtOneFrame
-        || totalInProgress >= maxConsecutiveChunks
-      ) {
-        return;
       }
     }
   }

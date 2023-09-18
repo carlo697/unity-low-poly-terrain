@@ -4,9 +4,16 @@ using System.Runtime.InteropServices;
 using Unity.Collections;
 using Unity.Jobs;
 
+public enum TerrainChunkStatus {
+  Spawned,
+  Generating,
+  Generated
+}
+
 [ExecuteInEditMode]
 public class TerrainChunk : MonoBehaviour {
   public static DateTime lastUpdatedAt = DateTime.Now;
+  private bool m_isAwake = false;
 
   public Vector3Int resolution {
     get {
@@ -55,13 +62,15 @@ public class TerrainChunk : MonoBehaviour {
   public bool drawGizmos = true;
   public float gizmosSize = 0.5f;
 
-  public bool isJobInProgress { get { return m_handle.HasValue; } }
-  public bool isGenerating { get; private set; } = false;
-  public bool hasEverBeenGenerated { get; private set; } = false;
-  public event Action GenerationCompleted;
-
-  private bool m_generateFlag;
+  #region Status
+  public bool hasEverBeenGenerated { get { return m_hasEverBeenGenerated; } }
+  private bool m_hasEverBeenGenerated;
+  public TerrainChunkStatus status { get { return m_status; } }
+  private TerrainChunkStatus m_status = TerrainChunkStatus.Spawned;
+  private bool m_updateFlag;
   private bool m_destroyFlag;
+  public event Action GenerationCompleted;
+  #endregion
 
   public MeshFilter meshFilter { get { return m_meshFilter; } }
   private MeshFilter m_meshFilter;
@@ -80,6 +89,7 @@ public class TerrainChunk : MonoBehaviour {
   private CubeGridPoint[] m_points;
 
   private void Awake() {
+    m_isAwake = true;
     gameObject.layer = LayerMask.NameToLayer("Ground");
 
     // Add a mesh filter
@@ -208,8 +218,8 @@ public class TerrainChunk : MonoBehaviour {
       m_handle.Value.Complete();
 
       // Flags
-      isGenerating = false;
-      hasEverBeenGenerated = true;
+      m_status = TerrainChunkStatus.Generated;
+      m_hasEverBeenGenerated = true;
 
       if (!m_destroyFlag) {
         // Copy points
@@ -257,30 +267,36 @@ public class TerrainChunk : MonoBehaviour {
 
       // Dispose memory
       DisposeJob();
+
+      // Debug.Log("completed!");
     }
   }
 
-  public void GenerateOnNextFrame() {
-    m_generateFlag = true;
-    isGenerating = true;
+  public void RequestUpdate() {
+    m_updateFlag = true;
+    m_status = TerrainChunkStatus.Generating;
+    // Debug.Log("request update!");
   }
 
   public void GenerateOnEditor() {
     if (Application.isEditor && !Application.isPlaying) {
-      GenerateOnNextFrame();
+      RequestUpdate();
     }
   }
 
   private void OnValidate() {
-    GenerateOnEditor();
-    m_size = size;
-    m_resolution = resolution;
+    if (m_isAwake) {
+      GenerateOnEditor();
+      m_size = size;
+      m_resolution = resolution;
+    }
   }
 
   private void GenerateIfNeeded() {
-    if (m_generateFlag && !m_destroyFlag) {
+    if (m_updateFlag && !m_destroyFlag) {
       ScheduleRegeneration();
-      m_generateFlag = false;
+      m_updateFlag = false;
+      m_status = TerrainChunkStatus.Generating;
     }
   }
 
