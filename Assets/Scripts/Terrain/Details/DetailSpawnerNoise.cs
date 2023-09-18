@@ -8,7 +8,8 @@ public class DetailSpawnerNoise : BasicNoiseSettings {
     private FastNoise m_noise;
 
     public Generator(DetailSpawnerNoise settings) {
-      FastNoise m_noise = new FastNoise(settings.fractalType.ToString());
+      m_parent = settings;
+      m_noise = new FastNoise(settings.fractalType.ToString());
       m_noise.Set("Source", new FastNoise(settings.noiseType.ToString()));
       m_noise.Set("Gain", settings.gain);
       m_noise.Set("Weighted Strength", settings.weightedStrength);
