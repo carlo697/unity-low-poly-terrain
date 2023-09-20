@@ -9,12 +9,16 @@ public class DetailSpawnerNoise : BasicNoiseSettings {
 
     public Generator(DetailSpawnerNoise settings) {
       m_parent = settings;
-      m_noise = new FastNoise(settings.fractalType.ToString());
-      m_noise.Set("Source", new FastNoise(settings.noiseType.ToString()));
-      m_noise.Set("Gain", settings.gain);
-      m_noise.Set("Weighted Strength", settings.weightedStrength);
-      m_noise.Set("Lacunarity", settings.lacunarity);
-      m_noise.Set("Octaves", settings.octaves);
+      if (settings.octaves > 1) {
+        m_noise = new FastNoise(settings.fractalType.ToString());
+        m_noise.Set("Source", new FastNoise(settings.noiseType.ToString()));
+        m_noise.Set("Gain", settings.gain);
+        m_noise.Set("Weighted Strength", settings.weightedStrength);
+        m_noise.Set("Lacunarity", settings.lacunarity);
+        m_noise.Set("Octaves", settings.octaves);
+      } else {
+        m_noise = new FastNoise(settings.noiseType.ToString());
+      }
 
       if (settings.amplitude != 1f) {
         FastNoise multiply = new FastNoise("Multiply");
