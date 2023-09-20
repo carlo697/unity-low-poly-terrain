@@ -325,6 +325,11 @@ public class DetailsManager : MonoBehaviour {
         for (int j = 0; j < chunk.instances.Count; j++) {
           DetailInstance instance = chunk.instances[j];
 
+          // Get grid cell
+          InstancingCell cell = m_instancingGridCopy.GetCellAt(
+            instance.position.x, instance.position.z
+          );
+
           // Ignore the instance if it doesn't have submeshes
           if (instance.detail.submeshes.Length > 0) {
             // Keep track of the number of instances so we can pause and
@@ -341,11 +346,6 @@ public class DetailsManager : MonoBehaviour {
             // Iterate the submeshes
             for (int k = 0; k < instance.detail.submeshes.Length; k++) {
               DetailSubmesh submesh = instance.detail.submeshes[k];
-
-              // Get grid cell
-              InstancingCell cell = m_instancingGridCopy.GetCellAt(
-                instance.position.x, instance.position.z
-              );
 
               // Get the list of lists or create it if necessary
               List<List<Matrix4x4>> lists;
