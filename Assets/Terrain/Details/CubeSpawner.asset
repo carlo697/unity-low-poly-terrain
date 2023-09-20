@@ -46,6 +46,7 @@ MonoBehaviour:
   noiseSettings:
     seed: 10
     scale: 1
+    amplitude: 1
     noiseType: 0
     gain: 0.5
     weightedStrength: 0
