@@ -42,10 +42,10 @@ MonoBehaviour:
     m_RotationOrder: 4
   applyNormalRotation: 1
   randomRotation: {x: 10, y: 360, z: 10}
-  useNoise: 0
+  useNoise: 1
   noiseSettings:
     seed: 10
-    scale: 1
+    scale: 15
     amplitude: 1
     noiseType: 0
     gain: 0.5
