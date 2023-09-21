@@ -33,7 +33,8 @@ public class DetailsManager : MonoBehaviour {
 
   [Header("Debug")]
   public bool drawGizmos;
-  public bool debugMeshInstancing;
+  public bool debugGpuInstancing;
+  public bool debugSkipGpuInstancing;
 
   private void Start() {
     if (m_terrainShape.useDetails) {
@@ -390,7 +391,7 @@ public class DetailsManager : MonoBehaviour {
       }
     }
 
-    if (debugMeshInstancing) {
+    if (debugGpuInstancing) {
       Debug.Log(
         string.Format(
           "Time: {0} ms to prepare {1} instances for GPU instancing in {2} frames",
@@ -405,7 +406,11 @@ public class DetailsManager : MonoBehaviour {
   private void Update() {
     // We'll call DrawMeshInstanced using the grid build by the
     // PrepareMeshInstancing coroutine
-    if (m_terrainShape.useDetails && m_renderMode == DetailsRenderMode.Instancing) {
+    if (
+      m_terrainShape.useDetails
+      && m_renderMode == DetailsRenderMode.Instancing
+      && !debugSkipGpuInstancing
+    ) {
       // Iterate the cells of the grid
       for (int i = 0; i < m_instancingGrid.cells.Length; i++) {
         InstancingCell cell = m_instancingGrid.cells[i];
