@@ -15,9 +15,9 @@ public class DetailsChunk : MonoBehaviour {
   private static int updatesThisFrame;
   private static int lastFrameCount;
 
+  public DetailsManager manager;
   public Bounds bounds;
   public TerrainShape terrainShape;
-  public bool useMeshInstancing;
 
   public DetailsChunkStatus status = DetailsChunkStatus.Spawned;
 
@@ -155,7 +155,7 @@ public class DetailsChunk : MonoBehaviour {
     // Dispose the job
     DisposeJob();
 
-    if (useMeshInstancing) {
+    if (manager.renderMode == DetailsRenderMode.Instancing) {
       // Add GPU instancing batches
       // if (useMeshInstancing) {
       //   if (instance.detail.submeshes.Length > 0 && m_instances.Count > 0) {
@@ -176,7 +176,7 @@ public class DetailsChunk : MonoBehaviour {
       //     }
       //   }
       // }
-    } else {
+    } else if (manager.renderMode == DetailsRenderMode.GameObjects) {
       // Instantiate new game objects
       for (int i = 0; i < m_instances.Count; i++) {
         DetailInstance instance = m_instances[i];
@@ -205,7 +205,7 @@ public class DetailsChunk : MonoBehaviour {
   }
 
   private void DestroyInstances() {
-    if (!useMeshInstancing) {
+    if (manager.renderMode == DetailsRenderMode.GameObjects) {
       // Delete the spawned game objects
       for (int i = 0; i < m_instances.Count; i++) {
         if (m_instances[i].spawnedObject) {
