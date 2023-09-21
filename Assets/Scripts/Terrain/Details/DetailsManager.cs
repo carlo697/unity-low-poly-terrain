@@ -4,7 +4,8 @@ using UnityEngine;
 
 public enum DetailsRenderMode {
   Disable,
-  Instancing,
+  InstancingFromManager,
+  InstancingFromChunk,
   GameObjects
 }
 
@@ -21,7 +22,7 @@ public class DetailsManager : MonoBehaviour {
   public AnimationCurve levelOfDetailCurve = AnimationCurve.EaseInOut(0f, 1f, 1f, 0f);
 
   public DetailsRenderMode renderMode { get { return m_renderMode; } }
-  [SerializeField] private DetailsRenderMode m_renderMode = DetailsRenderMode.Instancing;
+  [SerializeField] private DetailsRenderMode m_renderMode = DetailsRenderMode.InstancingFromManager;
 
   private List<DetailsChunk> m_spawnedChunks = new();
   private Dictionary<Bounds, DetailsChunk> m_spawnedChunksDictionary = new();
@@ -46,7 +47,7 @@ public class DetailsManager : MonoBehaviour {
       m_terrainManager.ChunkReplaced += ChunkReplacedEventHandler;
 
       // Allocate prefabs in the pool
-      if (m_renderMode == DetailsRenderMode.Instancing) {
+      if (m_renderMode == DetailsRenderMode.InstancingFromManager) {
         // Initialize the grid used by instancing
         InitializeInstancingGrid();
       } else if (m_renderMode == DetailsRenderMode.GameObjects) {
@@ -294,7 +295,7 @@ public class DetailsManager : MonoBehaviour {
   private IEnumerator PrepareMeshInstancing() {
     yield return null;
 
-    if (m_renderMode != DetailsRenderMode.Instancing) {
+    if (m_renderMode != DetailsRenderMode.InstancingFromManager) {
       yield break;
     }
 
@@ -408,7 +409,7 @@ public class DetailsManager : MonoBehaviour {
     // PrepareMeshInstancing coroutine
     if (
       m_terrainShape.useDetails
-      && m_renderMode == DetailsRenderMode.Instancing
+      && m_renderMode == DetailsRenderMode.InstancingFromManager
       && !debugSkipGpuInstancing
     ) {
       // Iterate the cells of the grid

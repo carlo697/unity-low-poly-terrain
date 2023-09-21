@@ -33,7 +33,7 @@ public class DetailsChunk : MonoBehaviour {
   private NativeArray<RaycastHit> m_results;
   private NativeArray<RaycastCommand> m_commands;
 
-  // private Dictionary<DetailSubmesh, List<Matrix4x4>> m_instancingBatches = new();
+  private Dictionary<DetailSubmesh, List<Matrix4x4>> m_instancingBatches = new();
 
   private void Update() {
     if (lastFrameCount != Time.frameCount) {
@@ -53,9 +53,9 @@ public class DetailsChunk : MonoBehaviour {
         StartCoroutine(PlaceDetails());
       }
 
-      // if (useMeshInstancing) {
-      //   Render();
-      // }
+      if (manager.renderMode == DetailsRenderMode.InstancingFromChunk && !manager.debugSkipGpuInstancing) {
+        Render();
+      }
     }
   }
 
@@ -155,27 +155,26 @@ public class DetailsChunk : MonoBehaviour {
     // Dispose the job
     DisposeJob();
 
-    if (manager.renderMode == DetailsRenderMode.Instancing) {
+    if (manager.renderMode == DetailsRenderMode.InstancingFromChunk) {
       // Add GPU instancing batches
-      // if (useMeshInstancing) {
-      //   if (instance.detail.submeshes.Length > 0 && m_instances.Count > 0) {
-      //     for (int j = 0; j < instance.detail.submeshes.Length; j++) {
-      //       DetailSubmesh batch = instance.detail.submeshes[j];
+      for (int i = 0; i < m_instances.Count; i++) {
+        DetailInstance instance = m_instances[i];
 
-      //       // Get the list
-      //       List<Matrix4x4> matrices;
-      //       m_instancingBatches.TryGetValue(batch, out matrices);
+        if (instance.detail.submeshes.Length > 0) {
+          for (int j = 0; j < instance.detail.submeshes.Length; j++) {
+            DetailSubmesh batch = instance.detail.submeshes[j];
 
-      //       // Create the list if it doesn't exist
-      //       if (matrices == null) {
-      //         matrices = m_instancingBatches[batch] = new();
-      //       }
+            // Get the list or create it if it doesn't exist
+            List<Matrix4x4> matrices;
+            if (!m_instancingBatches.TryGetValue(batch, out matrices)) {
+              matrices = m_instancingBatches[batch] = new();
+            }
 
-      //       // Add the matrix
-      //       matrices.Add(instance.matrix);
-      //     }
-      //   }
-      // }
+            // Add the matrix
+            matrices.Add(instance.matrix);
+          }
+        }
+      }
     } else if (manager.renderMode == DetailsRenderMode.GameObjects) {
       // Instantiate new game objects
       for (int i = 0; i < m_instances.Count; i++) {
@@ -212,15 +211,15 @@ public class DetailsChunk : MonoBehaviour {
           PrefabPool.Release(m_instances[i].spawnedObject);
         }
       }
+    } else if (manager.renderMode == DetailsRenderMode.InstancingFromChunk) {
+      // Clear batches for GPU instancing
+      foreach (var batch in m_instancingBatches) {
+        batch.Value.Clear();
+      }
     }
 
     // Clear array
     m_instances.Clear();
-
-    // Clear batches for GPU instancing
-    // foreach (var batch in m_instancingBatches) {
-    //   batch.Value.Clear();
-    // }
   }
 
   public static Vector3 RandomPointInBounds(Bounds bounds) {
@@ -372,17 +371,17 @@ public class DetailsChunk : MonoBehaviour {
     DestroyInstances();
   }
 
-  // private void Render() {
-  //   // Iterate the batches to draw them
-  //   foreach (var batch in m_instancingBatches) {
-  //     if (batch.Value.Count > 0) {
-  //       Graphics.DrawMeshInstanced(
-  //         batch.Key.mesh,
-  //         batch.Key.submeshIndex,
-  //         batch.Key.material,
-  //         batch.Value
-  //       );
-  //     }
-  //   }
-  // }
+  private void Render() {
+    // Iterate the batches to draw them
+    foreach (var batch in m_instancingBatches) {
+      if (batch.Value.Count > 0) {
+        Graphics.DrawMeshInstanced(
+          batch.Key.mesh,
+          batch.Key.submeshIndex,
+          batch.Key.material,
+          batch.Value
+        );
+      }
+    }
+  }
 }
