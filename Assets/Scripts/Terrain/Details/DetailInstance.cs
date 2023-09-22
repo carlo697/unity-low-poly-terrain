@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class DetailInstance {
+public struct DetailInstance {
   public int detailId;
   public int prefabIndex;
   public Vector3 position;

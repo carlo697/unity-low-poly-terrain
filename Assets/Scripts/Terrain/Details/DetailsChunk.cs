@@ -147,9 +147,7 @@ public class DetailsChunk : MonoBehaviour {
     // Get the final instances and register them
     for (int i = 0; i < m_results.Length; i++) {
       if (m_results[i].collider != null) {
-        DetailInstance instance = tempInstances[i].GetFinalInstance(m_results[i]);
-
-        if (instance != null)
+        if (tempInstances[i].GetFinalInstance(m_results[i], out DetailInstance instance))
           m_instances.Add(instance);
       }
     }

@@ -92,7 +92,7 @@ public class DetailSpawnerAsset : DetailSpawner {
       );
 
       // Function to instance the final detail when the raycast is done
-      Func<RaycastHit, DetailInstance> GetFinalInstance = (RaycastHit hit) => {
+      GetDetailResult GetFinalInstance = (RaycastHit hit, out DetailInstance instance) => {
         XorshiftStar instanceRng = new XorshiftStar(instanceSeed);
 
         Vector3 position = hit.point;
@@ -114,7 +114,7 @@ public class DetailSpawnerAsset : DetailSpawner {
         float scaleResult = scaleCurve.Evaluate((float)instanceRng.NextDouble());
         Vector3 scale = new Vector3(scaleResult, scaleResult, scaleResult);
 
-        return new DetailInstance {
+        instance = new DetailInstance {
           detailId = detail.id,
           prefabIndex = instanceRng.Next(detail.prefabs.Length),
           position = position,
@@ -122,6 +122,7 @@ public class DetailSpawnerAsset : DetailSpawner {
           scale = scale,
           matrix = Matrix4x4.TRS(position, rotation, scale)
         };
+        return true;
       };
 
       // Add a temporal instance to the list

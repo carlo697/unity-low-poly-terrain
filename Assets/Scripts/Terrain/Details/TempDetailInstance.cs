@@ -1,7 +1,8 @@
 using UnityEngine;
-using System;
+
+public delegate bool GetDetailResult(RaycastHit hit, out DetailInstance instance);
 
 public struct TempDetailInstance {
   public RaycastCommand raycastCommand;
-  public Func<RaycastHit, DetailInstance> GetFinalInstance;
+  public GetDetailResult GetFinalInstance;
 }
