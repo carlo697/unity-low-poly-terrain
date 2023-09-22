@@ -24,6 +24,9 @@ public class DetailsManager : MonoBehaviour {
   public DetailsRenderMode renderMode { get { return m_renderMode; } }
   [SerializeField] private DetailsRenderMode m_renderMode = DetailsRenderMode.InstancingFromManager;
 
+  public Dictionary<int, Detail> detailsById { get { return m_detailsById; } }
+  private Dictionary<int, Detail> m_detailsById = new Dictionary<int, Detail>();
+
   private List<DetailsChunk> m_spawnedChunks = new();
   private Dictionary<Bounds, DetailsChunk> m_spawnedChunksDictionary = new();
 
@@ -39,6 +42,8 @@ public class DetailsManager : MonoBehaviour {
 
   private void Start() {
     if (m_terrainShape.useDetails) {
+      InitializeDetailsDatabase();
+
       // Start coroutine to schedule the updates of the details
       StartCoroutine(UpdateCoroutine());
 
@@ -51,6 +56,13 @@ public class DetailsManager : MonoBehaviour {
         // Initialize the grid used by instancing
         InitializeInstancingGrid();
       }
+    }
+  }
+
+  private void InitializeDetailsDatabase() {
+    for (int i = 0; i < m_terrainShape.detailSpawners.Length; i++) {
+      DetailSpawner spawner = m_terrainShape.detailSpawners[i];
+      m_detailsById[spawner.detail.id] = spawner.detail;
     }
   }
 
@@ -328,6 +340,7 @@ public class DetailsManager : MonoBehaviour {
       // Iterate the instances in the chunk
       for (int j = 0; j < chunk.instances.Count; j++) {
         DetailInstance instance = chunk.instances[j];
+        Detail detail = m_detailsById[instance.detailId];
 
         // Get grid cell
         InstancingCell cell = m_instancingGridCopy.GetCellAt(
@@ -335,10 +348,10 @@ public class DetailsManager : MonoBehaviour {
         );
 
         // Ignore the instance if it doesn't have submeshes
-        if (instance.detail.submeshes.Length > 0) {
+        if (detail.submeshes.Length > 0) {
           // Keep track of the number of instances so we can pause and
           // keep updating the next frame
-          instancePauseCount += instance.detail.submeshes.Length;
+          instancePauseCount += detail.submeshes.Length;
           if (instancePauseCount > 4000) {
             timer.Stop();
             yield return new WaitForSeconds(0.01f);
@@ -348,8 +361,8 @@ public class DetailsManager : MonoBehaviour {
           }
 
           // Iterate the submeshes
-          for (int k = 0; k < instance.detail.submeshes.Length; k++) {
-            DetailSubmesh submesh = instance.detail.submeshes[k];
+          for (int k = 0; k < detail.submeshes.Length; k++) {
+            DetailSubmesh submesh = detail.submeshes[k];
 
             // Get the list of lists or create it if necessary
             List<List<Matrix4x4>> lists;

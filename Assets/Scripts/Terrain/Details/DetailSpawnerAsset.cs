@@ -114,15 +114,12 @@ public class DetailSpawnerAsset : DetailSpawner {
         float scaleResult = scaleCurve.Evaluate((float)instanceRng.NextDouble());
         Vector3 scale = new Vector3(scaleResult, scaleResult, scaleResult);
 
-        // Select the prefab to use
-        GameObject prefab = detail.prefabs[instanceRng.Next(detail.prefabs.Length)];
-
         return new DetailInstance {
+          detailId = detail.id,
+          prefabIndex = instanceRng.Next(detail.prefabs.Length),
           position = position,
           rotation = rotation,
           scale = scale,
-          prefab = prefab,
-          detail = detail,
           matrix = Matrix4x4.TRS(position, rotation, scale)
         };
       };

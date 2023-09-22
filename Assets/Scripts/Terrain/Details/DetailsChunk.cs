@@ -34,6 +34,13 @@ public class DetailsChunk : MonoBehaviour {
   private NativeArray<RaycastCommand> m_commands;
 
   private Dictionary<DetailSubmesh, List<Matrix4x4>> m_instancingBatches = new();
+  private List<GameObject> m_instancedGameObjects;
+
+  private void Start() {
+    if (manager.renderMode == DetailsRenderMode.GameObjects) {
+      m_instancedGameObjects = new();
+    }
+  }
 
   private void Update() {
     if (lastFrameCount != Time.frameCount) {
@@ -159,10 +166,11 @@ public class DetailsChunk : MonoBehaviour {
       // Add GPU instancing batches
       for (int i = 0; i < m_instances.Count; i++) {
         DetailInstance instance = m_instances[i];
+        Detail detail = manager.detailsById[instance.detailId];
 
-        if (instance.detail.submeshes.Length > 0) {
-          for (int j = 0; j < instance.detail.submeshes.Length; j++) {
-            DetailSubmesh batch = instance.detail.submeshes[j];
+        if (detail.submeshes.Length > 0) {
+          for (int j = 0; j < detail.submeshes.Length; j++) {
+            DetailSubmesh batch = detail.submeshes[j];
 
             // Get the list or create it if it doesn't exist
             List<Matrix4x4> matrices;
@@ -180,13 +188,13 @@ public class DetailsChunk : MonoBehaviour {
       for (int i = 0; i < m_instances.Count; i++) {
         DetailInstance instance = m_instances[i];
 
-        GameObject obj = PrefabPool.Get(instance.prefab);
+        Detail detail = manager.detailsById[instance.detailId];
+        GameObject obj = PrefabPool.Get(detail.prefabs[instance.prefabIndex]);
         obj.transform.SetPositionAndRotation(instance.position, instance.rotation);
         obj.transform.localScale = instance.scale;
         // obj.transform.SetParent(transform, false);
         obj.SetActive(true);
-        instance.spawnedObject = obj;
-        m_instances[i] = instance;
+        m_instancedGameObjects.Add(obj);
       }
     }
 
@@ -206,11 +214,11 @@ public class DetailsChunk : MonoBehaviour {
   private void DestroyInstances() {
     if (manager.renderMode == DetailsRenderMode.GameObjects) {
       // Delete the spawned game objects
-      for (int i = 0; i < m_instances.Count; i++) {
-        if (m_instances[i].spawnedObject) {
-          PrefabPool.Release(m_instances[i].spawnedObject);
-        }
+      for (int i = 0; i < m_instancedGameObjects.Count; i++) {
+        PrefabPool.Release(m_instancedGameObjects[i]);
       }
+
+      m_instancedGameObjects.Clear();
     } else if (manager.renderMode == DetailsRenderMode.InstancingFromChunk) {
       // Clear batches for GPU instancing
       foreach (var batch in m_instancingBatches) {
