@@ -12,50 +12,34 @@ public static class PrefabPool {
     parent = parentObject.transform;
   }
 
-  public static void Allocate(GameObject prefab, int count = 1000) {
+  public static GameObject Get(GameObject prefab, int capacity = 1000) {
     string type = prefab.name;
 
-    // Get the stack
+    // Get the stack or create it if necessary
     Stack<GameObject> stack;
-    pool.TryGetValue(type, out stack);
-
-    // Register a new stack for the prefab if necessary
-    if (stack == null) {
-      stack = pool[type] = new(count * 2);
+    if (!pool.TryGetValue(type, out stack)) {
+      stack = pool[type] = new();
     }
 
-    for (int i = 0; i < count; i++) {
+    GameObject gameObject;
+    if (stack.Count == 0) {
       // Instantiate the prefab
-      GameObject gameObject = GameObject.Instantiate(prefab);
+      gameObject = GameObject.Instantiate(prefab);
       gameObject.name = type;
 
       // Disable the object and parent it
       gameObject.SetActive(false);
       gameObject.transform.SetParent(parent);
 
-      // Add the object to the stack
-      stack.Push(gameObject);
-    }
-  }
+      return gameObject;
+    } else {
+      // Return an instantiated prefab from the stack
+      gameObject = stack.Pop();
 
-  public static GameObject Get(GameObject prefab, int capacity = 1000) {
-    string type = prefab.name;
-
-    // Get the stack
-    Stack<GameObject> stack;
-    pool.TryGetValue(type, out stack);
-
-    // Allocate more objects if the stack doesn't exist or is getting short
-    if (stack == null || stack.Count < 25) {
-      Allocate(prefab, 100);
-      stack = pool[type];
+      // Enable the instantiated prefab and return it
+      // gameObject.SetActive(true);
     }
 
-    // Return an instantiated prefab from the stack
-    GameObject gameObject = stack.Pop();
-
-    // Enable the instantiated prefab and return it
-    // gameObject.SetActive(true);
     return gameObject;
   }
 
@@ -65,7 +49,7 @@ public static class PrefabPool {
 
     // Disable the object and parent it
     gameObj.SetActive(false);
-    gameObj.transform.SetParent(parent);
+    // gameObj.transform.SetParent(parent);
 
     // Add the object to the pool
     pool[type].Push(gameObj);

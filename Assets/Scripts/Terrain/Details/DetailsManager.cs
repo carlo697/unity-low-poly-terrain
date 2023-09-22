@@ -50,14 +50,6 @@ public class DetailsManager : MonoBehaviour {
       if (m_renderMode == DetailsRenderMode.InstancingFromManager) {
         // Initialize the grid used by instancing
         InitializeInstancingGrid();
-      } else if (m_renderMode == DetailsRenderMode.GameObjects) {
-        for (int i = 0; i < terrainShape.detailSpawners.Length; i++) {
-          DetailSpawner spawner = terrainShape.detailSpawners[i];
-
-          for (int j = 0; j < spawner.detail.prefabs.Length; j++) {
-            PrefabPool.Allocate(spawner.detail.prefabs[j], spawner.detail.preAllocateCount);
-          }
-        }
       }
     }
   }
