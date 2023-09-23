@@ -23,6 +23,11 @@ public class DetailSpawnerAsset : DetailSpawner {
   public bool applyNormalRotation;
   public Vector3 randomRotation = new Vector3(0f, 360f, 0);
 
+  [Header("Slope")]
+  public bool useSlopeAngle;
+  public float minAngle = -90f;
+  public float maxAngle = 90f;
+
   [Header("Noise")]
   public bool useNoise;
   public DetailSpawnerNoise noiseSettings;
@@ -93,6 +98,14 @@ public class DetailSpawnerAsset : DetailSpawner {
 
       // Function to instance the final detail when the raycast is done
       GetDetailResult GetFinalInstance = (RaycastHit hit, out DetailInstance instance) => {
+        if (useSlopeAngle) {
+          float slopeAngle = 90f - Vector3Extensions.SimplifiedAngle(Vector3.up, hit.normal);
+          if (slopeAngle < minAngle || slopeAngle > maxAngle) {
+            instance = default;
+            return false;
+          }
+        }
+
         XorshiftStar instanceRng = new XorshiftStar(instanceSeed);
 
         Vector3 position = hit.point;

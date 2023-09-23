@@ -42,6 +42,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   applyNormalRotation: 0
   randomRotation: {x: 3, y: 360, z: 3}
+  useSlopeAngle: 1
+  minAngle: 45
+  maxAngle: 90
   useNoise: 1
   noiseSettings:
     seed: 0
