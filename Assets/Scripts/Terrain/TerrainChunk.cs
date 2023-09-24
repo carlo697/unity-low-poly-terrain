@@ -63,6 +63,12 @@ public class TerrainChunk : MonoBehaviour {
   public float gizmosSize = 0.5f;
 
   #region Status
+  public enum GenerationState {
+    None,
+    Terrain,
+    Physics
+  }
+  private GenerationState m_generationState = GenerationState.None;
   public bool hasEverBeenGenerated { get { return m_hasEverBeenGenerated; } }
   private bool m_hasEverBeenGenerated;
   public TerrainChunkStatus status { get { return m_status; } }
@@ -72,18 +78,31 @@ public class TerrainChunk : MonoBehaviour {
   public event Action GenerationCompleted;
   #endregion
 
+  #region Components
   public MeshFilter meshFilter { get { return m_meshFilter; } }
   private MeshFilter m_meshFilter;
   public MeshRenderer meshRenderer { get { return m_meshRenderer; } }
   private MeshRenderer m_meshRenderer;
+  public MeshCollider meshCollider { get { return m_meshCollider; } }
+  private MeshCollider m_meshCollider;
+  public Mesh mesh { get { return m_mesh; } }
+  private Mesh m_mesh;
+  #endregion
 
+  #region Terrain Job
   private GCHandle samplerHandle;
   private GCHandle postProcessingHandle;
   private NativeList<Vector3> m_jobVertices;
   private NativeList<int> m_jobTriangles;
   private NativeList<Color> m_jobColors;
   private NativeList<CubeGridPoint> m_jobPoints;
-  JobHandle? m_handle;
+  private JobHandle? m_terrainJobHandle;
+  #endregion
+
+  #region Physics Job
+  private NativeReference<int> m_meshId;
+  private JobHandle? m_physicsJobHandle;
+  #endregion
 
   public CubeGridPoint[] points { get { return m_points; } }
   private CubeGridPoint[] m_points;
@@ -108,6 +127,9 @@ public class TerrainChunk : MonoBehaviour {
   }
 
   private void Start() {
+    // Get mesh collider (it's optional)
+    m_meshCollider = GetComponent<MeshCollider>();
+
     UpdateCachedFields();
     GenerateIfNeeded();
   }
@@ -124,10 +146,18 @@ public class TerrainChunk : MonoBehaviour {
   public void ScheduleRegeneration() {
     UpdateCachedFields();
 
-    if (m_handle.HasValue) {
-      if (debug)
-        Debug.Log("There was already a handle running");
-      CancelJob();
+    if (m_terrainJobHandle.HasValue) {
+      if (debug) {
+        Debug.Log("There was already a terrain job in progress");
+      }
+
+      CancelTerrainJob();
+    } else if (m_physicsJobHandle.HasValue) {
+      if (debug) {
+        Debug.Log("There was already a physics job in progress");
+      }
+
+      CancelPhysicsJob();
     }
 
     // Create the delegates for sampling the noise
@@ -164,11 +194,11 @@ public class TerrainChunk : MonoBehaviour {
       useMiddlePoint,
       debug
     );
-    this.m_handle = job.Schedule();
+    m_terrainJobHandle = job.Schedule();
   }
 
   void Update() {
-    if (m_destroyFlag && !m_handle.HasValue) {
+    if (m_destroyFlag && !m_terrainJobHandle.HasValue && !m_physicsJobHandle.HasValue) {
       Destroy(gameObject);
     } else {
       GenerateIfNeeded();
@@ -184,97 +214,130 @@ public class TerrainChunk : MonoBehaviour {
       Destroy(m_meshFilter.sharedMesh);
     }
 
-    if (m_handle.HasValue) {
-      Debug.Log("Chunk destroyed and there was a job running");
-      CancelJob();
+    if (m_terrainJobHandle.HasValue) {
+      Debug.Log("Chunk destroyed and there was a terrain job running");
+      CancelTerrainJob();
+    } else if (m_physicsJobHandle.HasValue) {
+      Debug.Log("Chunk destroyed and there was a physics job running");
+      CancelPhysicsJob();
     }
   }
 
-  void DisposeJob() {
+  private void DisposeTerrainJob() {
     m_jobVertices.Dispose();
     m_jobTriangles.Dispose();
     m_jobColors.Dispose();
     m_jobPoints.Dispose();
     samplerHandle.Free();
     postProcessingHandle.Free();
-    m_handle = null;
+    m_terrainJobHandle = null;
   }
 
-  void CancelJob() {
-    m_handle.Value.Complete();
-    DisposeJob();
+  private void CancelTerrainJob() {
+    m_terrainJobHandle.Value.Complete();
+    DisposeTerrainJob();
+  }
+
+  private void DisposePhysicsJob() {
+    m_meshId.Dispose();
+    m_physicsJobHandle = null;
+  }
+
+  private void CancelPhysicsJob() {
+    m_physicsJobHandle.Value.Complete();
+    DisposePhysicsJob();
   }
 
   void LateUpdate() {
-    bool shouldUpdate = !Application.isPlaying || DateTime.Now > lastUpdatedAt.AddSeconds(1d / 32);
+    if (m_generationState == GenerationState.Terrain) {
+      bool shouldUpdate = !Application.isPlaying || DateTime.Now > lastUpdatedAt.AddSeconds(1d / 32);
 
-    if (m_handle.HasValue && m_handle.Value.IsCompleted && shouldUpdate) {
-      lastUpdatedAt = DateTime.Now;
+      if (m_terrainJobHandle.HasValue && m_terrainJobHandle.Value.IsCompleted && shouldUpdate) {
+        lastUpdatedAt = DateTime.Now;
 
-      System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
-      timer.Start();
+        System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
+        timer.Start();
 
-      // Complete the job
-      m_handle.Value.Complete();
+        // Complete the job
+        m_terrainJobHandle.Value.Complete();
 
-      // Flags
-      m_status = TerrainChunkStatus.Generated;
-      m_hasEverBeenGenerated = true;
+        if (!m_destroyFlag) {
+          // Copy points
+          m_points = m_jobPoints.ToArray();
 
-      if (!m_destroyFlag) {
-        // Copy points
-        m_points = m_jobPoints.ToArray();
-
-        // Create a mesh
-        Mesh mesh = CubeGrid.CreateMesh(
-          m_jobVertices,
-          m_jobTriangles,
-          m_jobColors,
-          debug,
-          meshFilter.sharedMesh
-        );
-        mesh.name = gameObject.name;
-
-        // Set mesh
-        m_meshFilter.sharedMesh = mesh;
-
-        timer.Stop();
-        if (debug)
-          Debug.Log(
-            string.Format(
-              "Total to apply mesh: {0} ms", timer.ElapsedMilliseconds
-            )
+          // Create a mesh
+          m_mesh = CubeGrid.CreateMesh(
+            m_jobVertices,
+            m_jobTriangles,
+            m_jobColors,
+            debug,
+            meshFilter.sharedMesh
           );
-        timer.Restart();
+          m_mesh.name = gameObject.name;
 
-        // Check if it has a mesh collider
-        MeshCollider collider = GetComponent<MeshCollider>();
-        if (collider) {
-          collider.sharedMesh = mesh;
+          // Set mesh
+          m_meshFilter.sharedMesh = m_mesh;
+
+          timer.Stop();
+          if (debug)
+            Debug.Log(
+              string.Format(
+                "Total to apply mesh: {0} ms", timer.ElapsedMilliseconds
+              )
+            );
+
+          // If the object has a collider, start baking the mesh, otherwise,
+          // finish the generation process
+          if (m_meshCollider) {
+            // Store the id of the mesh in a native reference
+            m_meshId = new NativeReference<int>(Allocator.TempJob);
+            m_meshId.Value = mesh.GetInstanceID();
+
+            // Schedule the job
+            BakeSingleMeshJob job = new BakeSingleMeshJob(m_meshId);
+            m_physicsJobHandle = job.Schedule();
+
+            m_generationState = GenerationState.Physics;
+          } else {
+            // Set status and call events
+            FinishGeneration();
+          }
         }
 
-        timer.Stop();
-        if (debug)
-          Debug.Log(
-            string.Format(
-              "Total to apply collider: {0} ms", timer.ElapsedMilliseconds
-            )
-          );
-
-        // Call events
-        GenerationCompleted?.Invoke();
+        // Dispose memory
+        DisposeTerrainJob();
       }
+    } else if (m_generationState == GenerationState.Physics) {
+      if (m_physicsJobHandle.HasValue && m_physicsJobHandle.Value.IsCompleted) {
+        // Complete the job and dispose memory
+        m_physicsJobHandle.Value.Complete();
+        DisposePhysicsJob();
 
-      // Dispose memory
-      DisposeJob();
+        // Assign new mesh to the mesh collider
+        m_meshCollider.sharedMesh = m_mesh;
 
-      // Debug.Log("completed!");
+        // Set status and call events
+        FinishGeneration();
+      }
     }
+  }
+
+  private void FinishGeneration() {
+    // Flags
+    m_status = TerrainChunkStatus.Generated;
+    m_generationState = GenerationState.None;
+    m_hasEverBeenGenerated = true;
+
+    // Call events
+    GenerationCompleted?.Invoke();
+
+    // Debug.Log("completed!");
   }
 
   public void RequestUpdate() {
     m_updateFlag = true;
     m_status = TerrainChunkStatus.Generating;
+    m_generationState = GenerationState.Terrain;
     // Debug.Log("request update!");
   }
 
