@@ -266,7 +266,20 @@ public class CubeGrid {
         Vector3 interpolatedPosition = Vector3.Lerp(positionA, positionB, interpolant);
 
         vertices.Add(interpolatedPosition);
+
+        // Add vertex color
         colors.Add(Color.Lerp(m_points[indexA].color, m_points[indexB].color, interpolant));
+
+        // Add UVs
+        if (interpolant < 0.5f) {
+          uvs.Add(new Vector3(
+            MaterialBitConverter.MaterialIdToFloat(m_points[indexA].material), 0f, 0f
+          ));
+        } else {
+          uvs.Add(new Vector3(
+            MaterialBitConverter.MaterialIdToFloat(m_points[indexB].material), 0f, 0f
+          ));
+        }
       }
     }
   }

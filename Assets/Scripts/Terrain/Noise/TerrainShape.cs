@@ -10,13 +10,16 @@ public class TerrainShape : ISamplerFactory {
   public AnimationCurve normalizerCurve;
 
   [Header("Materials")]
+  public uint grassId = 1;
   public Color grassColor = Color.green;
   public Color darkGrassColor = Color.Lerp(Color.green, Color.black, 0.5f);
-  public Color snowColor = Color.white;
-  public Color dirtColor = Color.yellow;
+  public uint rockId = 2;
+  public Color rockColor = new Color(0.5f, 0.5f, 0.5f);
+  public uint sandId = 3;
   public Color sandColor = Color.yellow;
   public Color darkSandColor = Color.Lerp(Color.yellow, Color.black, 0.5f);
-  public Color rockColor = new Color(0.5f, 0.5f, 0.5f);
+  public uint snowId = 4;
+  public Color snowColor = Color.white;
 
   [Header("Heights")]
   public float seaLevel = 0.5f;
@@ -308,19 +311,23 @@ public class TerrainShape : ISamplerFactory {
                 // Rock
                 point.color = rockColor;
                 point.roughness = 0.5f;
+                point.material = rockId;
               } else if (normalizedHeight >= snowHeight) {
                 // Snow
                 point.color = snowColor;
                 point.roughness = 0.05f;
+                point.material = snowId;
               } else if (normalizedHeight <= sandHeight) {
                 // Beach Sand
                 float t = Mathf.InverseLerp(0f, sandHeight, normalizedHeight);
                 point.color = Color.Lerp(darkSandColor, sandColor, t);
                 point.roughness = 0.05f;
+                point.material = sandId;
               } else {
                 // Grass
                 float t = Mathf.InverseLerp(sandHeight, snowHeight, normalizedHeight);
                 point.color = Color.Lerp(grassColor, darkGrassColor, t);
+                point.material = grassId;
               }
             }
           }

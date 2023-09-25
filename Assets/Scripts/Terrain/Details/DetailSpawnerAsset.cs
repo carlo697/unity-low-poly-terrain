@@ -28,6 +28,9 @@ public class DetailSpawnerAsset : DetailSpawner {
   public float minAngle = -90f;
   public float maxAngle = 90f;
 
+  [Header("Material")]
+  public uint[] materials = new uint[] { 0 };
+
   [Header("Noise")]
   public bool useNoise;
   public DetailSpawnerNoise noiseSettings;
@@ -98,6 +101,22 @@ public class DetailSpawnerAsset : DetailSpawner {
 
       // Function to instance the final detail when the raycast is done
       GetDetailResult GetFinalInstance = (RaycastHit hit, out DetailInstance instance) => {
+        // Get the material on the hit point
+        uint materialId = MaterialBitConverter.FloatToMaterialId(hit.textureCoord.x);
+        bool wasMaterialFound = false;
+        for (int i = 0; i < materials.Length; i++) {
+          if (materials[i] == materialId) {
+            wasMaterialFound = true;
+            break;
+          }
+        }
+
+        // Skip this instance if the material is not valid
+        if (!wasMaterialFound) {
+          instance = default;
+          return false;
+        }
+
         if (useSlopeAngle) {
           float slopeAngle = 90f - Vector3Extensions.SimplifiedAngle(Vector3.up, hit.normal);
           if (slopeAngle < minAngle || slopeAngle > maxAngle) {

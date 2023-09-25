@@ -42,6 +42,10 @@ MonoBehaviour:
     m_RotationOrder: 4
   applyNormalRotation: 1
   randomRotation: {x: 10, y: 360, z: 10}
+  useSlopeAngle: 0
+  minAngle: -90
+  maxAngle: 90
+  materials: 01000000
   useNoise: 1
   noiseSettings:
     seed: 10

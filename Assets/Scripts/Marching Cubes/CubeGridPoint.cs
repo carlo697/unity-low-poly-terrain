@@ -4,9 +4,9 @@ public struct CubeGridPoint {
   public int index;
   public Vector3 position;
   public float value;
-  // public byte material;
   public Color color;
   public float roughness;
+  public uint material;
 
   public Vector3Int GetCoords(TerrainChunk chunk) {
     int x = index / (chunk.gridSize.y * chunk.gridSize.x);

@@ -45,6 +45,7 @@ MonoBehaviour:
   useSlopeAngle: 1
   minAngle: 45
   maxAngle: 90
+  materials: 01000000
   useNoise: 1
   noiseSettings:
     seed: 0
