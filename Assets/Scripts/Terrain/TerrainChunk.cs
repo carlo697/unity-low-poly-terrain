@@ -94,6 +94,7 @@ public class TerrainChunk : MonoBehaviour {
   private GCHandle postProcessingHandle;
   private NativeList<Vector3> m_jobVertices;
   private NativeList<int> m_jobTriangles;
+  private NativeList<Vector3> m_jobUVs;
   private NativeList<Color> m_jobColors;
   private NativeList<CubeGridPoint> m_jobPoints;
   private JobHandle? m_terrainJobHandle;
@@ -176,6 +177,7 @@ public class TerrainChunk : MonoBehaviour {
     // Create the lists for the job
     m_jobVertices = new NativeList<Vector3>(Allocator.Persistent);
     m_jobTriangles = new NativeList<int>(Allocator.Persistent);
+    m_jobUVs = new NativeList<Vector3>(Allocator.Persistent);
     m_jobColors = new NativeList<Color>(Allocator.Persistent);
     int pointCount = (resolution.x + 1) * (resolution.y + 1) * (resolution.z + 1);
     m_jobPoints = new NativeList<CubeGridPoint>(pointCount, Allocator.Persistent);
@@ -184,6 +186,7 @@ public class TerrainChunk : MonoBehaviour {
     CubeGridJob job = new CubeGridJob(
       m_jobVertices,
       m_jobTriangles,
+      m_jobUVs,
       m_jobColors,
       m_jobPoints,
       size,
@@ -226,6 +229,7 @@ public class TerrainChunk : MonoBehaviour {
   private void DisposeTerrainJob() {
     m_jobVertices.Dispose();
     m_jobTriangles.Dispose();
+    m_jobUVs.Dispose();
     m_jobColors.Dispose();
     m_jobPoints.Dispose();
     samplerHandle.Free();
@@ -269,6 +273,7 @@ public class TerrainChunk : MonoBehaviour {
           m_mesh = CubeGrid.CreateMesh(
             m_jobVertices,
             m_jobTriangles,
+            m_jobUVs,
             m_jobColors,
             debug,
             meshFilter.sharedMesh

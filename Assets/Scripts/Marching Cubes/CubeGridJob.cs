@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 public struct CubeGridJob : IJob {
   private NativeList<Vector3> vertices;
   private NativeList<int> triangles;
+  private NativeList<Vector3> uvs;
   private NativeList<Color> colors;
   private NativeList<CubeGridPoint> points;
   private GCHandle samplerHandle;
@@ -19,6 +20,7 @@ public struct CubeGridJob : IJob {
   public CubeGridJob(
     NativeList<Vector3> vertices,
     NativeList<int> triangles,
+    NativeList<Vector3> uvs,
     NativeList<Color> colors,
     NativeList<CubeGridPoint> points,
     Vector3 size,
@@ -31,6 +33,7 @@ public struct CubeGridJob : IJob {
   ) {
     this.vertices = vertices;
     this.triangles = triangles;
+    this.uvs = uvs;
     this.colors = colors;
     this.points = points;
     this.samplerHandle = samplerHandle;
@@ -56,6 +59,7 @@ public struct CubeGridJob : IJob {
     grid.Generate(
       ref vertices,
       ref triangles,
+      ref uvs,
       ref colors,
       samplerFunc,
       postProcessingFunc,

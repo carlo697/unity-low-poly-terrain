@@ -188,8 +188,9 @@ public class CubeGrid {
   }
 
   public void MarchSingleCube(
-    NativeList<Vector3> vertices,
-    NativeList<Color> colors,
+    ref NativeList<Vector3> vertices,
+    ref NativeList<Vector3> uvs,
+    ref NativeList<Color> colors,
     int x,
     int y,
     int z
@@ -273,6 +274,7 @@ public class CubeGrid {
   public void Generate(
     ref NativeList<Vector3> outputVertices,
     ref NativeList<int> outputTriangles,
+    ref NativeList<Vector3> outputUVs,
     ref NativeList<Color> outputColors,
     CubeGridSamplerFunc samplerFunc = null,
     CubeGridPostProcessingFunc postProcessingFunc = null,
@@ -299,7 +301,7 @@ public class CubeGrid {
     for (int z = 0; z < m_sizes.z - 1; z++) {
       for (int y = 0; y < m_sizes.y - 1; y++) {
         for (int x = 0; x < m_sizes.x - 1; x++) {
-          MarchSingleCube(outputVertices, outputColors, x, y, z);
+          MarchSingleCube(ref outputVertices, ref outputUVs, ref outputColors, x, y, z);
         }
       }
     }
@@ -325,6 +327,7 @@ public class CubeGrid {
   public static Mesh CreateMesh(
     NativeList<Vector3> vertices,
     NativeList<int> triangles,
+    NativeList<Vector3> uvs,
     NativeList<Color> colors,
     bool debug = false,
     Mesh meshToReuse = null
@@ -347,6 +350,7 @@ public class CubeGrid {
     if (vertices.Length > 0) {
       mesh.SetVertices<Vector3>(vertices);
       mesh.SetIndices<int>(triangles, MeshTopology.Triangles, 0);
+      mesh.SetUVs<Vector3>(0, uvs);
       mesh.SetColors<Color>(colors);
       mesh.RecalculateNormals();
     }
