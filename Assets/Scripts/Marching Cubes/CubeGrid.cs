@@ -184,80 +184,84 @@ public class CubeGrid {
       postProcessingFunc(this);
   }
 
-  public void MarchSingleCube(
-    ref NativeList<Vector3> vertices,
-    ref NativeList<Vector3> uvs,
-    ref NativeList<Color> colors,
-    int x,
-    int y,
-    int z
+  private void MarchCubes(
+    NativeList<Vector3> vertices,
+    NativeList<Vector3> uvs,
+    NativeList<Color> colors
   ) {
-    // Find the case index
-    int caseIndex = 0;
-    for (int i = 0; i < 8; i++) {
-      int sampleIndex = GetIndexFromCoords(
-        x + MarchingCubesConsts.corners[i].x,
-        y + MarchingCubesConsts.corners[i].y,
-        z + MarchingCubesConsts.corners[i].z
-      );
-      float sample = m_points[sampleIndex].value;
+    for (int z = 0; z < m_sizes.z - 1; z++) {
+      for (int y = 0; y < m_sizes.y - 1; y++) {
+        for (int x = 0; x < m_sizes.x - 1; x++) {
+          // Find the case index
+          int caseIndex = 0;
+          for (int i = 0; i < 8; i++) {
+            int sampleIndex = GetIndexFromCoords(
+              x + MarchingCubesConsts.corners[i].x,
+              y + MarchingCubesConsts.corners[i].y,
+              z + MarchingCubesConsts.corners[i].z
+            );
+            float sample = m_points[sampleIndex].value;
 
-      if (sample > threshold)
-        caseIndex |= 1 << i;
-    }
+            if (sample > threshold)
+              caseIndex |= 1 << i;
+          }
 
-    if (caseIndex == 0 || caseIndex == 0xFF)
-      return;
+          if (caseIndex == 0 || caseIndex == 0xFF)
+            continue;
 
-    Vector3Int coords = new Vector3Int(x, y, z);
+          Vector3Int coords = new Vector3Int(x, y, z);
 
+          for (int i = 0; i <= 15; i++) {
+            int edgeIndex = MarchingCubesConsts.cases[caseIndex, i];
+            if (edgeIndex == -1) break;
 
-    for (int i = 0; i <= 16; i++) {
-      int edgeIndex = MarchingCubesConsts.cases[caseIndex, i];
-      if (edgeIndex == -1) return;
+            Vector3Int coordsA = coords + MarchingCubesConsts.edgeVerticesIndexes[edgeIndex, 0];
+            int indexA = GetIndexFromCoords(coordsA.x, coordsA.y, coordsA.z);
+            float sampleA = m_points[indexA].value;
+            Vector3 positionA = m_points[indexA].position;
 
-      Vector3Int coordsA = coords + MarchingCubesConsts.edgeVerticesIndexes[edgeIndex, 0];
-      int indexA = GetIndexFromCoords(coordsA.x, coordsA.y, coordsA.z);
-      float sampleA = m_points[indexA].value;
-      Vector3 positionA = m_points[indexA].position;
+            Vector3Int coordsB = coords + MarchingCubesConsts.edgeVerticesIndexes[edgeIndex, 1];
+            int indexB = GetIndexFromCoords(coordsB.x, coordsB.y, coordsB.z);
+            float sampleB = m_points[indexB].value;
+            Vector3 positionB = m_points[indexB].position;
 
-      Vector3Int coordsB = coords + MarchingCubesConsts.edgeVerticesIndexes[edgeIndex, 1];
-      int indexB = GetIndexFromCoords(coordsB.x, coordsB.y, coordsB.z);
-      float sampleB = m_points[indexB].value;
-      Vector3 positionB = m_points[indexB].position;
+            // Apply a random position to get a rougher mesh
+            if (coordsA.x > 0 && coordsA.x < m_sizes.x - 1
+              && coordsA.y > 0 && coordsA.y < m_sizes.y - 1
+              && coordsA.z > 0 && coordsA.z < m_sizes.z - 1
+            ) {
+              positionA +=
+                roughnessVectors[indexA % roughnessVectors.Length] * m_points[indexA].roughness;
+            }
+            if (coordsB.x > 0 && coordsB.x < m_sizes.x - 1
+              && coordsB.y > 0 && coordsB.y < m_sizes.y - 1
+              && coordsB.z > 0 && coordsB.z < m_sizes.z - 1
+            ) {
+              positionB +=
+                roughnessVectors[indexB % roughnessVectors.Length] * m_points[indexB].roughness;
+            }
 
-      // Apply a random position to get a rougher mesh
-      if (coordsA.x > 0 && coordsA.x < m_sizes.x - 1
-        && coordsA.y > 0 && coordsA.y < m_sizes.y - 1
-        && coordsA.z > 0 && coordsA.z < m_sizes.z - 1
-      ) {
-        positionA += roughnessVectors[indexA % roughnessVectors.Length] * m_points[indexA].roughness;
-      }
-      if (coordsB.x > 0 && coordsB.x < m_sizes.x - 1
-        && coordsB.y > 0 && coordsB.y < m_sizes.y - 1
-        && coordsB.z > 0 && coordsB.z < m_sizes.z - 1
-      ) {
-        positionB += roughnessVectors[indexB % roughnessVectors.Length] * m_points[indexB].roughness;
-      }
+            // Calculate the difference and interpolate
+            float interpolant = (threshold - sampleA) / (sampleB - sampleA);
+            Vector3 interpolatedPosition = Vector3.Lerp(positionA, positionB, interpolant);
 
-      // Calculate the difference and interpolate
-      float interpolant = (threshold - sampleA) / (sampleB - sampleA);
-      Vector3 interpolatedPosition = Vector3.Lerp(positionA, positionB, interpolant);
+            vertices.Add(interpolatedPosition);
 
-      vertices.Add(interpolatedPosition);
+            // Add vertex color
+            colors.Add(Color.Lerp(m_points[indexA].color, m_points[indexB].color, interpolant));
 
-      // Add vertex color
-      colors.Add(Color.Lerp(m_points[indexA].color, m_points[indexB].color, interpolant));
-
-      // Add UVs
-      if (interpolant < 0.5f) {
-        uvs.Add(new Vector3(
-          MaterialBitConverter.MaterialIdToFloat(m_points[indexA].material), 0f, 0f
-        ));
-      } else {
-        uvs.Add(new Vector3(
-          MaterialBitConverter.MaterialIdToFloat(m_points[indexB].material), 0f, 0f
-        ));
+            // Add UVs
+            if (interpolant < 0.5f) {
+              uvs.Add(new Vector3(
+                MaterialBitConverter.MaterialIdToFloat(m_points[indexA].material), 0f, 0f
+              ));
+            } else {
+              uvs.Add(new Vector3(
+                MaterialBitConverter.MaterialIdToFloat(m_points[indexB].material), 0f, 0f
+              ));
+            }
+          }
+        }
       }
     }
   }
@@ -288,14 +292,8 @@ public class CubeGrid {
 
     stepTimer.Restart();
 
-    // Loop through the points to generate the vertices and colors
-    for (int z = 0; z < m_sizes.z - 1; z++) {
-      for (int y = 0; y < m_sizes.y - 1; y++) {
-        for (int x = 0; x < m_sizes.x - 1; x++) {
-          MarchSingleCube(ref outputVertices, ref outputUVs, ref outputColors, x, y, z);
-        }
-      }
-    }
+    // March the cubes to generate the vertices, uvs, colors, etc
+    MarchCubes(outputVertices, outputUVs, outputColors);
 
     // Loop through the vertices to generate the triangles
     for (int i = 0; i < outputVertices.Length; i += 3) {
