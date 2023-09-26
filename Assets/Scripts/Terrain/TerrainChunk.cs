@@ -57,7 +57,6 @@ public class TerrainChunk : MonoBehaviour {
   private Bounds m_bounds;
 
   public float threshold = 0f;
-  public bool useMiddlePoint = false;
 
   public bool drawGizmos = true;
   public float gizmosSize = 0.5f;
@@ -194,7 +193,6 @@ public class TerrainChunk : MonoBehaviour {
       samplerHandle,
       postProcessingHandle,
       threshold,
-      useMiddlePoint,
       debug
     );
     m_terrainJobHandle = job.Schedule();

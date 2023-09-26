@@ -14,7 +14,6 @@ public struct CubeGridJob : IJob {
   private Vector3 size;
   private Vector3Int resolution;
   private float threshold;
-  private bool useMiddlePoint;
   private bool debug;
 
   public CubeGridJob(
@@ -28,7 +27,6 @@ public struct CubeGridJob : IJob {
     GCHandle samplerHandle,
     GCHandle postProcessingHandle,
     float threshold = 0f,
-    bool useMiddlePoint = false,
     bool debug = false
   ) {
     this.vertices = vertices;
@@ -41,7 +39,6 @@ public struct CubeGridJob : IJob {
     this.size = size;
     this.resolution = resolution;
     this.threshold = threshold;
-    this.useMiddlePoint = useMiddlePoint;
     this.debug = debug;
   }
 
@@ -52,8 +49,7 @@ public struct CubeGridJob : IJob {
     CubeGrid grid = new CubeGrid(
       size,
       resolution,
-      threshold,
-      useMiddlePoint
+      threshold
     );
 
     grid.Generate(

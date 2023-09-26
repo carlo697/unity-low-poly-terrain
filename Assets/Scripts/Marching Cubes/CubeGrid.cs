@@ -11,7 +11,6 @@ public class CubeGrid {
   public Vector3 size;
   public Vector3Int resolution;
   public float threshold;
-  public bool useMiddlePoint;
 
   public Vector3Int gridSize { get { return m_sizes; } }
   public int gridPointCount { get { return m_pointCount; } }
@@ -52,13 +51,11 @@ public class CubeGrid {
   public CubeGrid(
     Vector3 size,
     Vector3Int resolution,
-    float threshold = 0f,
-    bool useMiddlePoint = false
+    float threshold = 0f
   ) {
     this.size = size;
     this.resolution = resolution;
     this.threshold = threshold;
-    this.useMiddlePoint = useMiddlePoint;
 
     // Calculations needed to create the grid array
     m_sizes = new Vector3Int(resolution.x + 1, resolution.y + 1, resolution.z + 1);
@@ -214,72 +211,53 @@ public class CubeGrid {
 
     Vector3Int coords = new Vector3Int(x, y, z);
 
-    if (useMiddlePoint) {
-      // Use the found case to add the vertices and triangles
-      for (int i = 0; i <= 16; i++) {
-        int edgeIndex = MarchingCubesConsts.cases[caseIndex, i];
-        if (edgeIndex == -1) return;
 
-        Vector3Int coordsA = coords + MarchingCubesConsts.edgeVerticesIndexes[edgeIndex, 0];
-        int indexA = GetIndexFromCoords(coordsA.x, coordsA.y, coordsA.z);
-        Vector3 positionA = m_points[indexA].position;
+    for (int i = 0; i <= 16; i++) {
+      int edgeIndex = MarchingCubesConsts.cases[caseIndex, i];
+      if (edgeIndex == -1) return;
 
-        Vector3Int coordsB = coords + MarchingCubesConsts.edgeVerticesIndexes[edgeIndex, 1];
-        int indexB = GetIndexFromCoords(coordsB.x, coordsB.y, coordsB.z);
-        Vector3 positionB = m_points[indexB].position;
+      Vector3Int coordsA = coords + MarchingCubesConsts.edgeVerticesIndexes[edgeIndex, 0];
+      int indexA = GetIndexFromCoords(coordsA.x, coordsA.y, coordsA.z);
+      float sampleA = m_points[indexA].value;
+      Vector3 positionA = m_points[indexA].position;
 
-        Vector3 middlePoint = (positionA + positionB) / 2;
+      Vector3Int coordsB = coords + MarchingCubesConsts.edgeVerticesIndexes[edgeIndex, 1];
+      int indexB = GetIndexFromCoords(coordsB.x, coordsB.y, coordsB.z);
+      float sampleB = m_points[indexB].value;
+      Vector3 positionB = m_points[indexB].position;
 
-        vertices.Add(middlePoint);
+      // Apply a random position to get a rougher mesh
+      if (coordsA.x > 0 && coordsA.x < m_sizes.x - 1
+        && coordsA.y > 0 && coordsA.y < m_sizes.y - 1
+        && coordsA.z > 0 && coordsA.z < m_sizes.z - 1
+      ) {
+        positionA += roughnessVectors[indexA % roughnessVectors.Length] * m_points[indexA].roughness;
       }
-    } else {
-      for (int i = 0; i <= 16; i++) {
-        int edgeIndex = MarchingCubesConsts.cases[caseIndex, i];
-        if (edgeIndex == -1) return;
+      if (coordsB.x > 0 && coordsB.x < m_sizes.x - 1
+        && coordsB.y > 0 && coordsB.y < m_sizes.y - 1
+        && coordsB.z > 0 && coordsB.z < m_sizes.z - 1
+      ) {
+        positionB += roughnessVectors[indexB % roughnessVectors.Length] * m_points[indexB].roughness;
+      }
 
-        Vector3Int coordsA = coords + MarchingCubesConsts.edgeVerticesIndexes[edgeIndex, 0];
-        int indexA = GetIndexFromCoords(coordsA.x, coordsA.y, coordsA.z);
-        float sampleA = m_points[indexA].value;
-        Vector3 positionA = m_points[indexA].position;
+      // Calculate the difference and interpolate
+      float interpolant = (threshold - sampleA) / (sampleB - sampleA);
+      Vector3 interpolatedPosition = Vector3.Lerp(positionA, positionB, interpolant);
 
-        Vector3Int coordsB = coords + MarchingCubesConsts.edgeVerticesIndexes[edgeIndex, 1];
-        int indexB = GetIndexFromCoords(coordsB.x, coordsB.y, coordsB.z);
-        float sampleB = m_points[indexB].value;
-        Vector3 positionB = m_points[indexB].position;
+      vertices.Add(interpolatedPosition);
 
-        // Apply a random position to get a rougher mesh
-        if (coordsA.x > 0 && coordsA.x < m_sizes.x - 1
-          && coordsA.y > 0 && coordsA.y < m_sizes.y - 1
-          && coordsA.z > 0 && coordsA.z < m_sizes.z - 1
-        ) {
-          positionA += roughnessVectors[indexA % roughnessVectors.Length] * m_points[indexA].roughness;
-        }
-        if (coordsB.x > 0 && coordsB.x < m_sizes.x - 1
-          && coordsB.y > 0 && coordsB.y < m_sizes.y - 1
-          && coordsB.z > 0 && coordsB.z < m_sizes.z - 1
-        ) {
-          positionB += roughnessVectors[indexB % roughnessVectors.Length] * m_points[indexB].roughness;
-        }
+      // Add vertex color
+      colors.Add(Color.Lerp(m_points[indexA].color, m_points[indexB].color, interpolant));
 
-        // Calculate the difference and interpolate
-        float interpolant = (threshold - sampleA) / (sampleB - sampleA);
-        Vector3 interpolatedPosition = Vector3.Lerp(positionA, positionB, interpolant);
-
-        vertices.Add(interpolatedPosition);
-
-        // Add vertex color
-        colors.Add(Color.Lerp(m_points[indexA].color, m_points[indexB].color, interpolant));
-
-        // Add UVs
-        if (interpolant < 0.5f) {
-          uvs.Add(new Vector3(
-            MaterialBitConverter.MaterialIdToFloat(m_points[indexA].material), 0f, 0f
-          ));
-        } else {
-          uvs.Add(new Vector3(
-            MaterialBitConverter.MaterialIdToFloat(m_points[indexB].material), 0f, 0f
-          ));
-        }
+      // Add UVs
+      if (interpolant < 0.5f) {
+        uvs.Add(new Vector3(
+          MaterialBitConverter.MaterialIdToFloat(m_points[indexA].material), 0f, 0f
+        ));
+      } else {
+        uvs.Add(new Vector3(
+          MaterialBitConverter.MaterialIdToFloat(m_points[indexB].material), 0f, 0f
+        ));
       }
     }
   }
