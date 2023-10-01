@@ -1,11 +1,9 @@
 using UnityEngine;
 using System;
-using System.Collections.Generic;
 using Unity.Collections;
 using System.Runtime.CompilerServices;
 
-public delegate void CubeGridSamplerFunc(ref CubeGridPoint point);
-public delegate void CubeGridPostProcessingFunc(CubeGrid grid);
+public delegate void CubeGridSamplerFunc(CubeGrid grid);
 
 public class CubeGrid {
   public Vector3 size;
@@ -28,7 +26,9 @@ public class CubeGrid {
     }
   }
 
+  public Vector3Int sizes { get { return m_sizes; } }
   private Vector3Int m_sizes;
+
   private int m_pointCount;
   private Vector3 m_resolutionSizeRatio;
   private CubeGridPoint[] m_points;
@@ -144,44 +144,11 @@ public class CubeGrid {
   }
 
   public void InitializeGrid(
-    CubeGridSamplerFunc samplerFunc = null,
-    CubeGridPostProcessingFunc postProcessingFunc = null
+    CubeGridSamplerFunc samplerFunc = null
   ) {
     // Initialize the grid with points (all of them will start with a value = 0)
     m_points = new CubeGridPoint[m_pointCount];
-    for (int z = 0; z < m_sizes.z; z++) {
-      for (int y = 0; y < m_sizes.y; y++) {
-        for (int x = 0; x < m_sizes.x; x++) {
-          // Get 1D index from the coords
-          int index = GetIndexFromCoords(x, y, z);
-
-          // Get the position of the point
-          Vector3 pointPosition = GetPointPosition(x, y, z);
-
-          // // Apply a random position to get a rougher mesh
-          // if (x > 0 && x < m_sizes.x - 1 && y > 0 && y < m_sizes.y - 1 && z > 0 && z < m_sizes.z - 1) {
-          //   int randomVectorIndex = index % RandomVectors.vectors.Length;
-          //   pointPosition += RandomVectors.vectors[randomVectorIndex] * m_roughness;
-          // }
-
-          CubeGridPoint point = new CubeGridPoint {
-            index = index,
-            position = pointPosition
-          };
-
-          // Create the point and store it
-          if (samplerFunc != null) {
-            samplerFunc(ref point);
-          }
-
-          m_points[index] = point;
-        }
-      }
-    }
-
-    // Call post processing
-    if (postProcessingFunc != null)
-      postProcessingFunc(this);
+    samplerFunc(this);
   }
 
   private void MarchCubes(
@@ -272,13 +239,12 @@ public class CubeGrid {
     ref NativeList<Vector3> outputUVs,
     ref NativeList<Color> outputColors,
     CubeGridSamplerFunc samplerFunc = null,
-    CubeGridPostProcessingFunc postProcessingFunc = null,
     bool debug = false
   ) {
     var stepTimer = new System.Diagnostics.Stopwatch();
     stepTimer.Start();
 
-    InitializeGrid(samplerFunc, postProcessingFunc);
+    InitializeGrid(samplerFunc);
 
     stepTimer.Stop();
     if (debug)

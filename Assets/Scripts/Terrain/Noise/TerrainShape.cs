@@ -159,121 +159,131 @@ public class TerrainShape : ISamplerFactory {
     return pixels;
   }
 
-  public override void GetSampler(
-    TerrainChunk chunk,
-    out CubeGridSamplerFunc samplerFunc,
-    out CubeGridPostProcessingFunc postProcessingFunc
+  public override CubeGridSamplerFunc GetSampler(
+    TerrainChunk chunk
   ) {
-    // Create copies of the curves
-    AnimationCurve curve = new AnimationCurve(this.curve.keys);
-    AnimationCurve normalizerCurve = new AnimationCurve(this.normalizerCurve.keys);
+    return (CubeGrid grid) => {
+      // Create copies of the curves
+      AnimationCurve curve = new AnimationCurve(this.curve.keys);
+      AnimationCurve normalizerCurve = new AnimationCurve(this.normalizerCurve.keys);
 
-    // Pixels of noises
-    float[] baseTerrainPixels = null;
-    float[] falloffPixels = null;
-    float[] plateauMaskPixels = null;
-    float[] plateauShapePixels = null;
-    float[] plateauGroundPixels = null;
+      // Pixels of noises
+      float[] baseTerrainPixels = null;
+      float[] falloffPixels = null;
+      float[] plateauMaskPixels = null;
+      float[] plateauShapePixels = null;
+      float[] plateauGroundPixels = null;
 
-    // Debug pixels
-    float[] debugFalloff = null;
+      // Debug pixels
+      float[] debugFalloff = null;
 
-    // Plateaus
-    float relativeMaximunPlateauHeight = (1f / chunk.size.y) * absoluteMaximunPlateauHeight;
+      // Noise frequency
+      float noiseFrequency = 1f / noiseScale;
 
-    samplerFunc = (ref CubeGridPoint point) => {
-      // Generate the noise inside the sampler the first time it's called
-      if (baseTerrainPixels == null) {
-        float noiseFrequency = 1f / noiseScale;
-
-        // Generate the falloff map
-        if (useFalloff) {
-          falloffPixels = falloffNoise.GenerateNoise(chunk, noiseFrequency, terrainSeed);
-
-          if (debugMode == DebugMode.Falloff) {
-            debugFalloff = new float[chunk.gridSize.x * chunk.gridSize.z];
-          }
-        }
-
-        // Generate the base terrain noise
-        baseTerrainPixels = baseNoise.GenerateNoise(chunk, noiseFrequency, terrainSeed);
-
-        // Generate the noises for plateous
-        plateauMaskPixels = plateauMask.GenerateNoise(chunk, noiseFrequency, terrainSeed);
-        plateauGroundPixels = plateauGround.GenerateNoise(chunk, noiseFrequency, terrainSeed);
-        plateauShapePixels = plateauShape.GenerateNoise(chunk, noiseFrequency, terrainSeed);
-      }
-
-      // Coords for 2d maps
-      int index2D = point.Get2dIndex(chunk);
-
-      // Start sampling
-      float output = 0;
-      float heightGradient = point.position.y * chunk.inverseSize.y;
-
-      // Land output
-      float terrainHeight = Normalize(baseTerrainPixels[point.index]);
-
-      // Overall shape of Plateaus
-      float plateauMaskNoise = Normalize(plateauMaskPixels[index2D]);
-      float plateauShapeNoise = Normalize(plateauShapePixels[index2D]) * plateauMaskNoise;
-
-      // The height of the terrain on top of plateaus
-      float plateauGroundNoise = Normalize(plateauGroundPixels[index2D]);
-      float plateauHeight = Mathf.LerpUnclamped(
-        terrainHeight,
-        plateauGroundNoise,
-        relativeMaximunPlateauHeight
-      );
-
-      // 2nd Mask
-      float threshold = 0.02f;
-      float plateau2ndMask = plateauMaskNoise - terrainHeight;
-      plateau2ndMask = Mathf.SmoothStep(0f, 1f, plateau2ndMask / threshold);
-      plateauShapeNoise *= plateau2ndMask;
-
-      // Use plateauHeight only if it's taller than terrainHeight
-      terrainHeight = Mathf.LerpUnclamped(terrainHeight, plateauHeight, plateauShapeNoise);
-
+      // Generate the falloff map
       if (useFalloff) {
-        // Sample the falloff map
-        float finalFalloff = falloffPixels[index2D];
-
-        // Land gradient
-        float landGradient;
-        float start = seaLevel;
-        if (finalFalloff <= start) {
-          landGradient = 0f;
-        } else {
-          landGradient = Mathf.SmoothStep(0f, 1f, (finalFalloff - start) / (falloffNoise.landGap));
-        }
-
-        // Use the land gradient to combine the base terrain noise with the falloff map
-        float heightBelowSeaLevel = heightGradient - finalFalloff;
-        float heightAboveSeaLevel = heightGradient - seaLevel - (terrainHeight * (1f - seaLevel));
-        output = Mathf.Lerp(heightBelowSeaLevel, heightAboveSeaLevel, landGradient);
+        falloffPixels = falloffNoise.GenerateNoise(chunk, noiseFrequency, terrainSeed);
 
         if (debugMode == DebugMode.Falloff) {
-          debugFalloff[index2D] = 1f - output;
+          debugFalloff = new float[chunk.gridSize.x * chunk.gridSize.z];
         }
-
-        // height = Mathf.Lerp(heightGradient, height, finalFalloff);
-        // height = Mathf.Lerp(heightGradient, height, finalFalloff);
-        // height = heightGradient - finalFalloff;
-        // height = heightGradient - landGradient;
-        // height = heightGradient - (landGradient * 0.8f);
-        // height = Mathf.Lerp(height, heightGradient - seaLevel, borderGradient);
-      } else {
-        output = heightGradient - terrainHeight;
       }
 
-      point.value = output;
-    };
+      // Generate the base terrain noise
+      baseTerrainPixels = baseNoise.GenerateNoise(chunk, noiseFrequency, terrainSeed);
 
-    // Add color to the grid volume
-    postProcessingFunc = (CubeGrid grid) => {
+      // Generate the noises for plateous
+      float relativeMaximunPlateauHeight = (1f / chunk.size.y) * absoluteMaximunPlateauHeight;
+      plateauMaskPixels = plateauMask.GenerateNoise(chunk, noiseFrequency, terrainSeed);
+      plateauGroundPixels = plateauGround.GenerateNoise(chunk, noiseFrequency, terrainSeed);
+      plateauShapePixels = plateauShape.GenerateNoise(chunk, noiseFrequency, terrainSeed);
+
+      for (int z = 0; z < grid.sizes.z; z++) {
+        for (int y = 0; y < grid.sizes.y; y++) {
+          for (int x = 0; x < grid.sizes.x; x++) {
+            // Get 1D index from the coords
+            int index = grid.GetIndexFromCoords(x, y, z);
+
+            // Get the position of the point
+            Vector3 pointPosition = grid.GetPointPosition(x, y, z);
+
+            CubeGridPoint point = new CubeGridPoint {
+              index = index,
+              position = pointPosition
+            };
+
+            // Coords for 2d maps
+            int index2D = z * grid.gridSize.x + x;
+
+            // Start sampling
+            float output = 0;
+            float heightGradient = point.position.y * chunk.inverseSize.y;
+
+            // Land output
+            float terrainHeight = Normalize(baseTerrainPixels[point.index]);
+
+            // Overall shape of Plateaus
+            float plateauMaskNoise = Normalize(plateauMaskPixels[index2D]);
+            float plateauShapeNoise = Normalize(plateauShapePixels[index2D]) * plateauMaskNoise;
+
+            // The height of the terrain on top of plateaus
+            float plateauGroundNoise = Normalize(plateauGroundPixels[index2D]);
+            float plateauHeight = Mathf.LerpUnclamped(
+              terrainHeight,
+              plateauGroundNoise,
+              relativeMaximunPlateauHeight
+            );
+
+            // 2nd Mask
+            float threshold = 0.02f;
+            float plateau2ndMask = plateauMaskNoise - terrainHeight;
+            plateau2ndMask = Mathf.SmoothStep(0f, 1f, plateau2ndMask / threshold);
+            plateauShapeNoise *= plateau2ndMask;
+
+            // Use plateauHeight only if it's taller than terrainHeight
+            terrainHeight = Mathf.LerpUnclamped(terrainHeight, plateauHeight, plateauShapeNoise);
+
+            if (useFalloff) {
+              // Sample the falloff map
+              float finalFalloff = falloffPixels[index2D];
+
+              // Land gradient
+              float landGradient;
+              float start = seaLevel;
+              if (finalFalloff <= start) {
+                landGradient = 0f;
+              } else {
+                landGradient = Mathf.SmoothStep(0f, 1f, (finalFalloff - start) / (falloffNoise.landGap));
+              }
+
+              // Use the land gradient to combine the base terrain noise with the falloff map
+              float heightBelowSeaLevel = heightGradient - finalFalloff;
+              float heightAboveSeaLevel = heightGradient - seaLevel - (terrainHeight * (1f - seaLevel));
+              output = Mathf.Lerp(heightBelowSeaLevel, heightAboveSeaLevel, landGradient);
+
+              if (debugMode == DebugMode.Falloff) {
+                debugFalloff[index2D] = 1f - output;
+              }
+
+              // height = Mathf.Lerp(heightGradient, height, finalFalloff);
+              // height = Mathf.Lerp(heightGradient, height, finalFalloff);
+              // height = heightGradient - finalFalloff;
+              // height = heightGradient - landGradient;
+              // height = heightGradient - (landGradient * 0.8f);
+              // height = Mathf.Lerp(height, heightGradient - seaLevel, borderGradient);
+            } else {
+              output = heightGradient - terrainHeight;
+            }
+
+            point.value = output;
+
+            grid.gridPoints[index] = point;
+          }
+        }
+      }
+
+      // Initialize colors
       Color black = Color.black;
-
       for (int z = 0; z < grid.gridSize.z; z++) {
         for (int y = 0; y < grid.gridSize.y; y++) {
           for (int x = 0; x < grid.gridSize.x; x++) {

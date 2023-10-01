@@ -90,7 +90,6 @@ public class TerrainChunk : MonoBehaviour {
 
   #region Terrain Job
   private GCHandle samplerHandle;
-  private GCHandle postProcessingHandle;
   private NativeList<Vector3> m_jobVertices;
   private NativeList<int> m_jobTriangles;
   private NativeList<Vector3> m_jobUVs;
@@ -162,16 +161,14 @@ public class TerrainChunk : MonoBehaviour {
 
     // Create the delegates for sampling the noise
     CubeGridSamplerFunc samplerFunc;
-    CubeGridPostProcessingFunc postProcessingFunc;
     if (terrainShape != null) {
-      terrainShape.GetSampler(this, out samplerFunc, out postProcessingFunc);
+      samplerFunc = terrainShape.GetSampler(this);
     } else {
       throw new Exception("No sampler found");
     }
 
     // Store a reference to the sampler function
     samplerHandle = GCHandle.Alloc(samplerFunc);
-    postProcessingHandle = GCHandle.Alloc(postProcessingFunc);
 
     // Create the lists for the job
     m_jobVertices = new NativeList<Vector3>(Allocator.Persistent);
@@ -191,7 +188,6 @@ public class TerrainChunk : MonoBehaviour {
       size,
       resolution,
       samplerHandle,
-      postProcessingHandle,
       threshold,
       debug
     );
@@ -231,7 +227,6 @@ public class TerrainChunk : MonoBehaviour {
     m_jobColors.Dispose();
     m_jobPoints.Dispose();
     samplerHandle.Free();
-    postProcessingHandle.Free();
     m_terrainJobHandle = null;
   }
 

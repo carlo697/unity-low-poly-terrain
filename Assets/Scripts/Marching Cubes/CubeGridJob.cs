@@ -10,7 +10,6 @@ public struct CubeGridJob : IJob {
   private NativeList<Color> colors;
   private NativeList<CubeGridPoint> points;
   private GCHandle samplerHandle;
-  private GCHandle postProcessingHandle;
   private Vector3 size;
   private Vector3Int resolution;
   private float threshold;
@@ -25,7 +24,6 @@ public struct CubeGridJob : IJob {
     Vector3 size,
     Vector3Int resolution,
     GCHandle samplerHandle,
-    GCHandle postProcessingHandle,
     float threshold = 0f,
     bool debug = false
   ) {
@@ -35,7 +33,6 @@ public struct CubeGridJob : IJob {
     this.colors = colors;
     this.points = points;
     this.samplerHandle = samplerHandle;
-    this.postProcessingHandle = postProcessingHandle;
     this.size = size;
     this.resolution = resolution;
     this.threshold = threshold;
@@ -44,7 +41,6 @@ public struct CubeGridJob : IJob {
 
   public void Execute() {
     var samplerFunc = (CubeGridSamplerFunc)samplerHandle.Target;
-    var postProcessingFunc = (CubeGridPostProcessingFunc)postProcessingHandle.Target;
 
     CubeGrid grid = new CubeGrid(
       size,
@@ -58,7 +54,6 @@ public struct CubeGridJob : IJob {
       ref uvs,
       ref colors,
       samplerFunc,
-      postProcessingFunc,
       debug
     );
 
