@@ -1,7 +1,7 @@
 using UnityEngine;
-using System;
 
-public class TerrainShape : ISamplerFactory {
+[CreateAssetMenu(menuName = "Terrain/Shape", order = 0)]
+public class TerrainShape : ScriptableObject, ISamplerFactory {
   [Header("Size")]
   public Vector2 mapSize = Vector3.one * 16000f;
 
@@ -159,7 +159,7 @@ public class TerrainShape : ISamplerFactory {
     return pixels;
   }
 
-  public override CubeGridSamplerFunc GetSampler(
+  public CubeGridSamplerFunc GetSampler(
     TerrainChunk chunk
   ) {
     return (CubeGrid grid) => {

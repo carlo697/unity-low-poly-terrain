@@ -1,0 +1,459 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c0a105f68bd6b140913a4ff8df44e9d, type: 3}
+  m_Name: Terrain
+  m_EditorClassIdentifier: 
+  mapSize: {x: 8000, y: 8000}
+  curve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: -1
+      value: -1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: -0.2
+      value: -1
+      inSlope: 0
+      outSlope: 11.026021
+      tangentMode: 1
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.114916176
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.19108225
+    - serializedVersion: 3
+      time: 0.2
+      value: -1
+      inSlope: -6.1004157
+      outSlope: 0
+      tangentMode: 1
+      weightedMode: 0
+      inWeight: 0.21903877
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1.0076592
+      value: -1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  normalizerCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: -1
+      value: -1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: -0.1
+      value: -1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.1
+      value: 1
+      inSlope: 4.4630713
+      outSlope: 0
+      tangentMode: 1
+      weightedMode: 0
+      inWeight: 0.31311148
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  grassId: 1
+  grassColor: {r: 0.44313726, g: 0.8, b: 0.41960785, a: 1}
+  darkGrassColor: {r: 0.35572562, g: 0.5849056, b: 0.33935562, a: 1}
+  rockId: 2
+  rockColor: {r: 0.6132076, g: 0.6132076, b: 0.6132076, a: 1}
+  sandId: 3
+  sandColor: {r: 0.9647059, g: 0.89411765, b: 0.6784314, a: 1}
+  darkSandColor: {r: 0.53900003, g: 0.5017387, b: 0.39616504, a: 1}
+  snowId: 4
+  snowColor: {r: 1, g: 1, b: 1, a: 1}
+  seaLevel: 0.3
+  snowHeight: 0.8208333
+  sandHeight: 0.3260416
+  terrainSeed: 0
+  noiseScale: 1500
+  baseNoise:
+    seed: 0
+    scale: 0.8
+    amplitude: 1
+    noiseType: 4
+    gain: 0.5
+    weightedStrength: 0.2
+    lacunarity: 2
+    octaves: 8
+    fractalType: 1
+    useCurve: 1
+    curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: -1
+        value: -1
+        inSlope: 0.6379013
+        outSlope: 0.6379013
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: -0.7846964
+        value: -0.86265755
+        inSlope: 0.4243176
+        outSlope: 0.4243176
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: -0.19717938
+        value: -0.7388478
+        inSlope: 0.99087006
+        outSlope: 0.99087006
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.054822303
+        value: -0.29255125
+        inSlope: 1.0473769
+        outSlope: 1.0473769
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.479599
+      - serializedVersion: 3
+        time: 0.41185245
+        value: 0.33404908
+        inSlope: 1.2833332
+        outSlope: 1.2833332
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.6217422
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 1.1322855
+        outSlope: 1.1322855
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    is3d: 1
+    useDomainWarp: 1
+    domainWarpAmplitude: 0.3
+    domainWarpFrequency: 2
+  updateChunksInEditor: 1
+  useFalloff: 1
+  falloffNoise:
+    seed: 2
+    scale: 5.5
+    gain: 0.5
+    lacunarity: 2
+    octaves: 9
+    landGap: 0.15
+    falloffGradientCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0.6
+        value: 0
+        inSlope: 1.625
+        outSlope: 1.625
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 0.65
+        inSlope: 1.625
+        outSlope: 1.625
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    falloffOutputCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0.31843343
+        outSlope: 0.31843343
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.33841327
+        value: 0.1077621
+        inSlope: 0.6
+        outSlope: 0.6
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.5
+        value: 0.3
+        inSlope: 1.2948444
+        outSlope: 1.2948444
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 1.4
+        outSlope: 1.4
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  absoluteMaximunPlateauHeight: 48
+  plateauMask:
+    seed: 20
+    scale: 1
+    amplitude: 1
+    noiseType: 4
+    gain: 0.5
+    weightedStrength: 0
+    lacunarity: 2
+    octaves: 2
+    fractalType: 0
+    useCurve: 1
+    curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: -1
+        value: -1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: -0.047863737
+        value: -1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.35213625
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    is3d: 0
+    useDomainWarp: 0
+    domainWarpAmplitude: 1
+    domainWarpFrequency: 0.5
+  plateauShape:
+    seed: 22
+    scale: 0.15
+    amplitude: 1
+    noiseType: 4
+    gain: 0.5
+    weightedStrength: 0
+    lacunarity: 2
+    octaves: 5
+    fractalType: 0
+    useCurve: 1
+    curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: -1
+        value: -1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: -0.024999999
+        value: -0.9978128
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.14140432
+      - serializedVersion: 3
+        time: 0.006687032
+        value: -0.83953476
+        inSlope: 11.287728
+        outSlope: 11.287728
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.04889448
+        value: -0.09751035
+        inSlope: 15.171025
+        outSlope: 42.47076
+        tangentMode: 1
+        weightedMode: 0
+        inWeight: 0.17623144
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.049999997
+        value: 0.7632381
+        inSlope: 23.555582
+        outSlope: 23.555582
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.122810274
+      - serializedVersion: 3
+        time: 0.08
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    is3d: 0
+    useDomainWarp: 0
+    domainWarpAmplitude: 1
+    domainWarpFrequency: 0.5
+  plateauGround:
+    seed: 24
+    scale: 2.5
+    amplitude: 1
+    noiseType: 4
+    gain: 0.5
+    weightedStrength: 0
+    lacunarity: 2
+    octaves: 4
+    fractalType: 0
+    useCurve: 0
+    curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: -1
+        value: -1
+        inSlope: 1
+        outSlope: 1
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 1
+        outSlope: 1
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    is3d: 0
+    useDomainWarp: 0
+    domainWarpAmplitude: 1
+    domainWarpFrequency: 0.5
+  useDetails: 1
+  detailSpawners:
+  - {fileID: 11400000, guid: 7dae6a9c888920b4e90b14e3ba88f2d6, type: 2}
+  - {fileID: 11400000, guid: 52e61854e36b1b14e865453b08b664c8, type: 2}
+  debugMode: 0

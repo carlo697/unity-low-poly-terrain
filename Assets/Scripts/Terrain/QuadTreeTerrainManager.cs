@@ -77,12 +77,6 @@ public class QuadTreeTerrainManager : MonoBehaviour {
   private List<float> m_levelDistances;
   [SerializeField] private int m_debugChunkCount;
 
-  private void Awake() {
-    if (!m_terrainShape) {
-      m_terrainShape = GetComponent<TerrainShape>();
-    }
-  }
-
   private void CreateChunk(Bounds bounds) {
     // Create empty GameObject
     GameObject gameObject = new GameObject(string.Format(

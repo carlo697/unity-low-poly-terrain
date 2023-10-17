@@ -38,12 +38,6 @@ public class WaterChunkManager : MonoBehaviour {
   public int levelsOfDetail = 8;
   private List<float> m_levelDistances;
 
-  private void Awake() {
-    if (!m_terrainShape) {
-      m_terrainShape = GetComponent<TerrainShape>();
-    }
-  }
-
   private void CreateChunk(Bounds bounds) {
     // Create water object
     GameObject waterObj = new GameObject(string.Format(
