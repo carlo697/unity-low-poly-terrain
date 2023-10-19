@@ -12,6 +12,8 @@ public enum TerrainChunkStatus {
 
 [ExecuteInEditMode]
 public class TerrainChunk : MonoBehaviour {
+  public bool updateInEditor;
+
   public static DateTime lastUpdatedAt = DateTime.Now;
   private bool m_isAwake = false;
 
@@ -128,6 +130,11 @@ public class TerrainChunk : MonoBehaviour {
   private void Start() {
     // Get mesh collider (it's optional)
     m_meshCollider = GetComponent<MeshCollider>();
+
+    // Generate in editor
+    if (Application.isEditor && updateInEditor) {
+      RequestUpdate();
+    }
 
     UpdateCachedFields();
     GenerateIfNeeded();
@@ -340,7 +347,7 @@ public class TerrainChunk : MonoBehaviour {
   }
 
   public void GenerateOnEditor() {
-    if (Application.isEditor && !Application.isPlaying) {
+    if (updateInEditor && Application.isEditor && !Application.isPlaying) {
       RequestUpdate();
     }
   }
@@ -348,8 +355,6 @@ public class TerrainChunk : MonoBehaviour {
   private void OnValidate() {
     if (m_isAwake) {
       GenerateOnEditor();
-      m_size = size;
-      m_resolution = resolution;
     }
   }
 
