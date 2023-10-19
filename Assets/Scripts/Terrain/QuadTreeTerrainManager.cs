@@ -66,6 +66,7 @@ public class QuadTreeTerrainManager : MonoBehaviour {
 
   private Vector3 m_lastCameraPosition;
 
+  public TerrainShape terrainShape { get { return m_terrainShape; } }
   [SerializeField] private TerrainShape m_terrainShape;
 
   public DistanceShape distanceShape;

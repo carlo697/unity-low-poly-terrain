@@ -3789,7 +3789,7 @@ GameObject:
   m_Component:
   - component: {fileID: 637276799}
   m_Layer: 0
-  m_Name: Details
+  m_Name: Details Chunks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7085,7 +7085,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_terrainManager: {fileID: 1205162106}
-  m_terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
   updateVisibleChunksPeriod: 0.2
   updateSpawnedChunksPeriod: 0.2
   viewDistance: 750
@@ -7114,7 +7113,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   m_renderMode: 1
-  detailsParent: {fileID: 637276799}
+  m_chunksParent: {fileID: 637276799}
   drawGizmos: 0
   debugGpuInstancing: 0
   debugSkipGpuInstancing: 0

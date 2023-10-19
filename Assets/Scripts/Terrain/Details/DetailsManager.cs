@@ -13,27 +13,29 @@ public class DetailsManager : MonoBehaviour {
   public QuadTreeTerrainManager manager { get { return m_terrainManager; } }
   [SerializeField] private QuadTreeTerrainManager m_terrainManager;
 
-  public TerrainShape terrainShape { get { return m_terrainShape; } }
-  [SerializeField] private TerrainShape m_terrainShape;
+  public TerrainShape terrainShape { get { return m_terrainManager.terrainShape; } }
 
+  [Header("Chunk Distribution")]
   public float updateVisibleChunksPeriod = 0.5f;
   public float updateSpawnedChunksPeriod = 0.2f;
   public float viewDistance = 500f;
   public AnimationCurve levelOfDetailCurve = AnimationCurve.EaseInOut(0f, 1f, 1f, 0f);
 
   public DetailsRenderMode renderMode { get { return m_renderMode; } }
+  [Header("Instancing")]
   [SerializeField] private DetailsRenderMode m_renderMode = DetailsRenderMode.InstancingFromManager;
 
   public Dictionary<int, Detail> detailsById { get { return m_detailsById; } }
-  private Dictionary<int, Detail> m_detailsById = new Dictionary<int, Detail>();
+  private Dictionary<int, Detail> m_detailsById = new();
 
   private List<DetailsChunk> m_spawnedChunks = new();
   private Dictionary<Bounds, DetailsChunk> m_spawnedChunksDictionary = new();
 
   private List<Bounds> m_visibleChunkBounds = new();
-  private HashSet<Bounds> m_visibleChunkBoundsHashSet =
-    new HashSet<Bounds>();
-  public Transform detailsParent;
+  private HashSet<Bounds> m_visibleChunkBoundsHashSet = new();
+
+  public Transform chunksParent { get { return m_chunksParent; } }
+  [SerializeField] private Transform m_chunksParent;
 
   [Header("Debug")]
   public bool drawGizmos;
@@ -41,7 +43,7 @@ public class DetailsManager : MonoBehaviour {
   public bool debugSkipGpuInstancing;
 
   private void Start() {
-    if (m_terrainShape.useDetails) {
+    if (terrainShape.useDetails) {
       InitializeDetailsDatabase();
 
       // Start coroutine to schedule the updates of the details
@@ -60,8 +62,8 @@ public class DetailsManager : MonoBehaviour {
   }
 
   private void InitializeDetailsDatabase() {
-    for (int i = 0; i < m_terrainShape.detailSpawners.Length; i++) {
-      DetailSpawner spawner = m_terrainShape.detailSpawners[i];
+    for (int i = 0; i < terrainShape.detailSpawners.Length; i++) {
+      DetailSpawner spawner = terrainShape.detailSpawners[i];
       m_detailsById[spawner.detail.id] = spawner.detail;
     }
   }
@@ -203,7 +205,7 @@ public class DetailsManager : MonoBehaviour {
 
     // Set position and parent
     gameObject.transform.position = bounds.center - bounds.extents;
-    gameObject.transform.SetParent(detailsParent);
+    gameObject.transform.SetParent(m_chunksParent);
 
     // Create chunk component
     DetailsChunk chunk = gameObject.AddComponent<DetailsChunk>();
@@ -413,7 +415,7 @@ public class DetailsManager : MonoBehaviour {
     // We'll call DrawMeshInstanced using the grid build by the
     // PrepareMeshInstancing coroutine
     if (
-      m_terrainShape.useDetails
+      terrainShape.useDetails
       && m_renderMode == DetailsRenderMode.InstancingFromManager
       && !debugSkipGpuInstancing
     ) {
