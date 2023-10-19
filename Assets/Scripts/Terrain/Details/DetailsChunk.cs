@@ -19,13 +19,14 @@ public class DetailsChunk : MonoBehaviour {
   public Bounds bounds;
   public TerrainShape terrainShape;
 
-  public DetailsChunkStatus status = DetailsChunkStatus.Spawned;
+  public DetailsChunkStatus status { get { return m_status; } }
+  private DetailsChunkStatus m_status = DetailsChunkStatus.Spawned;
 
   private int m_integerLevelOfDetail;
   private float m_normalizedLevelOfDetail;
 
   public List<DetailInstance> instances { get { return m_instances; } }
-  private List<DetailInstance> m_instances = new List<DetailInstance>();
+  private List<DetailInstance> m_instances = new();
 
   private bool m_updateFlag;
   private bool m_destroyFlag;
@@ -49,14 +50,14 @@ public class DetailsChunk : MonoBehaviour {
     }
 
     if (m_destroyFlag) {
-      if (status != DetailsChunkStatus.Generating) {
+      if (m_status != DetailsChunkStatus.Generating) {
         Destroy(gameObject);
       }
     } else {
-      if (m_updateFlag && status != DetailsChunkStatus.Generating && updatesThisFrame < 2) {
+      if (m_updateFlag && m_status != DetailsChunkStatus.Generating && updatesThisFrame < 2) {
         updatesThisFrame++;
         m_updateFlag = false;
-        status = DetailsChunkStatus.Generating;
+        m_status = DetailsChunkStatus.Generating;
         StartCoroutine(PlaceDetails());
       }
 
@@ -206,7 +207,7 @@ public class DetailsChunk : MonoBehaviour {
     //   )
     // );
 
-    status = DetailsChunkStatus.Generated;
+    m_status = DetailsChunkStatus.Generated;
   }
 
   private void DestroyInstances() {
