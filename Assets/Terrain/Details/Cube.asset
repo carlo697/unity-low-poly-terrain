@@ -15,7 +15,6 @@ MonoBehaviour:
   m_id: 2000
   m_prefabs:
   - {fileID: 1802177506753183663, guid: ba428717b49074140a5a55ef1d1f7557, type: 3}
-  m_preAllocateCount: 25000
   m_submeshes:
   - mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
     material: {fileID: 2100000, guid: c120b8d5257c14b40b1c3ce8df92f8cd, type: 2}
