@@ -48,10 +48,18 @@ public class GrassSpawnerAsset : GrassSpawner {
     XorshiftStar rng = new XorshiftStar(seed);
     float baseCount = (1f / populationDensity) * (1f / populationDensity);
     // float distance = 1f - (Mathf.Clamp(normalizedDistance, 0f, maxDistance) / maxDistance);
-    int count = Mathf.FloorToInt(baseCount * area);
+    float count = baseCount * area;
+
+    int finalCount;
+    if (count < 1f) {
+      // If count is less than 1, we want to give it a chance to spawn
+      finalCount = rng.NextDouble() < count ? 1 : 0;
+    } else {
+      finalCount = Mathf.FloorToInt(count);
+    }
 
     // Create for loop
-    for (int bladeIndex = 0; bladeIndex < count; bladeIndex++) {
+    for (int bladeIndex = 0; bladeIndex < finalCount; bladeIndex++) {
       // Get random point in triangle to spawn the blade
       float r1 = (float)rng.NextDouble();
       float r1Sqrt = Mathf.Sqrt(r1);
@@ -90,6 +98,6 @@ public class GrassSpawnerAsset : GrassSpawner {
       });
     }
 
-    return count;
+    return finalCount;
   }
 }
