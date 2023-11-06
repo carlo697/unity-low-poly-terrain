@@ -78,6 +78,10 @@ public class QuadTreeTerrainManager : MonoBehaviour {
   private List<float> m_levelDistances;
   [SerializeField] private int m_debugChunkCount;
 
+  private void Awake() {
+    m_terrainShape.Initialize();
+  }
+
   private void CreateChunk(Bounds bounds) {
     // Create empty GameObject
     GameObject gameObject = new GameObject(string.Format(
@@ -105,6 +109,7 @@ public class QuadTreeTerrainManager : MonoBehaviour {
     float resolutionLevel = chunkSize.x / bounds.size.x;
 
     // Set variables
+    chunk.terrainManager = this;
     chunk.drawGizmos = false;
     chunk.debug = debug;
     chunk.terrainShape = m_terrainShape;
@@ -115,6 +120,9 @@ public class QuadTreeTerrainManager : MonoBehaviour {
       chunkResolution.z
     );
     chunk.GetComponent<MeshRenderer>().sharedMaterial = chunkMaterial;
+
+    // Add grass
+    gameObject.AddComponent<GrassChunk>();
   }
 
   private Vector3 FlatY(Vector3 worldPosition) {

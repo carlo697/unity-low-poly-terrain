@@ -13,6 +13,7 @@ public enum TerrainChunkStatus {
 [ExecuteInEditMode]
 public class TerrainChunk : MonoBehaviour {
   public bool updateInEditor;
+  public QuadTreeTerrainManager terrainManager;
 
   public static DateTime lastUpdatedAt = DateTime.Now;
   private bool m_isAwake = false;
@@ -58,6 +59,20 @@ public class TerrainChunk : MonoBehaviour {
   public Bounds bounds { get { return m_bounds; } }
   private Bounds m_bounds;
 
+  public int levelOfDetail {
+    get {
+      int levelOfDetail = 1;
+      if (terrainManager) {
+        levelOfDetail = 1 + (int)Mathf.Log(
+          m_size.x / terrainManager.chunkSize.x,
+          2
+        );
+      }
+
+      return levelOfDetail;
+    }
+  }
+
   public float threshold = 0f;
 
   public bool drawGizmos = true;
@@ -98,6 +113,17 @@ public class TerrainChunk : MonoBehaviour {
   private NativeList<Color> m_jobColors;
   private NativeList<CubeGridPoint> m_jobPoints;
   private JobHandle? m_terrainJobHandle;
+  #endregion
+
+  #region Raw Mesh Data
+  public Vector3[] meshVertices { get { return m_meshVertices; } }
+  private Vector3[] m_meshVertices;
+  public int[] meshTriangles { get { return m_meshTriangles; } }
+  private int[] m_meshTriangles;
+  public Vector3[] meshUVs { get { return m_meshUVs; } }
+  private Vector3[] m_meshUVs;
+  public Color[] meshColors { get { return meshColors; } }
+  private Color[] m_meshColors;
   #endregion
 
   #region Physics Job
@@ -266,8 +292,12 @@ public class TerrainChunk : MonoBehaviour {
         m_terrainJobHandle.Value.Complete();
 
         if (!m_destroyFlag) {
-          // Copy points
+          // Copy points and mesh data
           m_points = m_jobPoints.ToArray();
+          m_meshVertices = m_jobVertices.ToArray();
+          m_meshTriangles = m_jobTriangles.ToArray();
+          m_meshUVs = m_jobUVs.ToArray();
+          m_meshColors = m_jobColors.ToArray();
 
           // Create a mesh
           m_mesh = CubeGrid.CreateMesh(

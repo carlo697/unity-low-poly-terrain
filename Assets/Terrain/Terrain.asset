@@ -456,4 +456,7 @@ MonoBehaviour:
   detailSpawners:
   - {fileID: 11400000, guid: 7dae6a9c888920b4e90b14e3ba88f2d6, type: 2}
   - {fileID: 11400000, guid: 52e61854e36b1b14e865453b08b664c8, type: 2}
+  useGrass: 1
+  grassSpawners:
+  - {fileID: 11400000, guid: 2c550315c75bc494883f6b626fdb1771, type: 2}
   debugMode: 0

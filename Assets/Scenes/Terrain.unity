@@ -220,6 +220,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
   m_size: {x: 128, y: 192, z: 128}
   noiseSize: 1
@@ -326,6 +327,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
   m_size: {x: 256, y: 192, z: 256}
   noiseSize: 1
@@ -537,6 +539,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
   m_size: {x: 256, y: 192, z: 256}
   noiseSize: 1
@@ -643,6 +646,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
   m_size: {x: 128, y: 192, z: 128}
   noiseSize: 1
@@ -749,6 +753,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
   m_size: {x: 64, y: 192, z: 64}
   noiseSize: 1
@@ -855,6 +860,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
   m_size: {x: 32, y: 32, z: 32}
   noiseSize: 1
@@ -1079,6 +1085,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
   m_size: {x: 64, y: 192, z: 64}
   noiseSize: 1
@@ -1185,6 +1192,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
   m_size: {x: 64, y: 192, z: 64}
   noiseSize: 1
@@ -1323,6 +1331,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
   m_size: {x: 256, y: 192, z: 256}
   noiseSize: 1
@@ -1429,6 +1438,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
   m_size: {x: 32, y: 192, z: 32}
   noiseSize: 1
@@ -1535,6 +1545,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
   m_size: {x: 32, y: 192, z: 32}
   noiseSize: 1
@@ -1641,6 +1652,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
   m_size: {x: 64, y: 192, z: 64}
   noiseSize: 1
@@ -1875,6 +1887,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
   m_size: {x: 32, y: 192, z: 32}
   noiseSize: 1
@@ -1981,6 +1994,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
   m_size: {x: 32, y: 128, z: 32}
   noiseSize: 1
@@ -2192,6 +2206,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
   m_size: {x: 32, y: 192, z: 32}
   noiseSize: 1
@@ -2298,6 +2313,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
   m_size: {x: 64, y: 192, z: 64}
   noiseSize: 1
@@ -2404,6 +2420,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
   m_size: {x: 128, y: 192, z: 128}
   noiseSize: 1
@@ -2510,6 +2527,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
   m_size: {x: 64, y: 192, z: 64}
   noiseSize: 1
@@ -2753,6 +2771,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
   m_size: {x: 128, y: 192, z: 128}
   noiseSize: 1
@@ -2892,6 +2911,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
   m_size: {x: 32, y: 192, z: 32}
   noiseSize: 1
@@ -3103,6 +3123,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
   m_size: {x: 64, y: 192, z: 64}
   noiseSize: 1
@@ -3209,6 +3230,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
   m_size: {x: 128, y: 192, z: 128}
   noiseSize: 1
@@ -3398,6 +3420,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
   m_size: {x: 128, y: 192, z: 128}
   noiseSize: 1
@@ -3504,6 +3527,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
   m_size: {x: 128, y: 192, z: 128}
   noiseSize: 1
@@ -3795,6 +3819,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
   m_size: {x: 32, y: 192, z: 32}
   noiseSize: 1
@@ -3932,6 +3957,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
   m_size: {x: 32, y: 192, z: 32}
   noiseSize: 1
@@ -4143,6 +4169,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
   m_size: {x: 32, y: 128, z: 32}
   noiseSize: 1
@@ -4249,6 +4276,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
   m_size: {x: 128, y: 192, z: 128}
   noiseSize: 1
@@ -4355,6 +4383,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
   m_size: {x: 128, y: 192, z: 128}
   noiseSize: 1
@@ -4461,6 +4490,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
   m_size: {x: 64, y: 192, z: 64}
   noiseSize: 1
@@ -4672,6 +4702,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
   m_size: {x: 128, y: 192, z: 128}
   noiseSize: 1
@@ -4778,6 +4809,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
   m_size: {x: 64, y: 192, z: 64}
   noiseSize: 1
@@ -4884,6 +4916,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
   m_size: {x: 32, y: 128, z: 32}
   noiseSize: 1
@@ -5026,6 +5059,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
   m_size: {x: 256, y: 192, z: 256}
   noiseSize: 1
@@ -5132,6 +5166,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
   m_size: {x: 128, y: 192, z: 128}
   noiseSize: 1
@@ -5238,6 +5273,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
   m_size: {x: 64, y: 192, z: 64}
   noiseSize: 1
@@ -5466,6 +5502,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
   m_size: {x: 32, y: 128, z: 32}
   noiseSize: 1
@@ -5572,6 +5609,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
   m_size: {x: 64, y: 192, z: 64}
   noiseSize: 1
@@ -5678,6 +5716,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
   m_size: {x: 256, y: 192, z: 256}
   noiseSize: 1
@@ -5889,6 +5928,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
   m_size: {x: 64, y: 192, z: 64}
   noiseSize: 1
@@ -6100,6 +6140,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
   m_size: {x: 256, y: 192, z: 256}
   noiseSize: 1
@@ -6206,6 +6247,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
   m_size: {x: 128, y: 192, z: 128}
   noiseSize: 1
@@ -6312,6 +6354,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
   m_size: {x: 128, y: 192, z: 128}
   noiseSize: 1
@@ -6418,6 +6461,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
   m_size: {x: 128, y: 192, z: 128}
   noiseSize: 1
@@ -6524,6 +6568,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
   m_size: {x: 32, y: 128, z: 32}
   noiseSize: 1
@@ -6630,6 +6675,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
   m_size: {x: 256, y: 192, z: 256}
   noiseSize: 1
@@ -6736,6 +6782,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
   m_size: {x: 32, y: 192, z: 32}
   noiseSize: 1
@@ -6842,6 +6889,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
   m_size: {x: 64, y: 192, z: 64}
   noiseSize: 1
@@ -6948,6 +6996,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
   m_size: {x: 32, y: 128, z: 32}
   noiseSize: 1
@@ -7205,6 +7254,7 @@ MonoBehaviour:
   chunkSize: {x: 32, y: 192, z: 32}
   chunkResolution: {x: 32, y: 128, z: 32}
   chunkMaterial: {fileID: 2100000, guid: 52e67680063911d45af4a52211b84f8f, type: 2}
+  grassMaterial: {fileID: 2100000, guid: 8e499f27b26401f4d9a894b6b4c4d5e5, type: 2}
   debug: 0
   debugConsecutiveChunksGenerations: 0
   updatePeriod: 0.15
@@ -7316,6 +7366,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
   m_size: {x: 128, y: 192, z: 128}
   noiseSize: 1
@@ -7579,6 +7630,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
   m_size: {x: 256, y: 192, z: 256}
   noiseSize: 1
@@ -7792,6 +7844,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
   m_size: {x: 128, y: 192, z: 128}
   noiseSize: 1
@@ -7898,6 +7951,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
   m_size: {x: 256, y: 192, z: 256}
   noiseSize: 1
@@ -8004,6 +8058,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
   m_size: {x: 32, y: 192, z: 32}
   noiseSize: 1
@@ -8110,6 +8165,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
   m_size: {x: 64, y: 192, z: 64}
   noiseSize: 1
@@ -8216,6 +8272,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
   m_size: {x: 32, y: 192, z: 32}
   noiseSize: 1
@@ -8322,6 +8379,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
   m_size: {x: 128, y: 192, z: 128}
   noiseSize: 1
@@ -8630,6 +8688,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
   m_size: {x: 32, y: 192, z: 32}
   noiseSize: 1
@@ -8841,6 +8900,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
   m_size: {x: 256, y: 192, z: 256}
   noiseSize: 1
@@ -8947,6 +9007,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
   m_size: {x: 256, y: 192, z: 256}
   noiseSize: 1
@@ -9053,6 +9114,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
   m_size: {x: 256, y: 192, z: 256}
   noiseSize: 1
@@ -9621,6 +9683,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
   m_size: {x: 32, y: 128, z: 32}
   noiseSize: 1
@@ -9727,6 +9790,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
   m_size: {x: 32, y: 192, z: 32}
   noiseSize: 1
@@ -9833,6 +9897,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
   m_size: {x: 256, y: 192, z: 256}
   noiseSize: 1
@@ -9939,6 +10004,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
   m_size: {x: 32, y: 192, z: 32}
   noiseSize: 1
@@ -10045,6 +10111,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
   m_size: {x: 64, y: 192, z: 64}
   noiseSize: 1
@@ -10151,6 +10218,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
   m_size: {x: 32, y: 128, z: 32}
   noiseSize: 1
@@ -10257,6 +10325,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
   m_size: {x: 128, y: 192, z: 128}
   noiseSize: 1
@@ -10520,6 +10589,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
   m_size: {x: 64, y: 192, z: 64}
   noiseSize: 1
@@ -10661,6 +10731,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
   m_size: {x: 256, y: 192, z: 256}
   noiseSize: 1
@@ -10767,6 +10838,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
   m_size: {x: 128, y: 192, z: 128}
   noiseSize: 1
@@ -10873,6 +10945,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
   m_size: {x: 32, y: 192, z: 32}
   noiseSize: 1
@@ -10979,6 +11052,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
   m_size: {x: 256, y: 192, z: 256}
   noiseSize: 1
@@ -11085,6 +11159,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
   m_size: {x: 256, y: 192, z: 256}
   noiseSize: 1
@@ -11191,6 +11266,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
   m_size: {x: 64, y: 192, z: 64}
   noiseSize: 1
@@ -11297,6 +11373,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
   m_size: {x: 64, y: 192, z: 64}
   noiseSize: 1
@@ -11524,6 +11601,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
   m_size: {x: 128, y: 192, z: 128}
   noiseSize: 1
@@ -11630,6 +11708,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
   m_size: {x: 64, y: 192, z: 64}
   noiseSize: 1
@@ -11736,6 +11815,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
   m_size: {x: 32, y: 192, z: 32}
   noiseSize: 1
@@ -11979,6 +12059,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
   m_size: {x: 256, y: 192, z: 256}
   noiseSize: 1
@@ -12164,6 +12245,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
   m_size: {x: 32, y: 128, z: 32}
   noiseSize: 1
@@ -12270,6 +12352,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
   m_size: {x: 64, y: 192, z: 64}
   noiseSize: 1
@@ -12376,6 +12459,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
   m_size: {x: 32, y: 128, z: 32}
   noiseSize: 1
@@ -12514,6 +12598,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
   m_size: {x: 32, y: 192, z: 32}
   noiseSize: 1
@@ -12750,6 +12835,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
   m_size: {x: 256, y: 192, z: 256}
   noiseSize: 1
@@ -12856,6 +12942,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
   m_size: {x: 256, y: 192, z: 256}
   noiseSize: 1
@@ -13067,6 +13154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateInEditor: 1
+  terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
   m_size: {x: 256, y: 192, z: 256}
   noiseSize: 1
