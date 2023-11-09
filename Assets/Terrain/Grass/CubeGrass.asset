@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08478c72e6f05cb4a8cb148eaf89f924, type: 3}
   m_Name: CubeGrass
   m_EditorClassIdentifier: 
-  m_id: 0
+  m_id: 1
   m_meshes:
   - submeshes:
     - mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}

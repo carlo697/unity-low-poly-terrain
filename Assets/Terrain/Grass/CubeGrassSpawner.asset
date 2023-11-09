@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 392da0f00183fa74d97c7dea580b3211, type: 3}
   m_Name: CubeGrassSpawner
   m_EditorClassIdentifier: 
-  seed: 301
+  seed: 656
   populationDensity: 0.25
   m_grass: {fileID: 11400000, guid: 662714a382410c04a8905524a15cd3c0, type: 2}
   scaleCurve:

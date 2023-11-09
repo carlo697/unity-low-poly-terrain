@@ -15,11 +15,11 @@ public struct GrassChunkInstancingJob : IJob {
     timer.Start();
 
     var grasses = (Dictionary<int, Grass>)this.grasses.Target;
-    var groups = (Dictionary<DetailSubmesh, List<Matrix4x4>>)this.groups.Target;
+    var groups = (Dictionary<DetailMeshSet, GrassInstancingBatch>)this.groups.Target;
 
     // Clear the matrices
     foreach (var batch in groups) {
-      batch.Value.Clear();
+      batch.Value.matrices.Clear();
     }
 
     // Iterate the instances
@@ -37,25 +37,22 @@ public struct GrassChunkInstancingJob : IJob {
         continue;
       }
 
-      DetailSubmesh[] submeshes = grass.meshes[instance.meshIndex].submeshes;
-      for (int meshIdx = 0; meshIdx < submeshes.Length; meshIdx++) {
-        DetailSubmesh submesh = submeshes[meshIdx];
+      DetailMeshSet meshSet = grass.meshes[instance.meshIndex];
 
-        // Get the list of matrices or create it if necessary
-        List<Matrix4x4> lists;
-        if (!groups.TryGetValue(submesh, out lists)) {
-          lists = groups[submesh] = new List<Matrix4x4>();
-        }
-
-        // Add the matrix
-        lists.Add(instance.matrix);
+      // Get the list of matrices or create it if necessary
+      GrassInstancingBatch batch;
+      if (!groups.TryGetValue(meshSet, out batch)) {
+        batch = groups[meshSet] = new GrassInstancingBatch(grass);
       }
+
+      // Add the matrix
+      batch.matrices.Add(instance.matrix);
     }
 
     // Calculate number of batches
     int totalBatches = 0;
     foreach (var batch in groups) {
-      totalBatches += batch.Value.Count;
+      totalBatches += batch.Value.matrices.Count;
     }
 
     // Debug.LogFormat(

@@ -25,8 +25,8 @@ public class GrassChunk : MonoBehaviour {
 
   private Vector3 m_cameraPosition;
 
-  private Dictionary<DetailSubmesh, List<Matrix4x4>> m_groups = new();
-  private Dictionary<DetailSubmesh, List<Matrix4x4>> m_groupsCopy = new();
+  private Dictionary<DetailMeshSet, GrassInstancingBatch> m_groups = new();
+  private Dictionary<DetailMeshSet, GrassInstancingBatch> m_groupsCopy = new();
 
   private JobHandle? m_generationJobHandle;
   private NativeList<GrassInstance> m_nativeInstances;
@@ -36,6 +36,8 @@ public class GrassChunk : MonoBehaviour {
   private JobHandle? m_instancingJobHandle;
   private GCHandle m_grassesHandle;
   private GCHandle m_groupsHandle;
+
+  private MaterialPropertyBlock m_materialBlock;
 
   public bool isWithinMaxDistance {
     get {
@@ -112,16 +114,28 @@ public class GrassChunk : MonoBehaviour {
   }
 
   private void Render() {
-    foreach (var batch in m_groups) {
-      if (batch.Value.Count > 0) {
-        Graphics.DrawMeshInstanced(
-          batch.Key.mesh,
-          batch.Key.submeshIndex,
-          batch.Key.material,
-          batch.Value,
-          null,
-          batch.Key.castShadows
-        );
+    foreach (var item in m_groups) {
+      DetailMeshSet meshSet = item.Key;
+      GrassInstancingBatch batch = item.Value;
+
+      // Set values in the material block
+      float absoluteMaxDistance = maxDistance * batch.grass.maxDistance;
+      m_materialBlock.SetFloat("_FadeStart", absoluteMaxDistance / 2f);
+      m_materialBlock.SetFloat("_FadeEnd", absoluteMaxDistance * 0.95f);
+
+      if (batch.matrices.Count > 0) {
+        for (int i = 0; i < meshSet.submeshes.Length; i++) {
+          DetailSubmesh submesh = meshSet.submeshes[i];
+
+          Graphics.DrawMeshInstanced(
+            submesh.mesh,
+            submesh.submeshIndex,
+            submesh.material,
+            batch.matrices,
+            m_materialBlock,
+            submesh.castShadows
+          );
+        }
       }
     }
   }
@@ -225,6 +239,11 @@ public class GrassChunk : MonoBehaviour {
 
   private void ProcessInstancingJobResult() {
     m_instancingJobHandle.Value.Complete();
+
+    // Create a material block
+    if (m_materialBlock == null) {
+      m_materialBlock = new MaterialPropertyBlock();
+    }
 
     // Free memory
     DisposeInstancingJob();
