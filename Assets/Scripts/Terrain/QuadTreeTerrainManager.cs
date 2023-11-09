@@ -53,6 +53,7 @@ public class QuadTreeTerrainManager : MonoBehaviour {
     new HashSet<Bounds>();
 
   public event System.Action<TerrainChunk> ChunkGenerated;
+  public event System.Action<TerrainChunk> ChunkSpawned;
   public event System.Action<TerrainChunk, List<TerrainChunk>> ChunkReplaced;
   public event System.Action<TerrainChunk> ChunkDeleted;
 
@@ -120,6 +121,9 @@ public class QuadTreeTerrainManager : MonoBehaviour {
       chunkResolution.z
     );
     chunk.GetComponent<MeshRenderer>().sharedMaterial = chunkMaterial;
+
+    // Events
+    ChunkSpawned?.Invoke(chunk);
 
     // Add grass
     gameObject.AddComponent<GrassChunk>();
