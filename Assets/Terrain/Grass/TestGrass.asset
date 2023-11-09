@@ -14,10 +14,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_id: 0
   m_meshes:
-  - submeshes:
-    - mesh: {fileID: 8254687373856176130, guid: eee2906b3beacdd4b81f6d5f70df4cb9,
-        type: 3}
-      material: {fileID: 2100000, guid: 76655fd4e3f4dd44d9443271f3947a9b, type: 2}
-      submeshIndex: 0
-      castShadows: 1
+  - levelOfDetails:
+    - distance: 0
+      submeshes:
+      - mesh: {fileID: -5594943449212225110, guid: eee2906b3beacdd4b81f6d5f70df4cb9,
+          type: 3}
+        material: {fileID: 2100000, guid: 76655fd4e3f4dd44d9443271f3947a9b, type: 2}
+        submeshIndex: 0
+        castShadows: 1
+    - distance: 0.25
+      submeshes:
+      - mesh: {fileID: 8649022572691837781, guid: eee2906b3beacdd4b81f6d5f70df4cb9,
+          type: 3}
+        material: {fileID: 2100000, guid: 76655fd4e3f4dd44d9443271f3947a9b, type: 2}
+        submeshIndex: 0
+        castShadows: 1
   m_maxDistance: 0.5

@@ -23,10 +23,11 @@ public class GrassChunk : MonoBehaviour {
   public GrassChunkStatus status { get { return m_status; } }
   private GrassChunkStatus m_status = GrassChunkStatus.Spawned;
 
+  private Camera m_camera;
   private Vector3 m_cameraPosition;
 
-  private Dictionary<DetailMeshSet, GrassInstancingBatch> m_groups = new();
-  private Dictionary<DetailMeshSet, GrassInstancingBatch> m_groupsCopy = new();
+  private Dictionary<DetailSubmesh[], GrassInstancingBatch> m_groups = new();
+  private Dictionary<DetailSubmesh[], GrassInstancingBatch> m_groupsCopy = new();
 
   private JobHandle? m_generationJobHandle;
   private NativeList<GrassInstance> m_nativeInstances;
@@ -103,8 +104,8 @@ public class GrassChunk : MonoBehaviour {
 
     while (true) {
       // Calculate position to camera
-      Camera camera = Camera.main;
-      m_cameraPosition = camera.transform.position;
+      m_camera = Camera.main;
+      m_cameraPosition = m_camera.transform.position;
 
       // Render the grass batches
       Render();
@@ -115,7 +116,7 @@ public class GrassChunk : MonoBehaviour {
 
   private void Render() {
     foreach (var item in m_groups) {
-      DetailMeshSet meshSet = item.Key;
+      DetailSubmesh[] submeshes = item.Key;
       GrassInstancingBatch batch = item.Value;
 
       // Set values in the material block
@@ -124,8 +125,8 @@ public class GrassChunk : MonoBehaviour {
       m_materialBlock.SetFloat("_FadeEnd", absoluteMaxDistance * 0.95f);
 
       if (batch.matrices.Count > 0) {
-        for (int i = 0; i < meshSet.submeshes.Length; i++) {
-          DetailSubmesh submesh = meshSet.submeshes[i];
+        for (int i = 0; i < submeshes.Length; i++) {
+          DetailSubmesh submesh = submeshes[i];
 
           Graphics.DrawMeshInstanced(
             submesh.mesh,

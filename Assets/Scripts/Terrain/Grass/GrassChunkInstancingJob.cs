@@ -15,7 +15,7 @@ public struct GrassChunkInstancingJob : IJob {
     timer.Start();
 
     var grasses = (Dictionary<int, Grass>)this.grasses.Target;
-    var groups = (Dictionary<DetailMeshSet, GrassInstancingBatch>)this.groups.Target;
+    var groups = (Dictionary<DetailSubmesh[], GrassInstancingBatch>)this.groups.Target;
 
     // Clear the matrices
     foreach (var batch in groups) {
@@ -33,16 +33,28 @@ public struct GrassChunkInstancingJob : IJob {
       }
 
       Grass grass = grasses[instance.grassId];
-      if (distance > grass.maxDistance * maxDistance) {
+      float maxGrassAbsoluteDistance = grass.maxDistance * maxDistance;
+      if (distance > maxGrassAbsoluteDistance) {
         continue;
       }
 
       DetailMeshSet meshSet = grass.meshes[instance.meshIndex];
 
+      // Get LOD
+      float normalizedDistance = distance / maxGrassAbsoluteDistance;
+      DetailSubmesh[] submeshes = null;
+      for (int j = meshSet.levelOfDetails.Length - 1; j >= 0; j--) {
+        DetailMeshWithLOD meshWithLod = meshSet.levelOfDetails[j];
+        if (normalizedDistance > meshWithLod.distance) {
+          submeshes = meshWithLod.submeshes;
+          break;
+        }
+      }
+
       // Get the list of matrices or create it if necessary
       GrassInstancingBatch batch;
-      if (!groups.TryGetValue(meshSet, out batch)) {
-        batch = groups[meshSet] = new GrassInstancingBatch(grass);
+      if (!groups.TryGetValue(submeshes, out batch)) {
+        batch = groups[submeshes] = new GrassInstancingBatch(grass);
       }
 
       // Add the matrix
