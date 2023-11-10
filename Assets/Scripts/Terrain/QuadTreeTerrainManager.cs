@@ -124,9 +124,6 @@ public class QuadTreeTerrainManager : MonoBehaviour {
 
     // Events
     ChunkSpawned?.Invoke(chunk);
-
-    // Add grass
-    gameObject.AddComponent<GrassChunk>();
   }
 
   private Vector3 FlatY(Vector3 worldPosition) {

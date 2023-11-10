@@ -10,6 +10,7 @@ public struct GrassChunkGenerateJob : IJob {
   public NativeList<GrassInstance> instances;
   [ReadOnly] public GCHandle spawners;
   [ReadOnly] public Mesh.MeshDataArray meshDataArray;
+  public bool logTime;
 
   public void Execute() {
     var timer = new System.Diagnostics.Stopwatch();
@@ -72,11 +73,13 @@ public struct GrassChunkGenerateJob : IJob {
     vertices.Dispose();
     uvs.Dispose();
 
-    // Debug.LogFormat(
-    //   "Grass: {0} ms, Triangles: {1}, Instances: {2}",
-    //   timer.ElapsedMilliseconds,
-    //   indexCount / 3,
-    //   instances.Length
-    // );
+    if (logTime) {
+      Debug.LogFormat(
+        "Grass: {0} ms, Triangles: {1}, Instances: {2}",
+        timer.ElapsedMilliseconds,
+        indexCount / 3,
+        instances.Length
+      );
+    }
   }
 }

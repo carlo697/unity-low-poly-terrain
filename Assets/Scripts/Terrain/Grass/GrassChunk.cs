@@ -15,6 +15,10 @@ public enum GrassChunkStatus {
 public class GrassChunk : MonoBehaviour {
   public float maxDistance = 100f;
 
+  [Header("Debug")]
+  public bool logGenerationInfo;
+  public bool logInstancingInfo;
+
   public TerrainShape terrainShape { get { return m_terrainChunk.terrainShape; } }
 
   public TerrainChunk terrainChunk { get { return m_terrainChunk; } }
@@ -153,7 +157,8 @@ public class GrassChunk : MonoBehaviour {
       cameraPosition = m_cameraPosition,
       instances = m_nativeInstances,
       spawners = m_spawnersHandle,
-      meshDataArray = m_meshDataArray
+      meshDataArray = m_meshDataArray,
+      logTime = logGenerationInfo
     };
 
     m_generationJobHandle = job.Schedule();
@@ -215,7 +220,8 @@ public class GrassChunk : MonoBehaviour {
       cameraPosition = m_cameraPosition,
       instances = m_nativeInstances,
       grasses = m_grassesHandle,
-      groups = m_groupsHandle
+      groups = m_groupsHandle,
+      logTime = logInstancingInfo
     };
 
     m_instancingJobHandle = job.Schedule();

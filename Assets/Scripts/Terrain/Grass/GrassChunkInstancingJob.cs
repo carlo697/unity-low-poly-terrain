@@ -9,6 +9,7 @@ public struct GrassChunkInstancingJob : IJob {
   [ReadOnly] public NativeArray<GrassInstance> instances;
   [ReadOnly] public GCHandle grasses;
   [ReadOnly] public GCHandle groups;
+  public bool logTime;
 
   public void Execute() {
     var timer = new System.Diagnostics.Stopwatch();
@@ -67,11 +68,13 @@ public struct GrassChunkInstancingJob : IJob {
       totalBatches += batch.Value.matrices.Count;
     }
 
-    // Debug.LogFormat(
-    //   "Grass mesh instancing prepared in {0} ms, resulting in {2} batches from {1} instances",
-    //   timer.ElapsedMilliseconds,
-    //   instances.Length,
-    //   totalBatches
-    // );
+    if (logTime) {
+      Debug.LogFormat(
+        "Grass mesh instancing prepared in {0} ms, resulting in {2} batches from {1} instances",
+        timer.ElapsedMilliseconds,
+        instances.Length,
+        totalBatches
+      );
+    }
   }
 }
