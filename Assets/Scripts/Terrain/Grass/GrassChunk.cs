@@ -45,10 +45,16 @@ public class GrassChunk : MonoBehaviour {
 
   private MaterialPropertyBlock m_materialBlock;
 
-  public bool isWithinMaxDistance {
+  public float distanceToCamera {
     get {
       Vector3 closestPoint = m_terrainChunk.bounds.ClosestPoint(m_cameraPosition);
-      return Vector3.Distance(closestPoint, m_cameraPosition) < maxDistance;
+      return Vector3.Distance(closestPoint, m_cameraPosition);
+    }
+  }
+
+  public bool isWithinMaxDistance {
+    get {
+      return distanceToCamera < maxDistance;
     }
   }
 
@@ -92,6 +98,12 @@ public class GrassChunk : MonoBehaviour {
       yield return 0f;
     }
 
+    // Wait for the chunk to be near the camera
+    do {
+      UpdateCameraPosition();
+      yield return 0f;
+    } while (distanceToCamera > maxDistance);
+
     // Generate for the first time
     ScheduleGenerationJob();
 
@@ -108,15 +120,25 @@ public class GrassChunk : MonoBehaviour {
     StartCoroutine(PrepareInstancing());
 
     while (true) {
-      // Calculate position to camera
-      m_camera = Camera.main;
-      m_cameraPosition = m_camera.transform.position;
+      // Get the position to the camera
+      UpdateCameraPosition();
+
+      // Don't update if the chunk is far away
+      if (!isWithinMaxDistance) {
+        yield return 0f;
+        continue;
+      }
 
       // Render the grass batches
       Render();
 
       yield return 0f;
     }
+  }
+
+  private void UpdateCameraPosition() {
+    m_camera = Camera.main;
+    m_cameraPosition = m_camera.transform.position;
   }
 
   private void Render() {
