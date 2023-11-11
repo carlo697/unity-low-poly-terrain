@@ -18,6 +18,7 @@ public class GrassChunk : MonoBehaviour {
   [Header("Debug")]
   public bool logGenerationInfo;
   public bool logInstancingInfo;
+  public bool skipRendering;
 
   public TerrainShape terrainShape { get { return m_terrainChunk.terrainShape; } }
 
@@ -132,14 +133,16 @@ public class GrassChunk : MonoBehaviour {
         for (int i = 0; i < submeshes.Length; i++) {
           DetailSubmesh submesh = submeshes[i];
 
-          Graphics.DrawMeshInstanced(
-            submesh.mesh,
-            submesh.submeshIndex,
-            submesh.material,
-            batch.matrices,
-            m_materialBlock,
-            submesh.castShadows
-          );
+          if (!skipRendering) {
+            Graphics.DrawMeshInstanced(
+              submesh.mesh,
+              submesh.submeshIndex,
+              submesh.material,
+              batch.matrices,
+              m_materialBlock,
+              submesh.castShadows
+            );
+          }
         }
       }
     }

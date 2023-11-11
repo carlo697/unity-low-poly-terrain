@@ -9,6 +9,7 @@ public class GrassManager : MonoBehaviour {
   [Header("Debug")]
   public bool logGenerationInfo;
   public bool logInstancingInfo;
+  public bool skipRendering;
 
   private void Start() {
     // Register event in the terrain manager
@@ -27,6 +28,7 @@ public class GrassManager : MonoBehaviour {
       grassChunk.maxDistance = maxDistance;
       grassChunk.logGenerationInfo = logGenerationInfo;
       grassChunk.logInstancingInfo = logInstancingInfo;
+      grassChunk.skipRendering = skipRendering;
     }
   }
 }

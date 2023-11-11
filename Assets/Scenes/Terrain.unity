@@ -7214,8 +7214,9 @@ MonoBehaviour:
   m_renderMode: 1
   m_chunksParent: {fileID: 637276799}
   drawGizmos: 0
-  debugGpuInstancing: 0
-  debugSkipGpuInstancing: 0
+  logGpuInstancingInfo: 0
+  skipInstancingPreparation: 0
+  skipInstancingRendering: 0
 --- !u!114 &1205162105
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7285,6 +7286,7 @@ MonoBehaviour:
   maxDistance: 100
   logGenerationInfo: 0
   logInstancingInfo: 0
+  skipRendering: 0
 --- !u!1 &1220548223
 GameObject:
   m_ObjectHideFlags: 0

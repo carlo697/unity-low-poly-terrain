@@ -61,7 +61,7 @@ public class DetailsChunk : MonoBehaviour {
         StartCoroutine(PlaceDetails());
       }
 
-      if (manager.renderMode == DetailsRenderMode.InstancingFromChunk && !manager.debugSkipGpuInstancing) {
+      if (manager.renderMode == DetailsRenderMode.InstancingFromChunk && !manager.skipInstancingRendering) {
         Render();
       }
     }

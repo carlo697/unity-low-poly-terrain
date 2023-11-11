@@ -39,8 +39,9 @@ public class DetailsManager : MonoBehaviour {
 
   [Header("Debug")]
   public bool drawGizmos;
-  public bool debugGpuInstancing;
-  public bool debugSkipGpuInstancing;
+  public bool logGpuInstancingInfo;
+  public bool skipInstancingPreparation;
+  public bool skipInstancingRendering;
 
   private void Start() {
     if (terrainShape.useDetails) {
@@ -53,9 +54,8 @@ public class DetailsManager : MonoBehaviour {
       m_terrainManager.ChunkGenerated += ChunkGeneratedEventHandler;
       m_terrainManager.ChunkReplaced += ChunkReplacedEventHandler;
 
-      // Allocate prefabs in the pool
+      // Initialize the grid used by instancing
       if (m_renderMode == DetailsRenderMode.InstancingFromManager) {
-        // Initialize the grid used by instancing
         InitializeInstancingGrid();
       }
     }
@@ -106,8 +106,10 @@ public class DetailsManager : MonoBehaviour {
       yield return new WaitForSeconds(updateSpawnedChunksPeriod);
 
       // Update the lists needed to use GPU instancing
-      yield return StartCoroutine(PrepareMeshInstancing());
-      yield return new WaitForSeconds(updateVisibleChunksPeriod / 2f);
+      if (!skipInstancingPreparation) {
+        yield return StartCoroutine(PrepareMeshInstancing());
+        yield return new WaitForSeconds(updateVisibleChunksPeriod / 2f);
+      }
     }
   }
 
@@ -399,7 +401,7 @@ public class DetailsManager : MonoBehaviour {
       }
     }
 
-    if (debugGpuInstancing) {
+    if (logGpuInstancingInfo) {
       Debug.Log(
         string.Format(
           "Time: {0} ms to prepare {1} instances for GPU instancing in {2} frames",
@@ -417,7 +419,6 @@ public class DetailsManager : MonoBehaviour {
     if (
       terrainShape.useDetails
       && m_renderMode == DetailsRenderMode.InstancingFromManager
-      && !debugSkipGpuInstancing
     ) {
       // Iterate the cells of the grid
       for (int i = 0; i < m_instancingGrid.cells.Length; i++) {
@@ -427,7 +428,7 @@ public class DetailsManager : MonoBehaviour {
         foreach (var batch in cell.groups) {
           // Iterate the batches
           foreach (List<Matrix4x4> list in batch.Value) {
-            if (list.Count > 0) {
+            if (!skipInstancingRendering && list.Count > 0) {
               Graphics.DrawMeshInstanced(
                 batch.Key.mesh,
                 batch.Key.submeshIndex,
