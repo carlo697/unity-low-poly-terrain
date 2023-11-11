@@ -13,14 +13,14 @@ MonoBehaviour:
   m_Name: TestGrassSpawner
   m_EditorClassIdentifier: 
   seed: 301
-  populationDensity: 0.375
+  populationDensity: 0.5
   m_grass: {fileID: 11400000, guid: 0877c19a483faad45adce94f230399df, type: 2}
   scaleCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0.75
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -29,7 +29,7 @@ MonoBehaviour:
       outWeight: 0
     - serializedVersion: 3
       time: 1
-      value: 1
+      value: 1.25
       inSlope: 0
       outSlope: 0
       tangentMode: 0
