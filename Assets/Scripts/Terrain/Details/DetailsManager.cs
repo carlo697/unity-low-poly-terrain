@@ -261,8 +261,8 @@ public class DetailsManager : MonoBehaviour {
   #region GPU INSTANCING
 
   private class InstancingCell {
-    public Dictionary<DetailSubmesh, List<List<Matrix4x4>>> groups = new();
-    public Dictionary<DetailSubmesh, int> groupsBatchIndex = new();
+    public Dictionary<DetailSubmesh[], List<List<Matrix4x4>>> groups = new();
+    public Dictionary<DetailSubmesh[], int> groupsBatchIndex = new();
   }
 
   // We use two SimpleGrid2 because we update the instancing batches during
@@ -365,37 +365,35 @@ public class DetailsManager : MonoBehaviour {
           }
 
           // Iterate the submeshes
-          for (int k = 0; k < detail.submeshes.Length; k++) {
-            DetailSubmesh submesh = detail.submeshes[k];
+          DetailSubmesh[] submeshes = detail.submeshes;
 
-            // Get the list of lists or create it if necessary
-            List<List<Matrix4x4>> lists;
-            if (!cell.groups.TryGetValue(submesh, out lists)) {
-              lists = cell.groups[submesh] = new List<List<Matrix4x4>>(5);
-            }
+          // Get the list of lists or create it if necessary
+          List<List<Matrix4x4>> lists;
+          if (!cell.groups.TryGetValue(submeshes, out lists)) {
+            lists = cell.groups[submeshes] = new List<List<Matrix4x4>>(5);
+          }
 
-            // Get the index of the current list or create it if necessary
-            int currentIndex;
-            if (!cell.groupsBatchIndex.TryGetValue(submesh, out currentIndex)) {
-              currentIndex = cell.groupsBatchIndex[submesh] = 0;
-            }
+          // Get the index of the current list or create it if necessary
+          int currentIndex;
+          if (!cell.groupsBatchIndex.TryGetValue(submeshes, out currentIndex)) {
+            currentIndex = cell.groupsBatchIndex[submeshes] = 0;
+          }
 
-            // Create the list given by the index if it doesn't exist
-            if (lists.Count - 1 < currentIndex) {
-              lists.Add(new List<Matrix4x4>(1023));
-            }
+          // Create the list given by the index if it doesn't exist
+          if (lists.Count - 1 < currentIndex) {
+            lists.Add(new List<Matrix4x4>(1023));
+          }
 
-            // Get the current list
-            List<Matrix4x4> currentList = lists[currentIndex];
+          // Get the current list
+          List<Matrix4x4> currentList = lists[currentIndex];
 
-            // Add the matrix
-            currentList.Add(instance.matrix);
-            totalInstanceCount++;
+          // Add the matrix
+          currentList.Add(instance.matrix);
+          totalInstanceCount += detail.submeshes.Length;
 
-            // Increase the index when the limit of 1023 is passed
-            if (currentList.Count >= 1023) {
-              cell.groupsBatchIndex[submesh]++;
-            }
+          // Increase the index when the limit of 1023 is passed
+          if (currentList.Count >= 1023) {
+            cell.groupsBatchIndex[submeshes]++;
           }
         }
       }
@@ -425,16 +423,24 @@ public class DetailsManager : MonoBehaviour {
         InstancingCell cell = m_instancingGrid.cells[i];
 
         // Iterate the groups of details
-        foreach (var batch in cell.groups) {
-          // Iterate the batches
-          foreach (List<Matrix4x4> list in batch.Value) {
-            if (!skipInstancingRendering && list.Count > 0) {
-              Graphics.DrawMeshInstanced(
-                batch.Key.mesh,
-                batch.Key.submeshIndex,
-                batch.Key.material,
-                list
-              );
+        foreach (var item in cell.groups) {
+          DetailSubmesh[] submeshes = item.Key;
+          List<List<Matrix4x4>> nestedMatrices = item.Value;
+
+          // Iterate the submeshes
+          for (int j = 0; j < submeshes.Length; j++) {
+            DetailSubmesh submesh = submeshes[j];
+
+            // Iterate the batches
+            foreach (List<Matrix4x4> matrices in nestedMatrices) {
+              if (!skipInstancingRendering && matrices.Count > 0) {
+                Graphics.DrawMeshInstanced(
+                  submesh.mesh,
+                  submesh.submeshIndex,
+                  submesh.material,
+                  matrices
+                );
+              }
             }
           }
         }

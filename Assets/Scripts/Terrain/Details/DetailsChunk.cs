@@ -34,7 +34,7 @@ public class DetailsChunk : MonoBehaviour {
   private NativeArray<RaycastHit> m_results;
   private NativeArray<RaycastCommand> m_commands;
 
-  private Dictionary<DetailSubmesh, List<Matrix4x4>> m_instancingBatches = new();
+  private Dictionary<DetailSubmesh[], List<Matrix4x4>> m_instancingBatches = new();
   private List<GameObject> m_instancedGameObjects;
 
   private void Start() {
@@ -167,19 +167,16 @@ public class DetailsChunk : MonoBehaviour {
         DetailInstance instance = m_instances[i];
         Detail detail = manager.detailsById[instance.detailId];
 
-        if (detail.submeshes.Length > 0) {
-          for (int j = 0; j < detail.submeshes.Length; j++) {
-            DetailSubmesh batch = detail.submeshes[j];
-
-            // Get the list or create it if it doesn't exist
-            List<Matrix4x4> matrices;
-            if (!m_instancingBatches.TryGetValue(batch, out matrices)) {
-              matrices = m_instancingBatches[batch] = new();
-            }
-
-            // Add the matrix
-            matrices.Add(instance.matrix);
+        DetailSubmesh[] submeshes = detail.submeshes;
+        if (submeshes.Length > 0) {
+          // Get the list or create it if it doesn't exist
+          List<Matrix4x4> matrices;
+          if (!m_instancingBatches.TryGetValue(submeshes, out matrices)) {
+            matrices = m_instancingBatches[submeshes] = new();
           }
+
+          // Add the matrix
+          matrices.Add(instance.matrix);
         }
       }
     } else if (manager.renderMode == DetailsRenderMode.GameObjects) {
@@ -379,15 +376,25 @@ public class DetailsChunk : MonoBehaviour {
   }
 
   private void Render() {
-    // Iterate the batches to draw them
-    foreach (var batch in m_instancingBatches) {
-      if (batch.Value.Count > 0) {
-        Graphics.DrawMeshInstanced(
-          batch.Key.mesh,
-          batch.Key.submeshIndex,
-          batch.Key.material,
-          batch.Value
-        );
+    // Iterate the batches
+    foreach (var item in m_instancingBatches) {
+      DetailSubmesh[] submeshes = item.Key;
+      List<Matrix4x4> matrices = item.Value;
+
+      if (matrices.Count > 0) {
+        // Iterate the submeshes
+        for (int i = 0; i < submeshes.Length; i++) {
+          DetailSubmesh submesh = submeshes[i];
+
+          Graphics.DrawMeshInstanced(
+            submesh.mesh,
+            submesh.submeshIndex,
+            submesh.material,
+            matrices,
+            null,
+            submesh.castShadows
+          );
+        }
       }
     }
   }
