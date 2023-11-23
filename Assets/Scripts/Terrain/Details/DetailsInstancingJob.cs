@@ -6,8 +6,11 @@ using System.Runtime.InteropServices;
 
 public struct DetailsInstancingJob : IJobParallelForBatch {
   public float shadowDistance;
+  public float maxDistance;
+
   public Vector3 cameraPosition;
   [ReadOnly] public NativeArray<Plane> cameraPlanes;
+
   [ReadOnly] public GCHandle details;
   [ReadOnly] public GCHandle chunks;
   [ReadOnly] public GCHandle instancingBatches;
@@ -42,21 +45,43 @@ public struct DetailsInstancingJob : IJobParallelForBatch {
         DetailInstance instance = chunk.instances[j];
         Detail detail = details[instance.detailId];
 
-        // Add the matrix for the solid pass
+        // Get the distance to the instance
+        float distance = Vector3.Distance(instance.sphereBounds.center, cameraPosition);
+
+        // Distance culling
+        float maxAbsoluteDistance = detail.maxDistance * maxDistance;
+        if (distance > maxAbsoluteDistance) {
+          continue;
+        }
+
+        // Select the correct mesh for this detail
+        DetailMeshSet meshSet = detail.meshes[instance.meshIndex];
+
+        // Get LOD
+        float normalizedDistance = distance / maxAbsoluteDistance;
+        DetailSubmesh[] submeshes = null;
+        for (int lod = meshSet.levelOfDetails.Length - 1; lod >= 0; lod--) {
+          DetailMeshWithLOD meshWithLod = meshSet.levelOfDetails[lod];
+          if (normalizedDistance > meshWithLod.distance) {
+            submeshes = meshWithLod.submeshes;
+            break;
+          }
+        }
+
+        // Use frustum culling to add the matrix for the solid pass
         if (isChunkVisible) {
           bool isVisible = instance.sphereBounds.IntersectsExcludingFarPlane(cameraPlanes);
           if (isVisible) {
-            DetailsInstancingBatch batch = instancingBatches[detail.submeshes];
+            DetailsInstancingBatch batch = instancingBatches[submeshes];
             batch.matrixConcurrentList.Add(instance.matrix);
           }
         }
 
-        // Add the matrix for the shadow pass
+        // Use distance culling to add the matrix for the shadow pass
         if (isChunkShadowVisible) {
-          bool isShadowVisible =
-            Vector3.Distance(instance.sphereBounds.center, cameraPosition) + instance.sphereBounds.radius < shadowDistance;
+          bool isShadowVisible = distance + instance.sphereBounds.radius < shadowDistance;
           if (isShadowVisible) {
-            DetailsInstancingBatch batch = instancingShadowBatches[detail.submeshes];
+            DetailsInstancingBatch batch = instancingShadowBatches[submeshes];
             if (batch.hasShadows) {
               batch.matrixConcurrentList.Add(instance.matrix);
             }

@@ -9,6 +9,10 @@ public class DetailAsset : Detail {
   public override GameObject[] prefabs { get { return m_prefabs; } }
   [SerializeField] private GameObject[] m_prefabs;
 
-  public override DetailSubmesh[] submeshes { get { return m_submeshes; } }
-  [SerializeField] private DetailSubmesh[] m_submeshes = new DetailSubmesh[0];
+  public override DetailMeshSet[] meshes { get { return m_meshes; } }
+  [SerializeField] private DetailMeshSet[] m_meshes = new DetailMeshSet[0];
+
+  public override float maxDistance { get { return m_maxDistance; } }
+  [Range(0f, 1f)]
+  [SerializeField] private float m_maxDistance = 1f;
 }

@@ -169,12 +169,13 @@ public class DetailsChunk : MonoBehaviour {
         DetailInstance instance = m_instances[i];
         Detail detail = manager.detailsById[instance.detailId];
 
-        DetailSubmesh[] submeshes = detail.submeshes;
+        DetailMeshSet meshSet = detail.meshes[instance.meshIndex];
+        DetailSubmesh[] submeshes = meshSet.levelOfDetails[0].submeshes;
         if (submeshes.Length > 0) {
-          // Get the list or create it if it doesn't exist
+          // Get the batch or create it if it doesn't exist
           DetailsInstancingBatch batch;
           if (!m_instancingBatches.TryGetValue(submeshes, out batch)) {
-            batch = m_instancingBatches[submeshes] = new DetailsInstancingBatch(detail, bounds);
+            batch = m_instancingBatches[submeshes] = new DetailsInstancingBatch(submeshes, bounds);
           }
 
           // Add the matrix
@@ -187,7 +188,7 @@ public class DetailsChunk : MonoBehaviour {
         DetailInstance instance = m_instances[i];
 
         Detail detail = manager.detailsById[instance.detailId];
-        GameObject obj = PrefabPool.Get(detail.prefabs[instance.prefabIndex]);
+        GameObject obj = PrefabPool.Get(detail.prefabs[instance.meshIndex]);
         obj.transform.SetPositionAndRotation(instance.position, instance.rotation);
         obj.transform.localScale = instance.scale;
         // obj.transform.SetParent(transform, false);

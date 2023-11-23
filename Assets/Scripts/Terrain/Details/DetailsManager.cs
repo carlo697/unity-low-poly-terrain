@@ -67,20 +67,20 @@ public class DetailsManager : MonoBehaviour {
       m_detailsById[spawner.detail.id] = spawner.detail;
 
       // Instantiate the batch classes
-      DetailSubmesh[] submeshes = spawner.detail.submeshes;
-      for (int j = 0; j < submeshes.Length; j++) {
-        DetailSubmesh submesh = submeshes[j];
+      DetailMeshSet[] meshSets = spawner.detail.meshes;
+      foreach (DetailMeshSet meshSet in meshSets) {
+        foreach (DetailMeshWithLOD levelOfDetail in meshSet.levelOfDetails) {
+          DetailSubmesh[] submeshes = levelOfDetail.submeshes;
 
-        if (!m_instancingBatches.ContainsKey(submeshes)) {
           m_instancingBatches[submeshes] = new DetailsInstancingBatch(
-            spawner.detail,
+            submeshes,
             new Bounds(),
             DetailsBatchRenderMode.Solid,
             true
           );
 
           m_instancingShadowBatches[submeshes] = new DetailsInstancingBatch(
-            spawner.detail,
+            submeshes,
             new Bounds(),
             DetailsBatchRenderMode.Shadows,
             true
@@ -325,6 +325,7 @@ public class DetailsManager : MonoBehaviour {
 
     DetailsInstancingJob job = new DetailsInstancingJob {
       shadowDistance = QualitySettings.shadowDistance,
+      maxDistance = viewDistance,
       cameraPosition = cameraPosition,
       cameraPlanes = nativeCameraPlanes,
       details = details,
