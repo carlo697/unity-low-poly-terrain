@@ -7216,6 +7216,7 @@ MonoBehaviour:
   drawGizmos: 0
   logGpuInstancingInfo: 0
   skipInstancingPreparation: 0
+  keyToToggleInstancingPreparation: 282
   skipInstancingRendering: 0
 --- !u!114 &1205162105
 MonoBehaviour:

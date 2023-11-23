@@ -7,4 +7,5 @@ public struct DetailInstance {
   public Quaternion rotation;
   public Vector3 scale;
   public Matrix4x4 matrix;
+  public SphereBounds sphereBounds;
 }
