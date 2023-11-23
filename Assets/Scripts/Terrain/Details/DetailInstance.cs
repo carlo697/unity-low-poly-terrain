@@ -2,7 +2,8 @@ using UnityEngine;
 
 public struct DetailInstance {
   public int detailId;
-  public int prefabIndex;
+  public int meshIndex;
+
   public Vector3 position;
   public Quaternion rotation;
   public Vector3 scale;

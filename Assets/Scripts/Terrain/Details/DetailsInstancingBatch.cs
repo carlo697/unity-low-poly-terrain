@@ -10,7 +10,7 @@ public enum DetailsBatchRenderMode {
 }
 
 public class DetailsInstancingBatch {
-  public Detail detail;
+  public DetailSubmesh[] submeshes;
   public Bounds bounds;
 
   public DetailsBatchRenderMode renderMode;
@@ -21,7 +21,7 @@ public class DetailsInstancingBatch {
 
   public List<Matrix4x4> matrices { get { return isConcurrent ? matrixConcurrentList.list : matrixList; } }
 
-  public int submeshCount { get { return detail.submeshes.Length; } }
+  public int submeshCount { get { return submeshes.Length; } }
 
   public bool hasShadows { get { return m_hasShadows; } }
   private bool m_hasShadows;
@@ -32,12 +32,12 @@ public class DetailsInstancingBatch {
   private MaterialPropertyBlock materialPropertyBlock;
 
   public DetailsInstancingBatch(
-    Detail detail,
+    DetailSubmesh[] submeshes,
     Bounds bounds = new Bounds(),
     DetailsBatchRenderMode renderMode = DetailsBatchRenderMode.Normal,
     bool concurrent = false
   ) {
-    this.detail = detail;
+    this.submeshes = submeshes;
     this.bounds = bounds;
     this.materialPropertyBlock = new MaterialPropertyBlock();
     this.renderMode = renderMode;
@@ -45,7 +45,7 @@ public class DetailsInstancingBatch {
 
     args = new uint[submeshCount * 5];
     for (int i = 0; i < submeshCount; i++) {
-      DetailSubmesh submesh = detail.submeshes[i];
+      DetailSubmesh submesh = submeshes[i];
       int offset = i * 5;
 
       // 0 == Submesh index count
@@ -67,8 +67,8 @@ public class DetailsInstancingBatch {
 
   public void Render() {
     if (matrices.Count > 0) {
-      for (int i = 0; i < detail.submeshes.Length; i++) {
-        DetailSubmesh submesh = detail.submeshes[i];
+      for (int i = 0; i < submeshes.Length; i++) {
+        DetailSubmesh submesh = submeshes[i];
 
         if (renderMode == DetailsBatchRenderMode.Shadows
           && submesh.castShadows == ShadowCastingMode.Off

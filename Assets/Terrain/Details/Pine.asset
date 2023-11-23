@@ -15,10 +15,42 @@ MonoBehaviour:
   m_id: 1000
   m_prefabs:
   - {fileID: 9000620536312750102, guid: cd17dde0ce0aee7458214c05f96f0ae7, type: 3}
-  m_submeshes:
-  - mesh: {fileID: 3581466079261191796, guid: 8687953b64fc18040bec5e169eda71d9, type: 3}
-    material: {fileID: 2100000, guid: ce8366b872a3bce4db7b1ab131d71eb3, type: 2}
-    submeshIndex: 0
-  - mesh: {fileID: 3581466079261191796, guid: 8687953b64fc18040bec5e169eda71d9, type: 3}
-    material: {fileID: 2100000, guid: e239b7b822cd94b4d91fc1459bdd9284, type: 2}
-    submeshIndex: 1
+  m_meshes:
+  - levelOfDetails:
+    - distance: 0
+      submeshes:
+      - mesh: {fileID: 4384233104207612990, guid: 8687953b64fc18040bec5e169eda71d9,
+          type: 3}
+        material: {fileID: 2100000, guid: ce8366b872a3bce4db7b1ab131d71eb3, type: 2}
+        submeshIndex: 0
+        castShadows: 1
+      - mesh: {fileID: 4384233104207612990, guid: 8687953b64fc18040bec5e169eda71d9,
+          type: 3}
+        material: {fileID: 2100000, guid: e239b7b822cd94b4d91fc1459bdd9284, type: 2}
+        submeshIndex: 1
+        castShadows: 1
+    - distance: 0.1
+      submeshes:
+      - mesh: {fileID: 3930270322577542534, guid: 8687953b64fc18040bec5e169eda71d9,
+          type: 3}
+        material: {fileID: 2100000, guid: ce8366b872a3bce4db7b1ab131d71eb3, type: 2}
+        submeshIndex: 0
+        castShadows: 1
+      - mesh: {fileID: 3930270322577542534, guid: 8687953b64fc18040bec5e169eda71d9,
+          type: 3}
+        material: {fileID: 2100000, guid: e239b7b822cd94b4d91fc1459bdd9284, type: 2}
+        submeshIndex: 1
+        castShadows: 1
+    - distance: 0.4
+      submeshes:
+      - mesh: {fileID: -124157937234464263, guid: 8687953b64fc18040bec5e169eda71d9,
+          type: 3}
+        material: {fileID: 2100000, guid: ce8366b872a3bce4db7b1ab131d71eb3, type: 2}
+        submeshIndex: 0
+        castShadows: 0
+      - mesh: {fileID: -124157937234464263, guid: 8687953b64fc18040bec5e169eda71d9,
+          type: 3}
+        material: {fileID: 2100000, guid: e239b7b822cd94b4d91fc1459bdd9284, type: 2}
+        submeshIndex: 1
+        castShadows: 0
+  m_maxDistance: 1

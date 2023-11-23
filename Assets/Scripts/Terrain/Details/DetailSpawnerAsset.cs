@@ -152,14 +152,17 @@ public class DetailSpawnerAsset : DetailSpawner {
         // Transformation matrix
         Matrix4x4 matrix = Matrix4x4.TRS(position, rotation, scale);
 
+        // Select a mesh/prefab
+        int meshIndex = instanceRng.Next(detail.meshes.Length);
+
         // Generate a bounds
-        Bounds baseBounds = detail.submeshes[0].mesh.bounds;
+        Bounds baseBounds = detail.meshes[meshIndex].levelOfDetails[0].submeshes[0].mesh.bounds;
         Bounds rotatedBounds = baseBounds.ApplyTransform(matrix, cachePoints);
         SphereBounds sphereBounds = new SphereBounds(rotatedBounds);
 
         instance = new DetailInstance {
           detailId = detail.id,
-          prefabIndex = instanceRng.Next(detail.prefabs.Length),
+          meshIndex = meshIndex,
           position = position,
           rotation = rotation,
           scale = scale,
