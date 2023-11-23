@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
+using Unity.Jobs;
+using Unity.Collections;
 
 public enum DetailsRenderMode {
   Disable,
@@ -41,6 +44,7 @@ public class DetailsManager : MonoBehaviour {
   public bool drawGizmos;
   public bool logGpuInstancingInfo;
   public bool skipInstancingPreparation;
+  public KeyCode keyToToggleInstancingPreparation = KeyCode.None;
   public bool skipInstancingRendering;
 
   private void Start() {
@@ -53,18 +57,36 @@ public class DetailsManager : MonoBehaviour {
       // Register events in the terrain manager
       m_terrainManager.ChunkGenerated += ChunkGeneratedEventHandler;
       m_terrainManager.ChunkReplaced += ChunkReplacedEventHandler;
-
-      // Initialize the grid used by instancing
-      if (m_renderMode == DetailsRenderMode.InstancingFromManager) {
-        InitializeInstancingGrid();
-      }
     }
   }
 
   private void InitializeDetailsDatabase() {
     for (int i = 0; i < terrainShape.detailSpawners.Length; i++) {
+      // Fill up the dictionary of details
       DetailSpawner spawner = terrainShape.detailSpawners[i];
       m_detailsById[spawner.detail.id] = spawner.detail;
+
+      // Instantiate the batch classes
+      DetailSubmesh[] submeshes = spawner.detail.submeshes;
+      for (int j = 0; j < submeshes.Length; j++) {
+        DetailSubmesh submesh = submeshes[j];
+
+        if (!m_instancingBatches.ContainsKey(submeshes)) {
+          m_instancingBatches[submeshes] = new DetailsInstancingBatch(
+            spawner.detail,
+            new Bounds(),
+            DetailsBatchRenderMode.Solid,
+            true
+          );
+
+          m_instancingShadowBatches[submeshes] = new DetailsInstancingBatch(
+            spawner.detail,
+            new Bounds(),
+            DetailsBatchRenderMode.Shadows,
+            true
+          );
+        }
+      }
     }
   }
 
@@ -72,6 +94,11 @@ public class DetailsManager : MonoBehaviour {
     // Unregister events
     m_terrainManager.ChunkGenerated -= ChunkGeneratedEventHandler;
     m_terrainManager.ChunkReplaced -= ChunkReplacedEventHandler;
+
+    // Release the buffers used by GPU instancing
+    foreach (var item in m_instancingBatches) {
+      item.Value.Destroy();
+    }
   }
 
   private void ChunkGeneratedEventHandler(TerrainChunk generatedChunk) {
@@ -95,6 +122,21 @@ public class DetailsManager : MonoBehaviour {
     }
   }
 
+  private void Update() {
+    if (keyToToggleInstancingPreparation != KeyCode.None
+      && Input.GetKeyDown(keyToToggleInstancingPreparation)
+    ) {
+      skipInstancingPreparation = !skipInstancingPreparation;
+    }
+
+    // Update the lists needed to use GPU instancing
+    if (!skipInstancingPreparation
+      && m_renderMode == DetailsRenderMode.InstancingFromManager
+    ) {
+      PrepareMeshInstancing();
+    }
+  }
+
   public IEnumerator UpdateCoroutine() {
     while (true) {
       // Update the list visible chunks
@@ -104,12 +146,6 @@ public class DetailsManager : MonoBehaviour {
       // Spawn/despawn chunks
       UpdateSpawnedChunks();
       yield return new WaitForSeconds(updateSpawnedChunksPeriod);
-
-      // Update the lists needed to use GPU instancing
-      if (!skipInstancingPreparation) {
-        yield return StartCoroutine(PrepareMeshInstancing());
-        yield return new WaitForSeconds(updateVisibleChunksPeriod / 2f);
-      }
     }
   }
 
@@ -260,189 +296,175 @@ public class DetailsManager : MonoBehaviour {
 
   #region GPU INSTANCING
 
-  private class InstancingCell {
-    public Dictionary<DetailSubmesh[], List<List<Matrix4x4>>> groups = new();
-    public Dictionary<DetailSubmesh[], int> groupsBatchIndex = new();
-  }
+  private Dictionary<DetailSubmesh[], DetailsInstancingBatch> m_instancingBatches = new();
+  private Dictionary<DetailSubmesh[], DetailsInstancingBatch> m_instancingShadowBatches = new();
 
-  // We use two SimpleGrid2 because we update the instancing batches during
-  // several frames and while doing that we need to have an unaltered backup
-  // of the grid to keep calling DrawMeshInstanced with it
-  private SimpleGrid2<InstancingCell> m_instancingGridCopy;
-  private SimpleGrid2<InstancingCell> m_instancingGrid;
-
-  private Vector2 GetCenterOfInstancingGrid() {
-    return new Vector2(
-      m_terrainManager.usedCamera.transform.position.x,
-      m_terrainManager.usedCamera.transform.position.z
-    );
-  }
-
-  private void InitializeInstancingGrid() {
-    // Get the center of the grid
-    Vector2 gridCenter = GetCenterOfInstancingGrid();
-
-    // Build grid
-    float gridWidth = (viewDistance + m_terrainManager.chunkSize.x) * 2.5f;
-    Vector2 gridSize = new Vector2(gridWidth, gridWidth);
-    Vector2Int gridResolution = new Vector2Int(32, 32);
-
-    // Create the two grids
-    m_instancingGridCopy = new SimpleGrid2<InstancingCell>(
-      gridCenter,
-      gridSize,
-      gridResolution
-    );
-    m_instancingGrid = new SimpleGrid2<InstancingCell>(
-      gridCenter,
-      gridSize,
-      gridResolution
-    );
-  }
-
-  private IEnumerator PrepareMeshInstancing() {
-    yield return null;
-
-    if (m_renderMode != DetailsRenderMode.InstancingFromManager) {
-      yield break;
-    }
-
+  private void PrepareMeshInstancing() {
+    // Measure the total time
     System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
     timer.Start();
 
-    // Swap the two grids because we are about to edit the copy
-    SimpleGrid2<InstancingCell> gridA = m_instancingGridCopy;
-    m_instancingGridCopy = m_instancingGrid;
-    m_instancingGrid = gridA;
-
-    // Update the center of the grid
-    m_instancingGridCopy.center = GetCenterOfInstancingGrid();
-
     // Clear the groups and batches on the grid
-    for (int i = 0; i < m_instancingGridCopy.cells.Length; i++) {
-      InstancingCell cell = m_instancingGridCopy.cells[i];
-
-      cell.groupsBatchIndex.Clear();
-      foreach (var batch in cell.groups) {
-        foreach (var lists in batch.Value) {
-          lists.Clear();
-        }
-      }
+    foreach (var item in m_instancingBatches) {
+      item.Value.Clear();
+    }
+    foreach (var item in m_instancingShadowBatches) {
+      item.Value.Clear();
     }
 
-    // Iterate the spawned chunks
-    int instancePauseCount = 0;
-    int totalFrames = 1;
+    Camera camera = Camera.main;
+    Vector3 cameraPosition = camera.transform.position;
+    Plane[] cameraPlanes = GeometryUtility.CalculateFrustumPlanes(camera);
+
+    // Variables for the jobs
+    NativeArray<Plane> nativeCameraPlanes = new NativeArray<Plane>(cameraPlanes, Allocator.TempJob);
+    GCHandle details = GCHandle.Alloc(m_detailsById);
+    GCHandle chunks = GCHandle.Alloc(m_spawnedChunks);
+    GCHandle instancingBatches = GCHandle.Alloc(m_instancingBatches);
+    GCHandle instancingShadowBatches = GCHandle.Alloc(m_instancingShadowBatches);
+
+    DetailsInstancingJob job = new DetailsInstancingJob {
+      shadowDistance = QualitySettings.shadowDistance,
+      cameraPosition = cameraPosition,
+      cameraPlanes = nativeCameraPlanes,
+      details = details,
+      chunks = chunks,
+      instancingBatches = instancingBatches,
+      instancingShadowBatches = instancingShadowBatches
+    };
+    JobHandle handle = job.ScheduleBatch(m_spawnedChunks.Count, 300);
+
+    // Complete the job
+    handle.Complete();
+
+    // Deallocate
+    nativeCameraPlanes.Dispose();
+    details.Free();
+    chunks.Free();
+    instancingBatches.Free();
+    instancingShadowBatches.Free();
+
+    // foreach (var item in m_instancingBatches) {
+    //   item.Value.isConcurrent = false;
+    // }
+    // foreach (var item in m_instancingShadowBatches) {
+    //   item.Value.isConcurrent = false;
+    // }
+
+    // float shadowDistance = QualitySettings.shadowDistance;
+
+    // // Iterate the spawned chunks
+    // for (int i = 0; i < m_spawnedChunks.Count; i++) {
+    //   DetailsChunk chunk = m_spawnedChunks[i];
+
+    //   // Skip if the chunk don't have instances
+    //   if (chunk.instances.Count == 0) {
+    //     continue;
+    //   }
+
+    //   // Skip if the chunk is not visible
+    //   bool isChunkVisible = chunk.bounds.Intersects(cameraPlanes);
+    //   Vector3 nearestPoint = chunk.bounds.ClosestPoint(cameraPosition);
+    //   bool isChunkShadowVisible = Vector3.Distance(nearestPoint, cameraPosition) < shadowDistance;
+    //   if (!isChunkVisible && !isChunkShadowVisible) {
+    //     continue;
+    //   }
+
+    //   for (int j = 0; j < chunk.instances.Count; j++) {
+    //     DetailInstance instance = chunk.instances[j];
+    //     Detail detail = m_detailsById[instance.detailId];
+
+    //     // Add the matrix for the solid pass
+    //     if (isChunkVisible) {
+    //       bool isVisible = instance.sphereBounds.IntersectsExcludingFarPlane(cameraPlanes);
+    //       if (isVisible) {
+    //         DetailsInstancingBatch batch = m_instancingBatches[detail.submeshes];
+    //         batch.matrixList.Add(instance.matrix);
+    //       }
+    //     }
+
+    //     // Add the matrix for the shadow pass
+    //     if (isChunkShadowVisible) {
+    //       bool isShadowVisible =
+    //         Vector3.Distance(instance.sphereBounds.center, cameraPosition) + instance.sphereBounds.radius < shadowDistance;
+    //       if (isShadowVisible) {
+    //         DetailsInstancingBatch batch = m_instancingShadowBatches[detail.submeshes];
+    //         if (batch.hasShadows) {
+    //           batch.matrixList.Add(instance.matrix);
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
+
+    // Count the instances
     int totalInstanceCount = 0;
-    for (int i = 0; i < m_spawnedChunks.Count; i++) {
-      DetailsChunk chunk = m_spawnedChunks[i];
-
-      if (chunk.instances.Count == 0) {
-        continue;
-      }
-
-      // Iterate the instances in the chunk
-      for (int j = 0; j < chunk.instances.Count; j++) {
-        DetailInstance instance = chunk.instances[j];
-        Detail detail = m_detailsById[instance.detailId];
-
-        // Get grid cell
-        InstancingCell cell = m_instancingGridCopy.GetCellAt(
-          instance.position.x, instance.position.z
-        );
-
-        // Ignore the instance if it doesn't have submeshes
-        if (detail.submeshes.Length > 0) {
-          // Keep track of the number of instances so we can pause and
-          // keep updating the next frame
-          instancePauseCount += detail.submeshes.Length;
-          if (instancePauseCount > 4000) {
-            timer.Stop();
-            yield return new WaitForSeconds(0.01f);
-            timer.Start();
-            instancePauseCount = 0;
-            totalFrames++;
-          }
-
-          // Iterate the submeshes
-          DetailSubmesh[] submeshes = detail.submeshes;
-
-          // Get the list of lists or create it if necessary
-          List<List<Matrix4x4>> lists;
-          if (!cell.groups.TryGetValue(submeshes, out lists)) {
-            lists = cell.groups[submeshes] = new List<List<Matrix4x4>>(5);
-          }
-
-          // Get the index of the current list or create it if necessary
-          int currentIndex;
-          if (!cell.groupsBatchIndex.TryGetValue(submeshes, out currentIndex)) {
-            currentIndex = cell.groupsBatchIndex[submeshes] = 0;
-          }
-
-          // Create the list given by the index if it doesn't exist
-          if (lists.Count - 1 < currentIndex) {
-            lists.Add(new List<Matrix4x4>(1023));
-          }
-
-          // Get the current list
-          List<Matrix4x4> currentList = lists[currentIndex];
-
-          // Add the matrix
-          currentList.Add(instance.matrix);
-          totalInstanceCount += detail.submeshes.Length;
-
-          // Increase the index when the limit of 1023 is passed
-          if (currentList.Count >= 1023) {
-            cell.groupsBatchIndex[submeshes]++;
-          }
-        }
-      }
+    int totalShadowInstanceCount = 0;
+    foreach (var item in m_instancingBatches) {
+      totalInstanceCount += item.Value.matrices.Count * item.Value.submeshCount;
+    }
+    foreach (var item in m_instancingShadowBatches) {
+      totalShadowInstanceCount += item.Value.matrices.Count * item.Value.submeshCount;
     }
 
+    // Set bounds
+    Bounds bounds = new Bounds(cameraPosition, Vector3.one * 1000f);
+    foreach (var item in m_instancingBatches) {
+      item.Value.bounds = bounds;
+    }
+    foreach (var item in m_instancingShadowBatches) {
+      item.Value.bounds = bounds;
+    }
+
+    // Upload the buffers to the GPU
+    System.Diagnostics.Stopwatch buffersTimer = new System.Diagnostics.Stopwatch();
+    buffersTimer.Start();
+    foreach (var item in m_instancingBatches) {
+      item.Value.UploadBuffers();
+    }
+    foreach (var item in m_instancingShadowBatches) {
+      item.Value.UploadBuffers();
+    }
+    buffersTimer.Stop();
+
+    // Stop measuring the total time
+    timer.Stop();
+
+    // Log the times to the console
     if (logGpuInstancingInfo) {
       Debug.Log(
         string.Format(
-          "Time: {0} ms to prepare {1} instances for GPU instancing in {2} frames",
+          "{0} ms to create buffers in GPU by coping instances from CPU",
+          buffersTimer.ElapsedMilliseconds
+        )
+      );
+
+      Debug.Log(
+        string.Format(
+          "{0} ms ({1} ticks) to prepare {2} instances and {3} shadow instances instances (GPU instancing)",
           timer.ElapsedMilliseconds,
+          timer.ElapsedTicks,
           totalInstanceCount,
-          totalFrames
+          totalShadowInstanceCount
         )
       );
     }
   }
 
-  private void Update() {
-    // We'll call DrawMeshInstanced using the grid build by the
-    // PrepareMeshInstancing coroutine
+  private void LateUpdate() {
     if (
       terrainShape.useDetails
       && m_renderMode == DetailsRenderMode.InstancingFromManager
     ) {
-      // Iterate the cells of the grid
-      for (int i = 0; i < m_instancingGrid.cells.Length; i++) {
-        InstancingCell cell = m_instancingGrid.cells[i];
+      foreach (var item in m_instancingBatches) {
+        if (!skipInstancingRendering) {
+          item.Value.Render();
+        }
+      }
 
-        // Iterate the groups of details
-        foreach (var item in cell.groups) {
-          DetailSubmesh[] submeshes = item.Key;
-          List<List<Matrix4x4>> nestedMatrices = item.Value;
-
-          // Iterate the submeshes
-          for (int j = 0; j < submeshes.Length; j++) {
-            DetailSubmesh submesh = submeshes[j];
-
-            // Iterate the batches
-            foreach (List<Matrix4x4> matrices in nestedMatrices) {
-              if (!skipInstancingRendering && matrices.Count > 0) {
-                Graphics.DrawMeshInstanced(
-                  submesh.mesh,
-                  submesh.submeshIndex,
-                  submesh.material,
-                  matrices
-                );
-              }
-            }
-          }
+      foreach (var item in m_instancingShadowBatches) {
+        if (!skipInstancingRendering) {
+          item.Value.Render();
         }
       }
     }

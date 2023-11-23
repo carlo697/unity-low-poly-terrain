@@ -34,7 +34,7 @@ public class DetailsChunk : MonoBehaviour {
   private NativeArray<RaycastHit> m_results;
   private NativeArray<RaycastCommand> m_commands;
 
-  private Dictionary<DetailSubmesh[], List<Matrix4x4>> m_instancingBatches = new();
+  private Dictionary<DetailSubmesh[], DetailsInstancingBatch> m_instancingBatches = new();
   private List<GameObject> m_instancedGameObjects;
 
   private void Start() {
@@ -60,10 +60,12 @@ public class DetailsChunk : MonoBehaviour {
         m_status = DetailsChunkStatus.Generating;
         StartCoroutine(PlaceDetails());
       }
+    }
+  }
 
-      if (manager.renderMode == DetailsRenderMode.InstancingFromChunk && !manager.skipInstancingRendering) {
-        Render();
-      }
+  private void LateUpdate() {
+    if (manager.renderMode == DetailsRenderMode.InstancingFromChunk && !manager.skipInstancingRendering) {
+      Render();
     }
   }
 
@@ -143,7 +145,7 @@ public class DetailsChunk : MonoBehaviour {
     m_handle.Value.Complete();
 
     // Delete the old game objects
-    DestroyInstances();
+    DestroyInstances(false);
 
     // Get the final instances and register them
     for (int i = 0; i < m_results.Length; i++) {
@@ -170,13 +172,13 @@ public class DetailsChunk : MonoBehaviour {
         DetailSubmesh[] submeshes = detail.submeshes;
         if (submeshes.Length > 0) {
           // Get the list or create it if it doesn't exist
-          List<Matrix4x4> matrices;
-          if (!m_instancingBatches.TryGetValue(submeshes, out matrices)) {
-            matrices = m_instancingBatches[submeshes] = new();
+          DetailsInstancingBatch batch;
+          if (!m_instancingBatches.TryGetValue(submeshes, out batch)) {
+            batch = m_instancingBatches[submeshes] = new DetailsInstancingBatch(detail, bounds);
           }
 
           // Add the matrix
-          matrices.Add(instance.matrix);
+          batch.matrices.Add(instance.matrix);
         }
       }
     } else if (manager.renderMode == DetailsRenderMode.GameObjects) {
@@ -194,6 +196,14 @@ public class DetailsChunk : MonoBehaviour {
       }
     }
 
+    if (manager.renderMode == DetailsRenderMode.InstancingFromChunk) {
+      // Create buffers for GPU instancing
+      foreach (var item in m_instancingBatches) {
+        DetailsInstancingBatch batch = item.Value;
+        batch.UploadBuffers();
+      }
+    }
+
     timer.Stop();
 
     // Debug.Log(
@@ -207,7 +217,7 @@ public class DetailsChunk : MonoBehaviour {
     m_status = DetailsChunkStatus.Generated;
   }
 
-  private void DestroyInstances() {
+  private void DestroyInstances(bool destroy) {
     if (manager.renderMode == DetailsRenderMode.GameObjects) {
       // Delete the spawned game objects
       for (int i = 0; i < m_instancedGameObjects.Count; i++) {
@@ -217,8 +227,13 @@ public class DetailsChunk : MonoBehaviour {
       m_instancedGameObjects.Clear();
     } else if (manager.renderMode == DetailsRenderMode.InstancingFromChunk) {
       // Clear batches for GPU instancing
-      foreach (var batch in m_instancingBatches) {
-        batch.Value.Clear();
+      foreach (var item in m_instancingBatches) {
+        DetailsInstancingBatch batch = item.Value;
+        if (destroy) {
+          batch.Destroy();
+        } else {
+          batch.Clear();
+        }
       }
     }
 
@@ -372,30 +387,13 @@ public class DetailsChunk : MonoBehaviour {
       CancelJob();
     }
 
-    DestroyInstances();
+    DestroyInstances(true);
   }
 
   private void Render() {
     // Iterate the batches
     foreach (var item in m_instancingBatches) {
-      DetailSubmesh[] submeshes = item.Key;
-      List<Matrix4x4> matrices = item.Value;
-
-      if (matrices.Count > 0) {
-        // Iterate the submeshes
-        for (int i = 0; i < submeshes.Length; i++) {
-          DetailSubmesh submesh = submeshes[i];
-
-          Graphics.DrawMeshInstanced(
-            submesh.mesh,
-            submesh.submeshIndex,
-            submesh.material,
-            matrices,
-            null,
-            submesh.castShadows
-          );
-        }
-      }
+      item.Value.Render();
     }
   }
 }
