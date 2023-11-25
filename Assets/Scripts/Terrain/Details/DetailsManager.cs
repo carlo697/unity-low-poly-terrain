@@ -123,6 +123,10 @@ public class DetailsManager : MonoBehaviour {
   }
 
   private void Update() {
+    if (!terrainShape.useDetails) {
+      return;
+    }
+
     if (keyToToggleInstancingPreparation != KeyCode.None
       && Input.GetKeyDown(keyToToggleInstancingPreparation)
     ) {
