@@ -115,24 +115,24 @@ public class TerrainChunk : MonoBehaviour {
   private JobHandle? m_terrainJobHandle;
   #endregion
 
-  #region Raw Mesh Data
-  public Vector3[] meshVertices { get { return m_meshVertices; } }
-  private Vector3[] m_meshVertices;
-  public int[] meshTriangles { get { return m_meshTriangles; } }
-  private int[] m_meshTriangles;
-  public Vector3[] meshUVs { get { return m_meshUVs; } }
-  private Vector3[] m_meshUVs;
-  public Color[] meshColors { get { return meshColors; } }
-  private Color[] m_meshColors;
-  #endregion
+  // #region Raw Mesh Data
+  // public Vector3[] meshVertices { get { return m_meshVertices; } }
+  // private Vector3[] m_meshVertices;
+  // public int[] meshTriangles { get { return m_meshTriangles; } }
+  // private int[] m_meshTriangles;
+  // public Vector3[] meshUVs { get { return m_meshUVs; } }
+  // private Vector3[] m_meshUVs;
+  // public Color[] meshColors { get { return meshColors; } }
+  // private Color[] m_meshColors;
+  // #endregion
 
   #region Physics Job
   private NativeReference<int> m_meshId;
   private JobHandle? m_physicsJobHandle;
   #endregion
 
-  public CubeGridPoint[] points { get { return m_points; } }
-  private CubeGridPoint[] m_points;
+  // public CubeGridPoint[] points { get { return m_points; } }
+  // private CubeGridPoint[] m_points;
 
   private void Awake() {
     m_isAwake = true;
@@ -293,11 +293,11 @@ public class TerrainChunk : MonoBehaviour {
 
         if (!m_destroyFlag) {
           // Copy points and mesh data
-          m_points = m_jobPoints.ToArray();
-          m_meshVertices = m_jobVertices.ToArray();
-          m_meshTriangles = m_jobTriangles.ToArray();
-          m_meshUVs = m_jobUVs.ToArray();
-          m_meshColors = m_jobColors.ToArray();
+          // m_points = m_jobPoints.ToArray();
+          // m_meshVertices = m_jobVertices.ToArray();
+          // m_meshTriangles = m_jobTriangles.ToArray();
+          // m_meshUVs = m_jobUVs.ToArray();
+          // m_meshColors = m_jobColors.ToArray();
 
           // Create a mesh
           m_mesh = CubeGrid.CreateMesh(
