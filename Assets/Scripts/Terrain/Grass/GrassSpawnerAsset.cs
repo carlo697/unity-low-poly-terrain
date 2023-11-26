@@ -19,6 +19,19 @@ public class GrassSpawnerAsset : GrassSpawner {
   [Header("Material")]
   public uint[] materials = new uint[] { 1 };
 
+  [Header("Noise")]
+  public bool useHeightNoise;
+  public DetailSpawnerNoise heightNoiseSettings;
+  public float minHeightNoise = 0.5f;
+  public float maxHeightNoise = 1f;
+  private DetailSpawnerNoise.Generator m_instancedHeightNoise;
+
+  public override void InitializeForGeneration() {
+    if (useHeightNoise && m_instancedHeightNoise == null) {
+      m_instancedHeightNoise = heightNoiseSettings.GetGenerator();
+    }
+  }
+
   public override int Spawn(
     NativeList<GrassInstance> instances,
     Vector3 chunkPosition,
@@ -72,6 +85,20 @@ public class GrassSpawnerAsset : GrassSpawner {
       // Generate random scale
       float scaleResult = scaleCurve.Evaluate((float)rng.NextDouble());
       Vector3 scale = new Vector3(scaleResult, scaleResult, scaleResult);
+
+      if (useHeightNoise) {
+        float randomHeight = m_instancedHeightNoise.Generate(
+          position.x,
+          position.z,
+          (int)this.seed
+        );
+        // To range 0-1
+        randomHeight = (randomHeight + 1f) / 2f;
+        // To range minHeightNoise-maxHeightNoise
+        randomHeight = minHeightNoise + randomHeight * (maxHeightNoise - minHeightNoise);
+        // Apply it to the scale
+        scale.y *= randomHeight;
+      }
 
       // Generate a random rotation
       Quaternion rotation = Quaternion.FromToRotation(Vector3.up, unnormalizedNormal);
