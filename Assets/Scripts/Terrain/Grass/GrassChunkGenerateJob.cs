@@ -33,6 +33,11 @@ public struct GrassChunkGenerateJob : IJob {
 
     GrassSpawner[] spawners = (GrassSpawner[])this.spawners.Target;
 
+    for (int spawnerIdx = 0; spawnerIdx < spawners.Length; spawnerIdx++) {
+      GrassSpawner spawner = spawners[spawnerIdx];
+      spawner.InitializeForGeneration();
+    }
+
     // Iterate the triangles of the mesh
     for (int i = 0; i < triangles.Length; i += 3) {
       Vector3 a = vertices[i];
