@@ -12,6 +12,7 @@ public class GrassSpawnerAsset : GrassSpawner {
   [SerializeField] private Grass m_grass;
 
   [Header("Scale")]
+  public bool useScaleCurve = true;
   public AnimationCurve scaleCurve = new AnimationCurve(
     new Keyframe[] { new Keyframe(0f, 0.75f), new Keyframe(1f, 1f) }
   );
@@ -83,7 +84,7 @@ public class GrassSpawnerAsset : GrassSpawner {
       Vector3 position = chunkPosition + triangleCenter;
 
       // Generate random scale
-      float scaleResult = scaleCurve.Evaluate((float)rng.NextDouble());
+      float scaleResult = useScaleCurve ? scaleCurve.Evaluate((float)rng.NextDouble()) : 1f;
       Vector3 scale = new Vector3(scaleResult, scaleResult, scaleResult);
 
       if (useHeightNoise) {
