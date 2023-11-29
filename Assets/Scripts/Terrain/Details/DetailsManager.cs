@@ -42,6 +42,7 @@ public class DetailsManager : MonoBehaviour {
 
   [Header("Debug")]
   public bool drawGizmos;
+  public bool logGenerationInfo;
   public bool logGpuInstancingInfo;
   public bool skipInstancingPreparation;
   public KeyCode keyToToggleInstancingPreparation = KeyCode.None;
@@ -260,6 +261,7 @@ public class DetailsManager : MonoBehaviour {
     chunk.manager = this;
     chunk.bounds = bounds;
     chunk.terrainShape = terrainShape;
+    chunk.logGenerationInfo = logGenerationInfo;
 
     // Request update
     (int integer, float normalized) = GetLevelOfDetail(

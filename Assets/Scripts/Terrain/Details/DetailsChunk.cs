@@ -19,6 +19,8 @@ public class DetailsChunk : MonoBehaviour {
   public Bounds bounds;
   public TerrainShape terrainShape;
 
+  public bool logGenerationInfo;
+
   public DetailsChunkStatus status { get { return m_status; } }
   private DetailsChunkStatus m_status = DetailsChunkStatus.Spawned;
 
@@ -205,17 +207,20 @@ public class DetailsChunk : MonoBehaviour {
       }
     }
 
+    m_status = DetailsChunkStatus.Generated;
+
     timer.Stop();
 
-    // Debug.Log(
-    //   string.Format(
-    //     "Time: {0} ms, instances: {1}",
-    //     timer.ElapsedMilliseconds,
-    //     m_instances.Count
-    //   )
-    // );
-
-    m_status = DetailsChunkStatus.Generated;
+    if (logGenerationInfo) {
+      Debug.Log(
+        string.Format(
+          "{0} ms ({1} ticks) to generate {2} details",
+          timer.ElapsedMilliseconds,
+          timer.ElapsedTicks,
+          m_instances.Count
+        )
+      );
+    }
   }
 
   private void DestroyInstances(bool destroy) {
