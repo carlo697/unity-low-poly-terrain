@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections.Generic;
 
 [CreateAssetMenu(menuName = "Terrain/Shape", order = 0)]
 public class TerrainShape : ScriptableObject, ISamplerFactory {
@@ -76,9 +75,6 @@ public class TerrainShape : ScriptableObject, ISamplerFactory {
   public bool useGrass = true;
   public GrassSpawner[] grassSpawners = new GrassSpawner[] { };
 
-  public Dictionary<int, Grass> grassesById { get { return m_grassesById; } }
-  private Dictionary<int, Grass> m_grassesById = new();
-
   [Header("Debug")]
   public DebugMode debugMode = DebugMode.None;
 
@@ -92,12 +88,6 @@ public class TerrainShape : ScriptableObject, ISamplerFactory {
     PlateauShape,
     PlateauShapeAndMask,
     PlateauGround,
-  }
-
-  public void Initialize() {
-    foreach (GrassSpawner grassSpawner in grassSpawners) {
-      m_grassesById[grassSpawner.grass.id] = grassSpawner.grass;
-    }
   }
 
   public static float Normalize(float value) {

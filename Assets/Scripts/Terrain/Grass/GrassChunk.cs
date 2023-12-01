@@ -13,6 +13,7 @@ public enum GrassChunkStatus {
 
 [RequireComponent(typeof(TerrainChunk))]
 public class GrassChunk : MonoBehaviour {
+  public GrassManager manager;
   public float maxDistance = 100f;
 
   [Header("Debug")]
@@ -237,7 +238,7 @@ public class GrassChunk : MonoBehaviour {
     // Swap the two dictionary of groups because we are about to edit one of then
     SwapGroups();
 
-    m_grassesHandle = GCHandle.Alloc(terrainShape.grassesById);
+    m_grassesHandle = GCHandle.Alloc(manager.grassesById);
     m_groupsHandle = GCHandle.Alloc(m_groupsCopy);
 
     GrassChunkInstancingJob job = new GrassChunkInstancingJob {
