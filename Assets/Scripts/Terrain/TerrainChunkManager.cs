@@ -30,7 +30,7 @@ struct DistanceToCameraComparer : IComparer<Bounds> {
   }
 }
 
-public class QuadTreeTerrainManager : MonoBehaviour {
+public class TerrainChunkManager : MonoBehaviour {
   public Camera usedCamera { get { return Camera.main; } }
 
   public float viewDistance = 100f;

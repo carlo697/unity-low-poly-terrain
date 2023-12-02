@@ -13,8 +13,8 @@ public enum DetailsRenderMode {
 }
 
 public class DetailsManager : MonoBehaviour {
-  public QuadTreeTerrainManager manager { get { return m_terrainManager; } }
-  [SerializeField] private QuadTreeTerrainManager m_terrainManager;
+  public TerrainChunkManager manager { get { return m_terrainManager; } }
+  [SerializeField] private TerrainChunkManager m_terrainManager;
 
   public TerrainShape terrainShape { get { return m_terrainManager.terrainShape; } }
 

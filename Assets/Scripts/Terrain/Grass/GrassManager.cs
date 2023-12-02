@@ -2,8 +2,8 @@ using UnityEngine;
 using System.Collections.Generic;
 
 public class GrassManager : MonoBehaviour {
-  public QuadTreeTerrainManager terrainManager { get { return m_terrainManager; } }
-  [SerializeField] private QuadTreeTerrainManager m_terrainManager;
+  public TerrainChunkManager terrainManager { get { return m_terrainManager; } }
+  [SerializeField] private TerrainChunkManager m_terrainManager;
 
   public float maxDistance = 100f;
 

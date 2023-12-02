@@ -13,7 +13,7 @@ public enum TerrainChunkStatus {
 [ExecuteInEditMode]
 public class TerrainChunk : MonoBehaviour {
   public bool updateInEditor;
-  public QuadTreeTerrainManager terrainManager;
+  public TerrainChunkManager terrainManager;
 
   public static DateTime lastUpdatedAt = DateTime.Now;
   private bool m_isAwake = false;
