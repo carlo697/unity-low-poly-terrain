@@ -7214,6 +7214,7 @@ MonoBehaviour:
   m_renderMode: 1
   m_chunksParent: {fileID: 637276799}
   drawGizmos: 0
+  logGenerationInfo: 0
   logGpuInstancingInfo: 0
   skipInstancingPreparation: 0
   keyToToggleInstancingPreparation: 282
@@ -7257,7 +7258,7 @@ MonoBehaviour:
   chunkSize: {x: 32, y: 192, z: 32}
   chunkResolution: {x: 32, y: 128, z: 32}
   chunkMaterial: {fileID: 2100000, guid: 52e67680063911d45af4a52211b84f8f, type: 2}
-  debug: 0
+  debug: 1
   debugConsecutiveChunksGenerations: 0
   updatePeriod: 0.15
   generatePeriod: 0.02

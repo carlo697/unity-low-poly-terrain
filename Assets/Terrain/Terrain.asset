@@ -192,7 +192,6 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    is3d: 1
     useDomainWarp: 1
     domainWarpAmplitude: 0.3
     domainWarpFrequency: 2
@@ -325,7 +324,6 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    is3d: 0
     useDomainWarp: 0
     domainWarpAmplitude: 1
     domainWarpFrequency: 0.5
@@ -409,7 +407,6 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    is3d: 0
     useDomainWarp: 0
     domainWarpAmplitude: 1
     domainWarpFrequency: 0.5
@@ -448,7 +445,6 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    is3d: 0
     useDomainWarp: 0
     domainWarpAmplitude: 1
     domainWarpFrequency: 0.5

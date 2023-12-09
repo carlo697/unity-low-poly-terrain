@@ -30,7 +30,6 @@ public class TerrainShape : ScriptableObject, ISamplerFactory {
   public int terrainSeed = 0;
   public float noiseScale = 1500f;
   public FractalNoiseGenerator baseNoise = new FractalNoiseGenerator {
-    is3d = true,
     seed = 0,
     scale = 1f,
     octaves = 8
@@ -44,7 +43,6 @@ public class TerrainShape : ScriptableObject, ISamplerFactory {
   [Header("Plateaus")]
   public float absoluteMaximunPlateauHeight = 48f;
   public FractalNoiseGenerator plateauMask = new FractalNoiseGenerator {
-    is3d = false,
     seed = 20,
     scale = 1f,
     noiseType = NoiseType.OpenSimplex2S,
@@ -52,7 +50,6 @@ public class TerrainShape : ScriptableObject, ISamplerFactory {
     useCurve = true
   };
   public FractalNoiseGenerator plateauShape = new FractalNoiseGenerator {
-    is3d = false,
     seed = 22,
     scale = 0.15f,
     noiseType = NoiseType.OpenSimplex2S,
@@ -60,7 +57,6 @@ public class TerrainShape : ScriptableObject, ISamplerFactory {
     useCurve = true
   };
   public FractalNoiseGenerator plateauGround = new FractalNoiseGenerator {
-    is3d = false,
     seed = 24,
     scale = 2.5f,
     noiseType = NoiseType.OpenSimplex2S,
@@ -171,20 +167,18 @@ public class TerrainShape : ScriptableObject, ISamplerFactory {
       AnimationCurve curve = new AnimationCurve(this.curve.keys);
       AnimationCurve normalizerCurve = new AnimationCurve(this.normalizerCurve.keys);
 
-      // Pixels of noises
-      float[] baseTerrainPixels = null;
-      float[] falloffPixels = null;
-      float[] plateauMaskPixels = null;
-      float[] plateauShapePixels = null;
-      float[] plateauGroundPixels = null;
-
       // Debug pixels
       float[] debugFalloff = null;
 
       // Noise frequency
       float noiseFrequency = 1f / noiseScale;
 
+      // Generate the base terrain noise
+      TerrainNoiseGenerator baseTerrainGenerator = baseNoise.GetGenerator();
+      float[] baseTerrainPixels = baseTerrainGenerator.GenerateGrid3d(chunk, noiseFrequency, terrainSeed);
+
       // Generate the falloff map
+      float[] falloffPixels = null;
       if (useFalloff) {
         falloffPixels = falloffNoise.GenerateNoise(chunk, noiseFrequency, terrainSeed);
 
@@ -193,14 +187,14 @@ public class TerrainShape : ScriptableObject, ISamplerFactory {
         }
       }
 
-      // Generate the base terrain noise
-      baseTerrainPixels = baseNoise.GenerateNoise(chunk, noiseFrequency, terrainSeed);
-
       // Generate the noises for plateous
       float relativeMaximunPlateauHeight = (1f / chunk.size.y) * absoluteMaximunPlateauHeight;
-      plateauMaskPixels = plateauMask.GenerateNoise(chunk, noiseFrequency, terrainSeed);
-      plateauGroundPixels = plateauGround.GenerateNoise(chunk, noiseFrequency, terrainSeed);
-      plateauShapePixels = plateauShape.GenerateNoise(chunk, noiseFrequency, terrainSeed);
+      TerrainNoiseGenerator plateauMaskGenerator = plateauMask.GetGenerator();
+      float[] plateauMaskPixels = plateauMaskGenerator.GenerateGrid2d(chunk, noiseFrequency, terrainSeed);
+      TerrainNoiseGenerator plateauGroundGenerator = plateauGround.GetGenerator();
+      float[] plateauGroundPixels = plateauGroundGenerator.GenerateGrid2d(chunk, noiseFrequency, terrainSeed);
+      TerrainNoiseGenerator plateauShapeGenerator = plateauShape.GetGenerator();
+      float[] plateauShapePixels = plateauShapeGenerator.GenerateGrid2d(chunk, noiseFrequency, terrainSeed);
 
       for (int z = 0; z < grid.sizes.z; z++) {
         for (int y = 0; y < grid.sizes.y; y++) {
