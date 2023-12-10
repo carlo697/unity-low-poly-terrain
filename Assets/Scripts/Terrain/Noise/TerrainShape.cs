@@ -102,32 +102,28 @@ public class TerrainShape : ScriptableObject, ISamplerFactory {
     float frequency = 1f
   ) {
     // Variables needed to sample the point in world space
-    float gridSizeNormalizer = chunk.size.x / 32f;
-
-    // Calculate offset
-    float offsetX = chunk.noisePosition.x / gridSizeNormalizer;
-    float offsetY = chunk.noisePosition.z / gridSizeNormalizer;
-    float noiseSize = (1f / chunk.noiseSize) * frequency;
+    float sizeNormalizer = chunk.size.x / 32f;
+    float noiseFrequency = (1f / chunk.noiseSize) * frequency;
 
     // Apply offset
     FastNoise offsetNoise = new FastNoise("Domain Offset");
     offsetNoise.Set("Source", noise);
     if (is3D) {
-      offsetNoise.Set("OffsetX", chunk.noisePosition.z * noiseSize);
+      offsetNoise.Set("OffsetX", chunk.noisePosition.z * noiseFrequency);
       offsetNoise.Set("OffsetY", 0f);
-      offsetNoise.Set("OffsetZ", chunk.noisePosition.x * noiseSize);
+      offsetNoise.Set("OffsetZ", chunk.noisePosition.x * noiseFrequency);
     } else {
-      offsetNoise.Set("OffsetX", chunk.noisePosition.x * noiseSize);
-      offsetNoise.Set("OffsetY", chunk.noisePosition.z * noiseSize);
+      offsetNoise.Set("OffsetX", chunk.noisePosition.x * noiseFrequency);
+      offsetNoise.Set("OffsetY", chunk.noisePosition.z * noiseFrequency);
     }
 
     // Apply scale to noise
-    float scale = noiseSize * gridSizeNormalizer;
+    float noiseScale = noiseFrequency * sizeNormalizer;
     FastNoise scaleNoise = new FastNoise("Domain Axis Scale");
     scaleNoise.Set("Source", offsetNoise);
-    scaleNoise.Set("ScaleX", scale);
-    scaleNoise.Set("ScaleY", scale);
-    scaleNoise.Set("ScaleZ", scale);
+    scaleNoise.Set("ScaleX", noiseScale);
+    scaleNoise.Set("ScaleY", noiseScale);
+    scaleNoise.Set("ScaleZ", noiseScale);
 
     float[] pixels;
     if (is3D) {
