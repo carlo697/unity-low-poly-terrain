@@ -13,7 +13,7 @@ public class FalloffNoiseGenerator {
   public AnimationCurve falloffGradientCurve = AnimationCurve.Linear(-1f, -1f, 1f, 1f);
   public AnimationCurve falloffOutputCurve = AnimationCurve.Linear(0f, 0f, 1f, 1f);
 
-  public float[] GenerateNoise(TerrainChunk chunk, float frequency, int seed) {
+  public float[] GenerateNoise(TerrainChunk chunk, float scale, int seed) {
     // Create copies of the curves (for thread safety)
     AnimationCurve falloffGradientCurve = new AnimationCurve(this.falloffGradientCurve.keys);
     AnimationCurve falloffOutputCurve = new AnimationCurve(this.falloffOutputCurve.keys);
@@ -32,7 +32,7 @@ public class FalloffNoiseGenerator {
       chunk,
       falloffNoise,
       seed + this.seed,
-      (1f / (scale)) * frequency
+      scale * this.scale
     );
 
     // Generate the final falloff map

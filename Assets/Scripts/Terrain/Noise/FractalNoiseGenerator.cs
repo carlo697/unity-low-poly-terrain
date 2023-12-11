@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 
 [Serializable]
 public class FractalNoiseGenerator : BasicNoiseSettings {
+  [Header("Domain Warp")]
   public bool useDomainWarp = false;
   public float domainWarpAmplitude = 1f;
   public float domainWarpFrequency = 0.5f;
@@ -80,22 +81,22 @@ public class FractalNoiseGenerator : BasicNoiseSettings {
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public float[] GenerateGrid3d(TerrainChunk chunk, float noiseFrequency, int terrainSeed) {
-      return GenerateGrid(true, chunk, noiseFrequency, terrainSeed);
+    public float[] GenerateGrid3d(TerrainChunk chunk, float scale, int terrainSeed) {
+      return GenerateGrid(true, chunk, scale, terrainSeed);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public float[] GenerateGrid2d(TerrainChunk chunk, float noiseFrequency, int terrainSeed) {
-      return GenerateGrid(false, chunk, noiseFrequency, terrainSeed);
+    public float[] GenerateGrid2d(TerrainChunk chunk, float scale, int terrainSeed) {
+      return GenerateGrid(false, chunk, scale, terrainSeed);
     }
 
-    private float[] GenerateGrid(bool is3d, TerrainChunk chunk, float noiseFrequency, int terrainSeed) {
+    private float[] GenerateGrid(bool is3d, TerrainChunk chunk, float scale, int terrainSeed) {
       float[] pixels = TerrainShape.GenerateFastNoiseForChunk(
         is3d,
         chunk,
         m_noise,
         terrainSeed + m_settings.seed,
-        (1f / m_settings.scale) * noiseFrequency
+        m_settings.scale * scale
       );
 
       if (m_settings.useCurve) {
