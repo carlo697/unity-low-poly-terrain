@@ -85,6 +85,7 @@ public class TerrainShape : ScriptableObject, ISamplerFactory {
     PlateauShape,
     PlateauShapeAndMask,
     PlateauGround,
+    Noise,
   }
 
   public static float Normalize(float value) {
@@ -150,6 +151,12 @@ public class TerrainShape : ScriptableObject, ISamplerFactory {
             // Start sampling
             float output = 0;
             float heightGradient = point.position.y * chunk.inverseSize.y;
+
+            if (debugMode == DebugMode.Noise) {
+              point.value = baseTerrainPixels[point.index] * -1f;
+              grid.gridPoints[index] = point;
+              continue;
+            }
 
             // Land output
             float terrainHeight = Normalize(baseTerrainPixels[point.index]);
@@ -248,6 +255,8 @@ public class TerrainShape : ScriptableObject, ISamplerFactory {
               point.color = Color.Lerp(Color.black, Color.white, plateauShapeNoise);
             } else if (debugMode == DebugMode.PlateauGround) {
               point.color = Color.Lerp(Color.black, Color.white, plateauGroundPixels[index2D]);
+            } else if (debugMode == DebugMode.Noise) {
+              point.color = Color.white * 0.5f;
             } else {
               float normalizedHeight = point.position.y / chunk.size.y;
 
