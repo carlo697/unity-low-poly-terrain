@@ -37,10 +37,11 @@ public class TerrainShape : ScriptableObject, ISamplerFactory {
   public bool updateChunksInEditor = true;
 
   [Header("Falloff Settings")]
-  public bool useFalloff;
+  public bool useFalloff = true;
   public FalloffNoiseGenerator falloffNoise = new FalloffNoiseGenerator();
 
   [Header("Plateaus")]
+  public bool usePlateaus = true;
   public float absoluteMaximunPlateauHeight = 48f;
   public FractalNoiseGenerator plateauMask = new FractalNoiseGenerator {
     seed = 20,
@@ -153,26 +154,28 @@ public class TerrainShape : ScriptableObject, ISamplerFactory {
             // Land output
             float terrainHeight = Normalize(baseTerrainPixels[point.index]);
 
-            // Overall shape of Plateaus
-            float plateauMaskNoise = Normalize(plateauMaskPixels[index2D]);
-            float plateauShapeNoise = Normalize(plateauShapePixels[index2D]) * plateauMaskNoise;
+            if (usePlateaus) {
+              // Overall shape of Plateaus
+              float plateauMaskNoise = Normalize(plateauMaskPixels[index2D]);
+              float plateauShapeNoise = Normalize(plateauShapePixels[index2D]) * plateauMaskNoise;
 
-            // The height of the terrain on top of plateaus
-            float plateauGroundNoise = Normalize(plateauGroundPixels[index2D]);
-            float plateauHeight = Mathf.LerpUnclamped(
-              terrainHeight,
-              plateauGroundNoise,
-              relativeMaximunPlateauHeight
-            );
+              // The height of the terrain on top of plateaus
+              float plateauGroundNoise = Normalize(plateauGroundPixels[index2D]);
+              float plateauHeight = Mathf.LerpUnclamped(
+                terrainHeight,
+                plateauGroundNoise,
+                relativeMaximunPlateauHeight
+              );
 
-            // 2nd Mask
-            float threshold = 0.02f;
-            float plateau2ndMask = plateauMaskNoise - terrainHeight;
-            plateau2ndMask = Mathf.SmoothStep(0f, 1f, plateau2ndMask / threshold);
-            plateauShapeNoise *= plateau2ndMask;
+              // 2nd Mask
+              float threshold = 0.02f;
+              float plateau2ndMask = plateauMaskNoise - terrainHeight;
+              plateau2ndMask = Mathf.SmoothStep(0f, 1f, plateau2ndMask / threshold);
+              plateauShapeNoise *= plateau2ndMask;
 
-            // Use plateauHeight only if it's taller than terrainHeight
-            terrainHeight = Mathf.LerpUnclamped(terrainHeight, plateauHeight, plateauShapeNoise);
+              // Use plateauHeight only if it's taller than terrainHeight
+              terrainHeight = Mathf.LerpUnclamped(terrainHeight, plateauHeight, plateauShapeNoise);
+            }
 
             if (useFalloff) {
               // Sample the falloff map
