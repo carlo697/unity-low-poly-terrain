@@ -27,9 +27,9 @@ public class FalloffNoiseGenerator {
     float[] falloffNoiseGrid = null;
 
     // Generate the falloff noise texture
-    falloffNoiseGrid = TerrainShape.GenerateFastNoiseForChunk(
+    FastNoiseChunk noiseChunk = new FastNoiseChunk(chunk);
+    falloffNoiseGrid = noiseChunk.GenerateGrid(
       false,
-      chunk,
       falloffNoise,
       seed + this.seed,
       scale * this.scale

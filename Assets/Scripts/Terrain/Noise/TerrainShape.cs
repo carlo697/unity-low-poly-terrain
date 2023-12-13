@@ -94,68 +94,6 @@ public class TerrainShape : ScriptableObject, ISamplerFactory {
     return (value * 2f) - 1f;
   }
 
-  public static float[] GenerateFastNoiseForChunk(
-    bool is3D,
-    TerrainChunk chunk,
-    FastNoise noise,
-    int seed,
-    float scale = 1f
-  ) {
-    // Variables needed to sample the point in world space
-    float sizeNormalizer = chunk.size.x / 32f;
-    float noiseFrequency = 1f / (chunk.noiseSize * scale);
-
-    // Apply offset
-    Vector3 offset = chunk.noisePosition * noiseFrequency;
-    FastNoise offsetNode = new FastNoise("Domain Offset");
-    offsetNode.Set("Source", noise);
-    if (is3D) {
-      offsetNode.Set("OffsetX", offset.z);
-      offsetNode.Set("OffsetY", offset.y);
-      offsetNode.Set("OffsetZ", offset.x);
-    } else {
-      offsetNode.Set("OffsetX", offset.x);
-      offsetNode.Set("OffsetY", offset.z);
-    }
-
-    // Apply scale to noise
-    float scaleNodeValue = noiseFrequency * sizeNormalizer;
-    FastNoise scaleNode = new FastNoise("Domain Axis Scale");
-    scaleNode.Set("Source", offsetNode);
-    scaleNode.Set("ScaleX", scaleNodeValue);
-    scaleNode.Set("ScaleY", scaleNodeValue);
-    scaleNode.Set("ScaleZ", scaleNodeValue);
-
-    float[] pixels;
-    if (is3D) {
-      pixels = new float[chunk.gridSize.x * chunk.gridSize.y * chunk.gridSize.z];
-      scaleNode.GenUniformGrid3D(
-        pixels,
-        0,
-        0,
-        0,
-        chunk.gridSize.x,
-        chunk.gridSize.y,
-        chunk.gridSize.x,
-        1f,
-        seed
-      );
-    } else {
-      pixels = new float[chunk.gridSize.x * chunk.gridSize.z];
-      scaleNode.GenUniformGrid2D(
-        pixels,
-        0,
-        0,
-        chunk.gridSize.x,
-        chunk.gridSize.z,
-        1f,
-        seed
-      );
-    }
-
-    return pixels;
-  }
-
   public CubeGridSamplerFunc GetSampler(
     TerrainChunk chunk
   ) {
@@ -168,8 +106,9 @@ public class TerrainShape : ScriptableObject, ISamplerFactory {
       float[] debugFalloff = null;
 
       // Generate the base terrain noise
+      FastNoiseChunk noiseChunk = new FastNoiseChunk(chunk);
       TerrainNoiseGenerator baseTerrainGenerator = baseNoise.GetGenerator();
-      float[] baseTerrainPixels = baseTerrainGenerator.GenerateGrid3d(chunk, noiseScale, terrainSeed);
+      float[] baseTerrainPixels = baseTerrainGenerator.GenerateGrid3d(noiseChunk, noiseScale, terrainSeed);
 
       // Generate the falloff map
       float[] falloffPixels = null;
@@ -184,11 +123,11 @@ public class TerrainShape : ScriptableObject, ISamplerFactory {
       // Generate the noises for plateous
       float relativeMaximunPlateauHeight = (1f / chunk.size.y) * absoluteMaximunPlateauHeight;
       TerrainNoiseGenerator plateauMaskGenerator = plateauMask.GetGenerator();
-      float[] plateauMaskPixels = plateauMaskGenerator.GenerateGrid2d(chunk, noiseScale, terrainSeed);
+      float[] plateauMaskPixels = plateauMaskGenerator.GenerateGrid2d(noiseChunk, noiseScale, terrainSeed);
       TerrainNoiseGenerator plateauGroundGenerator = plateauGround.GetGenerator();
-      float[] plateauGroundPixels = plateauGroundGenerator.GenerateGrid2d(chunk, noiseScale, terrainSeed);
+      float[] plateauGroundPixels = plateauGroundGenerator.GenerateGrid2d(noiseChunk, noiseScale, terrainSeed);
       TerrainNoiseGenerator plateauShapeGenerator = plateauShape.GetGenerator();
-      float[] plateauShapePixels = plateauShapeGenerator.GenerateGrid2d(chunk, noiseScale, terrainSeed);
+      float[] plateauShapePixels = plateauShapeGenerator.GenerateGrid2d(noiseChunk, noiseScale, terrainSeed);
 
       for (int z = 0; z < grid.sizes.z; z++) {
         for (int y = 0; y < grid.sizes.y; y++) {
