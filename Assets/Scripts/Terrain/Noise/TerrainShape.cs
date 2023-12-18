@@ -38,7 +38,18 @@ public class TerrainShape : ScriptableObject, ISamplerFactory {
 
   [Header("Falloff Settings")]
   public bool useFalloff = true;
-  public FalloffNoiseGenerator falloffNoise = new FalloffNoiseGenerator();
+  public FalloffNoiseGenerator falloffMask = new FalloffNoiseGenerator {
+    seed = 2,
+    scale = 5.5f,
+    octaves = 8
+  };
+  public FractalNoiseGenerator landGradientSteepness = new FractalNoiseGenerator {
+    seed = 3,
+    scale = 1f,
+    noiseType = NoiseType.OpenSimplex2S,
+    fractalType = FractalType.FractalFBm,
+    octaves = 3
+  };
 
   [Header("Plateaus")]
   public bool usePlateaus = true;
@@ -73,6 +84,7 @@ public class TerrainShape : ScriptableObject, ISamplerFactory {
   public GrassSpawner[] grassSpawners = new GrassSpawner[] { };
 
   [Header("Debug")]
+  public float debugHeightmapMultiplier = 1f;
   public DebugMode debugMode = DebugMode.None;
 
   public enum DebugMode {
@@ -81,6 +93,10 @@ public class TerrainShape : ScriptableObject, ISamplerFactory {
     Normals,
     Slope,
     Falloff,
+    LandGradient,
+    OceanGradient,
+    OceanAndLandGradient,
+    LandGradientSteepness,
     PlateauMask,
     PlateauShape,
     PlateauShapeAndMask,
@@ -105,20 +121,57 @@ public class TerrainShape : ScriptableObject, ISamplerFactory {
       AnimationCurve normalizerCurve = new AnimationCurve(this.normalizerCurve.keys);
 
       // Debug pixels
-      float[] debugFalloff = null;
+      float[] debug2dPixels = null;
+      if (debugMode == DebugMode.Falloff
+        || debugMode == DebugMode.LandGradient
+        || debugMode == DebugMode.OceanGradient
+        || debugMode == DebugMode.OceanAndLandGradient
+        || debugMode == DebugMode.LandGradientSteepness
+      ) {
+        debug2dPixels = new float[chunk.gridSize.x * chunk.gridSize.z];
+      }
 
       // Generate the base terrain noise
       FastNoiseChunk noiseChunk = new FastNoiseChunk(chunk);
       TerrainNoiseGenerator baseTerrainGenerator = baseNoise.GetGenerator();
       float[] baseTerrainPixels = baseTerrainGenerator.GenerateGrid3d(noiseChunk, noiseScale, terrainSeed);
 
-      // Generate the falloff map
+      // Generate the falloff map and the gradient maps
       float[] falloffPixels = null;
+      float[] landGradientSteepnessPixels = null;
+      float[] landGradientPixels = null;
+      float[] oceanGradientPixels = null;
       if (useFalloff) {
-        falloffPixels = falloffNoise.GenerateNoise(chunk, noiseScale, terrainSeed);
+        falloffPixels = falloffMask.GenerateNoise(chunk, noiseScale, terrainSeed);
+        landGradientSteepnessPixels =
+          landGradientSteepness.GetGenerator().GenerateGrid2d(noiseChunk, noiseScale, terrainSeed);
 
-        if (debugMode == DebugMode.Falloff) {
-          debugFalloff = new float[chunk.gridSize.x * chunk.gridSize.z];
+        landGradientPixels = new float[falloffPixels.Length];
+        oceanGradientPixels = new float[falloffPixels.Length];
+
+        for (int i = 0; i < landGradientPixels.Length; i++) {
+          float falloff = falloffPixels[i];
+          float landGradientSteepness = landGradientSteepnessPixels[i];
+
+          // Get the land gradient from the falloff
+          float landGradient;
+          if (falloff <= seaLevel) {
+            landGradient = 0f;
+          } else {
+            // landGradient = Mathf.SmoothStep(0f, 1f, (falloff - seaLevel) / landGradientSteepness);
+            landGradient = Mathf.Clamp01((falloff - seaLevel) / landGradientSteepness);
+          }
+          landGradientPixels[i] = landGradient;
+
+          // Get the ocean gradient from the falloff
+          float oceanGradient;
+          if (falloff > seaLevel) {
+            oceanGradient = 0f;
+          } else {
+            // oceanGradient = Mathf.SmoothStep(0f, 1f, ((seaLevel - falloff) / (landGradientSteepness)));
+            oceanGradient = Mathf.Clamp01((seaLevel - falloff) / (landGradientSteepness));
+          }
+          oceanGradientPixels[i] = oceanGradient;
         }
       }
 
@@ -185,39 +238,43 @@ public class TerrainShape : ScriptableObject, ISamplerFactory {
             }
 
             if (useFalloff) {
-              // Sample the falloff map
-              float finalFalloff = falloffPixels[index2D];
-
-              // Land gradient
-              float landGradient;
-              float start = seaLevel;
-              if (finalFalloff <= start) {
-                landGradient = 0f;
-              } else {
-                landGradient = Mathf.SmoothStep(0f, 1f, (finalFalloff - start) / (falloffNoise.landGap));
-              }
+              float landGradient = landGradientPixels[index2D];
+              float oceanGradient = oceanGradientPixels[index2D];
 
               // Use the land gradient to combine the base terrain noise with the falloff map
-              float heightBelowSeaLevel = heightGradient - finalFalloff;
-              float heightAboveSeaLevel = heightGradient - seaLevel - (terrainHeight * (1f - seaLevel));
-              output = Mathf.Lerp(heightBelowSeaLevel, heightAboveSeaLevel, landGradient);
+              // float heightBelowSeaLevel = heightGradient - finalFalloff;
+              // float heightAboveSeaLevel = heightGradient - seaLevel - (terrainHeight * (1f - seaLevel));
+              // output = Mathf.Lerp(heightBelowSeaLevel, heightAboveSeaLevel, landGradient);
 
-              if (debugMode == DebugMode.Falloff) {
-                debugFalloff[index2D] = 1f - output;
+              // Determine the density in the ocean and on land
+              float densitySeaLevel = heightGradient - seaLevel;
+              float oceanDensity = heightGradient - terrainHeight * seaLevel * 0.5f;
+              float landDensity = heightGradient - seaLevel - (terrainHeight * (1f - seaLevel));
+
+              // Use the land and ocean gradients to combine land density and ocean density
+              if (oceanGradient > 0f) {
+                output = Mathf.LerpUnclamped(densitySeaLevel, oceanDensity, oceanGradient);
+              } else {
+                output = Mathf.LerpUnclamped(densitySeaLevel, landDensity, landGradient);
               }
 
-              // height = Mathf.Lerp(heightGradient, height, finalFalloff);
-              // height = Mathf.Lerp(heightGradient, height, finalFalloff);
-              // height = heightGradient - finalFalloff;
-              // height = heightGradient - landGradient;
-              // height = heightGradient - (landGradient * 0.8f);
-              // height = Mathf.Lerp(height, heightGradient - seaLevel, borderGradient);
+              if (debugMode == DebugMode.Falloff) {
+                debug2dPixels[index2D] = 1f - output;
+              } else if (debugMode == DebugMode.LandGradient) {
+                debug2dPixels[index2D] = landGradient;
+              } else if (debugMode == DebugMode.OceanGradient) {
+                debug2dPixels[index2D] = oceanGradient;
+              } else if (debugMode == DebugMode.OceanAndLandGradient) {
+                debug2dPixels[index2D] = Mathf.Max(oceanGradient, landGradient);
+              } else if (debugMode == DebugMode.LandGradientSteepness) {
+                debug2dPixels[index2D] = landGradientSteepnessPixels[index2D];
+              }
             } else {
               output = heightGradient - terrainHeight;
             }
 
+            // Set the density and save the point
             point.value = output;
-
             grid.gridPoints[index] = point;
           }
         }
@@ -242,8 +299,13 @@ public class TerrainShape : ScriptableObject, ISamplerFactory {
               point.color = new Color(normal.x, normal.y, normal.z);
             } else if (debugMode == DebugMode.Slope) {
               point.color = Color.Lerp(Color.black, Color.white, normal.y);
-            } else if (useFalloff && debugMode == DebugMode.Falloff) {
-              point.color = Color.Lerp(Color.black, Color.white, debugFalloff[index2D]);
+            } else if (debugMode == DebugMode.Falloff
+              || debugMode == DebugMode.LandGradient
+              || debugMode == DebugMode.OceanGradient
+              || debugMode == DebugMode.OceanAndLandGradient
+              || debugMode == DebugMode.LandGradientSteepness
+            ) {
+              point.color = Color.white * debug2dPixels[index2D] * debugHeightmapMultiplier;
             } else if (debugMode == DebugMode.PlateauMask) {
               point.color = Color.Lerp(Color.black, Color.white, plateauMaskPixels[index2D]);
             } else if (debugMode == DebugMode.PlateauShape) {

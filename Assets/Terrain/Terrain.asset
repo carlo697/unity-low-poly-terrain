@@ -197,13 +197,12 @@ MonoBehaviour:
     domainWarpFrequency: 2
   updateChunksInEditor: 1
   useFalloff: 1
-  falloffNoise:
+  falloffMask:
     seed: 2
     scale: 5.5
     gain: 0.5
     lacunarity: 2
-    octaves: 9
-    landGap: 0.15
+    octaves: 8
     falloffGradientCurve:
       serializedVersion: 2
       m_Curve:
@@ -270,6 +269,72 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
+  landGradientSteepness:
+    seed: 3
+    scale: 1
+    amplitude: 1
+    noiseType: 4
+    gain: 0.5
+    weightedStrength: 0
+    lacunarity: 2
+    octaves: 3
+    fractalType: 0
+    useCurve: 1
+    curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: -1
+        value: 0.005
+        inSlope: 0.008778769
+        outSlope: 0.008778769
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.16467631
+      - serializedVersion: 3
+        time: -0.3415226
+        value: 0.07556065
+        inSlope: 0.16850802
+        outSlope: 0.16850802
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.0037965663
+        value: 0.1549353
+        inSlope: 0.17618977
+        outSlope: 0.17618977
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.2888558
+        value: 0.18986097
+        inSlope: 0.040710695
+        outSlope: 0.040710695
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 0.2
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    useDomainWarp: 0
+    domainWarpAmplitude: 1
+    domainWarpFrequency: 2
+  usePlateaus: 1
   absoluteMaximunPlateauHeight: 48
   plateauMask:
     seed: 20
@@ -456,4 +521,5 @@ MonoBehaviour:
   grassSpawners:
   - {fileID: 11400000, guid: f09574a29497eb44697a702d50e82f8c, type: 2}
   - {fileID: 11400000, guid: f1d226c1e2cc50a48bc7d4fe08e87a88, type: 2}
+  debugHeightmapMultiplier: 1
   debugMode: 0
