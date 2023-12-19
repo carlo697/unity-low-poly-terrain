@@ -17,6 +17,7 @@ public class TerrainShape : ScriptableObject, ISamplerFactory {
   public Color rockColor = new Color(0.5f, 0.5f, 0.5f);
   public uint sandId = 3;
   public Color sandColor = Color.yellow;
+  public Color wetSandColor = Color.yellow;
   public Color darkSandColor = Color.Lerp(Color.yellow, Color.black, 0.5f);
   public uint snowId = 4;
   public Color snowColor = Color.white;
@@ -332,11 +333,16 @@ public class TerrainShape : ScriptableObject, ISamplerFactory {
                 point.color = snowColor;
                 point.roughness = 0.05f;
                 point.material = snowId;
+              } else if (normalizedHeight <= seaLevel) {
+                // Underwater Beach Sand
+                float t = Mathf.InverseLerp(0f, sandHeight, normalizedHeight);
+                point.color = Color.Lerp(darkSandColor, wetSandColor, t);
+                point.roughness = 0.05f;
+                point.material = sandId;
               } else if (normalizedHeight <= sandHeight) {
                 // Beach Sand
-                float t = Mathf.InverseLerp(0f, sandHeight, normalizedHeight);
-                point.color = Color.Lerp(darkSandColor, sandColor, t);
-                point.roughness = 0.05f;
+                point.color = sandColor;
+                point.roughness = 0.1f;
                 point.material = sandId;
               } else {
                 // Grass

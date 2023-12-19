@@ -112,7 +112,8 @@ MonoBehaviour:
   rockId: 2
   rockColor: {r: 0.6132076, g: 0.6132076, b: 0.6132076, a: 1}
   sandId: 3
-  sandColor: {r: 0.9647059, g: 0.89411765, b: 0.6784314, a: 1}
+  sandColor: {r: 0.9647059, g: 0.8475259, b: 0.6569647, a: 1}
+  wetSandColor: {r: 0.801, g: 0.6729863, b: 0.50108224, a: 1}
   darkSandColor: {r: 0.53900003, g: 0.5017387, b: 0.39616504, a: 1}
   snowId: 4
   snowColor: {r: 1, g: 1, b: 1, a: 1}
