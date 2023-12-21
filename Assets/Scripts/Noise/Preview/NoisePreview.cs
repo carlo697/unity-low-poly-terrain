@@ -2,96 +2,75 @@ using UnityEngine;
 
 public class NoisePreview : MonoBehaviour {
   [Header("Position")]
-  public Vector3 offset = Vector3.zero;
+  public Vector3 offset;
 
   [Header("Noise")]
   public int resolution = 256;
-  public int seed = 0;
-  public float frequency = 0.05f;
-  public float persistence = 0.5f;
-  public int octaves = 3;
+  public FractalNoiseGenerator noise;
 
   [Header("Noise Output")]
   public bool useThreshold;
   public float threshold = 0.5f;
-  public AnimationCurve curve = AnimationCurve.Linear(-1f, -1f, 1f, 1f);
-  public enum NoiseType { BuiltIn, FastNoise2D, FastNoise3D };
-  public NoiseType type = NoiseType.BuiltIn;
 
   [Header("Debug")]
   public bool debugTime;
-
-  private MeshRenderer m_meshRenderer;
-
-  protected FastNoise m_fastNoise2;
 
   private void Start() {
     Generate();
   }
 
-  protected virtual void InitializeNoises() {
-    m_fastNoise2 = new FastNoise("FractalFBm");
-    m_fastNoise2.Set("Source", new FastNoise("Simplex"));
-    m_fastNoise2.Set("Gain", persistence);
-    m_fastNoise2.Set("Lacunarity", 2f);
-    m_fastNoise2.Set("Octaves", octaves);
-  }
-
   public void AssignHeightmap(float[,] heightmap) {
     // Add a mesh renderer and assign material
-    m_meshRenderer = GetComponent<MeshRenderer>();
-    if (!m_meshRenderer) {
-      m_meshRenderer = gameObject.AddComponent<MeshRenderer>();
+    MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
+    if (!meshRenderer) {
+      meshRenderer = gameObject.AddComponent<MeshRenderer>();
     }
 
     // Generate material and assign texture
-    Material material = m_meshRenderer.sharedMaterial;
+    Material material = meshRenderer.sharedMaterial;
     if (!material) {
       material = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
     }
     material.SetTexture("_BaseMap", TextureGenerator.GetTextureFromHeightmap(heightmap));
-    m_meshRenderer.sharedMaterial = material;
+    meshRenderer.sharedMaterial = material;
   }
 
-  public virtual void Generate() {
-    System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
-    watch.Start();
+  public virtual float[,] GenerateNoise() {
+    var generator = noise.GetGenerator();
 
-    InitializeNoises();
-
-    // Generate heightmap
+    // Generate noise texture
     float[,] heightmap = new float[resolution, resolution];
     for (int y = 0; y < resolution; y++) {
       for (int x = 0; x < resolution; x++) {
-        if (type == NoiseType.BuiltIn) {
-          heightmap[x, y] = Mathf.PerlinNoise(
-            (float)x * frequency + offset.x,
-            (float)y * frequency + offset.y
-          );
-        } else if (type == NoiseType.FastNoise2D) {
-          float value = curve.Evaluate(m_fastNoise2.GenSingle2D(
-            (float)x * frequency + offset.x,
-            (float)y * frequency + offset.y,
-            seed
-          ));
+        // Sample noise
+        float value = generator.Generate3d(
+          (float)x + offset.x,
+          (float)y + offset.y,
+          offset.z,
+          0
+        );
 
-          heightmap[x, y] = (value + 1f) / 2f;
-        } else if (type == NoiseType.FastNoise3D) {
-          float value = curve.Evaluate(m_fastNoise2.GenSingle3D(
-            (float)x * frequency + offset.x,
-            (float)y * frequency + offset.y,
-            offset.z,
-            seed
-          ));
+        // Normalize
+        value = (value + 1f) / 2f;
 
-          heightmap[x, y] = (value + 1f) / 2f;
-        }
-
+        // Threshold
         if (useThreshold) {
-          heightmap[x, y] = heightmap[x, y] >= threshold ? 1f : 0f;
+          value = value >= threshold ? 1f : 0f;
         }
+
+        // Save value
+        heightmap[x, y] = value;
       }
     }
+
+    return heightmap;
+  }
+
+  public void Generate() {
+    System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
+    watch.Start();
+
+    float[,] heightmap = GenerateNoise();
 
     watch.Stop();
     if (debugTime)
@@ -102,52 +81,5 @@ public class NoisePreview : MonoBehaviour {
 
   private void OnValidate() {
     Generate();
-  }
-
-  [ContextMenu("Print Min And Max")]
-  private void PrintMinAndMax() {
-    InitializeNoises();
-
-    // Min and max values
-    float min = float.MaxValue;
-    float max = float.MinValue;
-    float median = 0;
-
-    // Generate heightmap
-    int samples = 50000000;
-    for (int i = 0; i < samples; i++) {
-      float finalValue = 0f;
-
-      float coordX = Random.Range(-10000000f, 10000000f);
-      float coordY = Random.Range(-10000000f, 10000000f);
-      float coordZ = Random.Range(-10000000f, 10000000f);
-
-      if (type == NoiseType.BuiltIn) {
-        finalValue = Mathf.PerlinNoise(coordX, coordY);
-      } else if (type == NoiseType.FastNoise2D) {
-        finalValue = m_fastNoise2.GenSingle2D(
-          coordX,
-          coordY,
-          0
-        );
-      } else if (type == NoiseType.FastNoise3D) {
-        finalValue = m_fastNoise2.GenSingle3D(
-          coordX,
-          coordY,
-          coordZ,
-          0
-        );
-      }
-
-      median += finalValue / samples;
-      if (finalValue > max) {
-        max = finalValue;
-      } else if (finalValue < min) {
-        min = finalValue;
-      }
-    }
-
-    // Debug the min and max values
-    Debug.Log(string.Format("min: {0}, max: {1}, median: {2}", min, max, median));
   }
 }
