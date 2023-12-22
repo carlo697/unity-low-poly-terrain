@@ -1,8 +1,17 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using System.Runtime.CompilerServices;
 
-public static class TextureGenerator {
+public static class TextureUtils {
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]
+  public static float Normalize(float value) {
+    return (value + 1f) * 0.5f;
+  }
+
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]
+  public static float Denormalize(float value) {
+    return (value * 2f) - 1f;
+  }
+
   public static Texture2D GetTextureFromColorMap(Color[] colorMap, int width, int height) {
     Texture2D texture = new Texture2D(width, height);
 

@@ -54,7 +54,7 @@ public class FalloffNoiseGenerator {
         float curvedFalloff = 1f - falloffGradientCurve.Evaluate(falloff);
 
         // Sample and normalize the noise
-        float falloffNoiseSample = TerrainShape.Normalize(falloffNoiseGrid[_index2D]);
+        float falloffNoiseSample = TextureUtils.Normalize(falloffNoiseGrid[_index2D]);
 
         // Combine the falloff map and the noise
         float finalFalloff = falloffNoiseSample * curvedFalloff;

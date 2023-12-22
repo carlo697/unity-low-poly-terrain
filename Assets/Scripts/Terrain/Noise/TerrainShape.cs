@@ -105,14 +105,6 @@ public class TerrainShape : ScriptableObject {
     Noise,
   }
 
-  public static float Normalize(float value) {
-    return ((value + 1f) / 2f);
-  }
-
-  public static float Denormalize(float value) {
-    return (value * 2f) - 1f;
-  }
-
   public CubeGridSamplerFunc GetSampler(FastNoiseChunk chunk) {
     return (CubeGrid grid) => {
       // Create copies of the curves
@@ -210,15 +202,16 @@ public class TerrainShape : ScriptableObject {
             }
 
             // Land output
-            float terrainHeight = Normalize(baseTerrainPixels[point.index]);
+            float terrainHeight = TextureUtils.Normalize(baseTerrainPixels[point.index]);
 
             if (usePlateaus) {
               // Overall shape of Plateaus
-              float plateauMaskNoise = Normalize(plateauMaskPixels[index2D]);
-              float plateauShapeNoise = Normalize(plateauShapePixels[index2D]) * plateauMaskNoise;
+              float plateauMaskNoise = TextureUtils.Normalize(plateauMaskPixels[index2D]);
+              float plateauShapeNoise =
+                TextureUtils.Normalize(plateauShapePixels[index2D]) * plateauMaskNoise;
 
               // The height of the terrain on top of plateaus
-              float plateauGroundNoise = Normalize(plateauGroundPixels[index2D]);
+              float plateauGroundNoise = TextureUtils.Normalize(plateauGroundPixels[index2D]);
               float plateauHeight = Mathf.LerpUnclamped(
                 terrainHeight,
                 plateauGroundNoise,
@@ -309,8 +302,9 @@ public class TerrainShape : ScriptableObject {
             } else if (debugMode == DebugMode.PlateauShape) {
               point.color = Color.Lerp(Color.black, Color.white, plateauShapePixels[index2D]);
             } else if (debugMode == DebugMode.PlateauShapeAndMask) {
-              float plateauMaskNoise = Normalize(plateauMaskPixels[index2D]);
-              float plateauShapeNoise = Normalize(plateauShapePixels[index2D]) * plateauMaskNoise;
+              float plateauMaskNoise = TextureUtils.Normalize(plateauMaskPixels[index2D]);
+              float plateauShapeNoise =
+                TextureUtils.Normalize(plateauShapePixels[index2D]) * plateauMaskNoise;
 
               point.color = Color.Lerp(Color.black, Color.white, plateauShapeNoise);
             } else if (debugMode == DebugMode.PlateauGround) {

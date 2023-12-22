@@ -31,7 +31,7 @@ public class NoisePreview : MonoBehaviour {
     if (!material) {
       material = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
     }
-    material.SetTexture("_BaseMap", TextureGenerator.GetTextureFromHeightmap(heightmap));
+    material.SetTexture("_BaseMap", TextureUtils.GetTextureFromHeightmap(heightmap));
     meshRenderer.sharedMaterial = material;
   }
 
