@@ -47,9 +47,6 @@ public class TerrainChunk : MonoBehaviour {
   public Vector3Int gridSize { get { return m_gridSize; } }
   private Vector3Int m_gridSize;
 
-  public Vector3 inverseSize { get { return m_inverseSize; } }
-  private Vector3 m_inverseSize;
-
   public Vector3 position { get { return m_position; } }
   private Vector3 m_position;
 
@@ -168,7 +165,6 @@ public class TerrainChunk : MonoBehaviour {
 
   public void UpdateCachedFields() {
     m_gridSize = new Vector3Int(m_resolution.x + 1, m_resolution.y + 1, m_resolution.z + 1);
-    m_inverseSize = new Vector3(1f / m_size.x, 1f / m_size.y, 1f / m_size.z);
     m_position = transform.position;
     m_noisePosition = m_position + noiseOffset;
     m_bounds = new Bounds(m_position + m_size / 2f, m_size);
@@ -195,7 +191,8 @@ public class TerrainChunk : MonoBehaviour {
     // Create the delegates for sampling the noise
     CubeGridSamplerFunc samplerFunc;
     if (terrainShape != null) {
-      samplerFunc = terrainShape.GetSampler(this);
+      FastNoiseChunk chunk = new FastNoiseChunk(this);
+      samplerFunc = terrainShape.GetSampler(chunk);
     } else {
       throw new Exception("No sampler found");
     }

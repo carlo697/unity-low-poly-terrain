@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Terrain/Shape", order = 0)]
-public class TerrainShape : ScriptableObject, ISamplerFactory {
+public class TerrainShape : ScriptableObject {
   [Header("Size")]
   public Vector2 mapSize = Vector3.one * 16000f;
 
@@ -113,9 +113,7 @@ public class TerrainShape : ScriptableObject, ISamplerFactory {
     return (value * 2f) - 1f;
   }
 
-  public CubeGridSamplerFunc GetSampler(
-    TerrainChunk chunk
-  ) {
+  public CubeGridSamplerFunc GetSampler(FastNoiseChunk chunk) {
     return (CubeGrid grid) => {
       // Create copies of the curves
       AnimationCurve curve = new AnimationCurve(this.curve.keys);
@@ -129,13 +127,12 @@ public class TerrainShape : ScriptableObject, ISamplerFactory {
         || debugMode == DebugMode.OceanAndLandGradient
         || debugMode == DebugMode.LandGradientSteepness
       ) {
-        debug2dPixels = new float[chunk.gridSize.x * chunk.gridSize.z];
+        debug2dPixels = new float[chunk.resolution.x * chunk.resolution.z];
       }
 
       // Generate the base terrain noise
-      FastNoiseChunk noiseChunk = new FastNoiseChunk(chunk);
       TerrainNoiseGenerator baseTerrainGenerator = baseNoise.GetGenerator();
-      float[] baseTerrainPixels = baseTerrainGenerator.GenerateGrid3d(noiseChunk, noiseScale, terrainSeed);
+      float[] baseTerrainPixels = baseTerrainGenerator.GenerateGrid3d(chunk, noiseScale, terrainSeed);
 
       // Generate the falloff map and the gradient maps
       float[] falloffPixels = null;
@@ -145,7 +142,7 @@ public class TerrainShape : ScriptableObject, ISamplerFactory {
       if (useFalloff) {
         falloffPixels = falloffMask.GenerateNoise(chunk, noiseScale, terrainSeed);
         landGradientSteepnessPixels =
-          landGradientSteepness.GetGenerator().GenerateGrid2d(noiseChunk, noiseScale, terrainSeed);
+          landGradientSteepness.GetGenerator().GenerateGrid2d(chunk, noiseScale, terrainSeed);
 
         landGradientPixels = new float[falloffPixels.Length];
         oceanGradientPixels = new float[falloffPixels.Length];
@@ -179,11 +176,11 @@ public class TerrainShape : ScriptableObject, ISamplerFactory {
       // Generate the noises for plateous
       float relativeMaximunPlateauHeight = (1f / chunk.size.y) * absoluteMaximunPlateauHeight;
       TerrainNoiseGenerator plateauMaskGenerator = plateauMask.GetGenerator();
-      float[] plateauMaskPixels = plateauMaskGenerator.GenerateGrid2d(noiseChunk, noiseScale, terrainSeed);
+      float[] plateauMaskPixels = plateauMaskGenerator.GenerateGrid2d(chunk, noiseScale, terrainSeed);
       TerrainNoiseGenerator plateauGroundGenerator = plateauGround.GetGenerator();
-      float[] plateauGroundPixels = plateauGroundGenerator.GenerateGrid2d(noiseChunk, noiseScale, terrainSeed);
+      float[] plateauGroundPixels = plateauGroundGenerator.GenerateGrid2d(chunk, noiseScale, terrainSeed);
       TerrainNoiseGenerator plateauShapeGenerator = plateauShape.GetGenerator();
-      float[] plateauShapePixels = plateauShapeGenerator.GenerateGrid2d(noiseChunk, noiseScale, terrainSeed);
+      float[] plateauShapePixels = plateauShapeGenerator.GenerateGrid2d(chunk, noiseScale, terrainSeed);
 
       for (int z = 0; z < grid.sizes.z; z++) {
         for (int y = 0; y < grid.sizes.y; y++) {
@@ -204,7 +201,7 @@ public class TerrainShape : ScriptableObject, ISamplerFactory {
 
             // Start sampling
             float output = 0;
-            float heightGradient = point.position.y * chunk.inverseSize.y;
+            float heightGradient = point.position.y / chunk.size.y;
 
             if (debugMode == DebugMode.Noise) {
               point.value = baseTerrainPixels[point.index] * -1f;

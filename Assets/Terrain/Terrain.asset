@@ -199,6 +199,7 @@ MonoBehaviour:
   updateChunksInEditor: 1
   useFalloff: 1
   falloffMask:
+    mapSize: {x: 8000, y: 8000}
     seed: 2
     scale: 5.5
     gain: 0.5
