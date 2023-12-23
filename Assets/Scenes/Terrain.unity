@@ -222,7 +222,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
-  m_size: {x: 128, y: 192, z: 128}
+  m_scale: {x: 128, y: 192, z: 128}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -329,7 +329,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
-  m_size: {x: 256, y: 192, z: 256}
+  m_scale: {x: 256, y: 192, z: 256}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -541,7 +541,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
-  m_size: {x: 256, y: 192, z: 256}
+  m_scale: {x: 256, y: 192, z: 256}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -648,7 +648,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
-  m_size: {x: 128, y: 192, z: 128}
+  m_scale: {x: 128, y: 192, z: 128}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -755,7 +755,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
-  m_size: {x: 64, y: 192, z: 64}
+  m_scale: {x: 64, y: 192, z: 64}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -862,7 +862,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
-  m_size: {x: 32, y: 32, z: 32}
+  m_scale: {x: 32, y: 32, z: 32}
   noiseSize: 1
   noiseOffset: {x: 0, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -1087,7 +1087,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
-  m_size: {x: 64, y: 192, z: 64}
+  m_scale: {x: 64, y: 192, z: 64}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -1360,7 +1360,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
-  m_size: {x: 64, y: 192, z: 64}
+  m_scale: {x: 64, y: 192, z: 64}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -1499,7 +1499,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
-  m_size: {x: 256, y: 192, z: 256}
+  m_scale: {x: 256, y: 192, z: 256}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -1606,7 +1606,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
-  m_size: {x: 32, y: 192, z: 32}
+  m_scale: {x: 32, y: 192, z: 32}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -1713,7 +1713,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
-  m_size: {x: 32, y: 192, z: 32}
+  m_scale: {x: 32, y: 192, z: 32}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -1820,7 +1820,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
-  m_size: {x: 64, y: 192, z: 64}
+  m_scale: {x: 64, y: 192, z: 64}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -2230,7 +2230,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
-  m_size: {x: 32, y: 192, z: 32}
+  m_scale: {x: 32, y: 192, z: 32}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -2337,7 +2337,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
-  m_size: {x: 32, y: 128, z: 32}
+  m_scale: {x: 32, y: 128, z: 32}
   noiseSize: 1
   noiseOffset: {x: -533.1, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -2549,7 +2549,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
-  m_size: {x: 32, y: 192, z: 32}
+  m_scale: {x: 32, y: 192, z: 32}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -2656,7 +2656,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
-  m_size: {x: 64, y: 192, z: 64}
+  m_scale: {x: 64, y: 192, z: 64}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -2763,7 +2763,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
-  m_size: {x: 128, y: 192, z: 128}
+  m_scale: {x: 128, y: 192, z: 128}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -2870,7 +2870,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
-  m_size: {x: 64, y: 192, z: 64}
+  m_scale: {x: 64, y: 192, z: 64}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -3114,7 +3114,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
-  m_size: {x: 128, y: 192, z: 128}
+  m_scale: {x: 128, y: 192, z: 128}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -3254,7 +3254,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
-  m_size: {x: 32, y: 192, z: 32}
+  m_scale: {x: 32, y: 192, z: 32}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -3466,7 +3466,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
-  m_size: {x: 64, y: 192, z: 64}
+  m_scale: {x: 64, y: 192, z: 64}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -3573,7 +3573,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
-  m_size: {x: 128, y: 192, z: 128}
+  m_scale: {x: 128, y: 192, z: 128}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -3763,7 +3763,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
-  m_size: {x: 128, y: 192, z: 128}
+  m_scale: {x: 128, y: 192, z: 128}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -3870,7 +3870,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
-  m_size: {x: 128, y: 192, z: 128}
+  m_scale: {x: 128, y: 192, z: 128}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -4162,7 +4162,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
-  m_size: {x: 32, y: 192, z: 32}
+  m_scale: {x: 32, y: 192, z: 32}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -4300,7 +4300,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
-  m_size: {x: 32, y: 192, z: 32}
+  m_scale: {x: 32, y: 192, z: 32}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -4512,7 +4512,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
-  m_size: {x: 32, y: 128, z: 32}
+  m_scale: {x: 32, y: 128, z: 32}
   noiseSize: 1
   noiseOffset: {x: -533.1, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -4619,7 +4619,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
-  m_size: {x: 128, y: 192, z: 128}
+  m_scale: {x: 128, y: 192, z: 128}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -4726,7 +4726,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
-  m_size: {x: 128, y: 192, z: 128}
+  m_scale: {x: 128, y: 192, z: 128}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -4833,7 +4833,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
-  m_size: {x: 64, y: 192, z: 64}
+  m_scale: {x: 64, y: 192, z: 64}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -5045,7 +5045,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
-  m_size: {x: 128, y: 192, z: 128}
+  m_scale: {x: 128, y: 192, z: 128}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -5152,7 +5152,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
-  m_size: {x: 64, y: 192, z: 64}
+  m_scale: {x: 64, y: 192, z: 64}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -5259,7 +5259,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
-  m_size: {x: 32, y: 128, z: 32}
+  m_scale: {x: 32, y: 128, z: 32}
   noiseSize: 1
   noiseOffset: {x: -533.1, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -5405,7 +5405,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
-  m_size: {x: 256, y: 192, z: 256}
+  m_scale: {x: 256, y: 192, z: 256}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -5512,7 +5512,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
-  m_size: {x: 128, y: 192, z: 128}
+  m_scale: {x: 128, y: 192, z: 128}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -5619,7 +5619,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
-  m_size: {x: 64, y: 192, z: 64}
+  m_scale: {x: 64, y: 192, z: 64}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -5848,7 +5848,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
-  m_size: {x: 32, y: 128, z: 32}
+  m_scale: {x: 32, y: 128, z: 32}
   noiseSize: 1
   noiseOffset: {x: -533.1, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -5955,7 +5955,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
-  m_size: {x: 64, y: 192, z: 64}
+  m_scale: {x: 64, y: 192, z: 64}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -6062,7 +6062,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
-  m_size: {x: 256, y: 192, z: 256}
+  m_scale: {x: 256, y: 192, z: 256}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -6274,7 +6274,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
-  m_size: {x: 64, y: 192, z: 64}
+  m_scale: {x: 64, y: 192, z: 64}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -6634,7 +6634,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
-  m_size: {x: 256, y: 192, z: 256}
+  m_scale: {x: 256, y: 192, z: 256}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -6741,7 +6741,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
-  m_size: {x: 128, y: 192, z: 128}
+  m_scale: {x: 128, y: 192, z: 128}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -6848,7 +6848,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
-  m_size: {x: 128, y: 192, z: 128}
+  m_scale: {x: 128, y: 192, z: 128}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -6955,7 +6955,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
-  m_size: {x: 128, y: 192, z: 128}
+  m_scale: {x: 128, y: 192, z: 128}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -7062,7 +7062,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
-  m_size: {x: 32, y: 128, z: 32}
+  m_scale: {x: 32, y: 128, z: 32}
   noiseSize: 1
   noiseOffset: {x: -533.1, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -7169,7 +7169,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
-  m_size: {x: 256, y: 192, z: 256}
+  m_scale: {x: 256, y: 192, z: 256}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -7276,7 +7276,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
-  m_size: {x: 32, y: 192, z: 32}
+  m_scale: {x: 32, y: 192, z: 32}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -7383,7 +7383,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
-  m_size: {x: 64, y: 192, z: 64}
+  m_scale: {x: 64, y: 192, z: 64}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -7490,7 +7490,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
-  m_size: {x: 32, y: 128, z: 32}
+  m_scale: {x: 32, y: 128, z: 32}
   noiseSize: 1
   noiseOffset: {x: -533.1, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -7756,7 +7756,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   viewDistance: 5000
-  chunkSize: {x: 32, y: 192, z: 32}
+  chunkScale: {x: 32, y: 192, z: 32}
   chunkResolution: {x: 32, y: 128, z: 32}
   chunkMaterial: {fileID: 2100000, guid: 52e67680063911d45af4a52211b84f8f, type: 2}
   debug: 1
@@ -7889,7 +7889,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
-  m_size: {x: 128, y: 192, z: 128}
+  m_scale: {x: 128, y: 192, z: 128}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -8162,7 +8162,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
-  m_size: {x: 256, y: 192, z: 256}
+  m_scale: {x: 256, y: 192, z: 256}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -8376,7 +8376,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
-  m_size: {x: 128, y: 192, z: 128}
+  m_scale: {x: 128, y: 192, z: 128}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -8483,7 +8483,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
-  m_size: {x: 256, y: 192, z: 256}
+  m_scale: {x: 256, y: 192, z: 256}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -8590,7 +8590,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
-  m_size: {x: 32, y: 192, z: 32}
+  m_scale: {x: 32, y: 192, z: 32}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -8697,7 +8697,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
-  m_size: {x: 64, y: 192, z: 64}
+  m_scale: {x: 64, y: 192, z: 64}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -8804,7 +8804,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
-  m_size: {x: 32, y: 192, z: 32}
+  m_scale: {x: 32, y: 192, z: 32}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -8911,7 +8911,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
-  m_size: {x: 128, y: 192, z: 128}
+  m_scale: {x: 128, y: 192, z: 128}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -9199,7 +9199,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
-  m_size: {x: 32, y: 192, z: 32}
+  m_scale: {x: 32, y: 192, z: 32}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -9411,7 +9411,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
-  m_size: {x: 256, y: 192, z: 256}
+  m_scale: {x: 256, y: 192, z: 256}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -9518,7 +9518,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
-  m_size: {x: 256, y: 192, z: 256}
+  m_scale: {x: 256, y: 192, z: 256}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -9625,7 +9625,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
-  m_size: {x: 256, y: 192, z: 256}
+  m_scale: {x: 256, y: 192, z: 256}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -10245,7 +10245,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
-  m_size: {x: 32, y: 128, z: 32}
+  m_scale: {x: 32, y: 128, z: 32}
   noiseSize: 1
   noiseOffset: {x: -533.1, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -10352,7 +10352,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
-  m_size: {x: 32, y: 192, z: 32}
+  m_scale: {x: 32, y: 192, z: 32}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -10459,7 +10459,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
-  m_size: {x: 256, y: 192, z: 256}
+  m_scale: {x: 256, y: 192, z: 256}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -10566,7 +10566,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
-  m_size: {x: 32, y: 192, z: 32}
+  m_scale: {x: 32, y: 192, z: 32}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -10673,7 +10673,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
-  m_size: {x: 64, y: 192, z: 64}
+  m_scale: {x: 64, y: 192, z: 64}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -10780,7 +10780,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
-  m_size: {x: 32, y: 128, z: 32}
+  m_scale: {x: 32, y: 128, z: 32}
   noiseSize: 1
   noiseOffset: {x: -533.1, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -10887,7 +10887,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
-  m_size: {x: 128, y: 192, z: 128}
+  m_scale: {x: 128, y: 192, z: 128}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -11160,7 +11160,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
-  m_size: {x: 64, y: 192, z: 64}
+  m_scale: {x: 64, y: 192, z: 64}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -11302,7 +11302,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
-  m_size: {x: 256, y: 192, z: 256}
+  m_scale: {x: 256, y: 192, z: 256}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -11409,7 +11409,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
-  m_size: {x: 128, y: 192, z: 128}
+  m_scale: {x: 128, y: 192, z: 128}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -11516,7 +11516,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
-  m_size: {x: 32, y: 192, z: 32}
+  m_scale: {x: 32, y: 192, z: 32}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -11623,7 +11623,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
-  m_size: {x: 256, y: 192, z: 256}
+  m_scale: {x: 256, y: 192, z: 256}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -11730,7 +11730,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
-  m_size: {x: 256, y: 192, z: 256}
+  m_scale: {x: 256, y: 192, z: 256}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -11837,7 +11837,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
-  m_size: {x: 64, y: 192, z: 64}
+  m_scale: {x: 64, y: 192, z: 64}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -11944,7 +11944,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
-  m_size: {x: 64, y: 192, z: 64}
+  m_scale: {x: 64, y: 192, z: 64}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -12172,7 +12172,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 32, z: 32}
-  m_size: {x: 128, y: 192, z: 128}
+  m_scale: {x: 128, y: 192, z: 128}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -12279,7 +12279,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
-  m_size: {x: 64, y: 192, z: 64}
+  m_scale: {x: 64, y: 192, z: 64}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -12386,7 +12386,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
-  m_size: {x: 32, y: 192, z: 32}
+  m_scale: {x: 32, y: 192, z: 32}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -12630,7 +12630,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
-  m_size: {x: 256, y: 192, z: 256}
+  m_scale: {x: 256, y: 192, z: 256}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -12816,7 +12816,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
-  m_size: {x: 32, y: 128, z: 32}
+  m_scale: {x: 32, y: 128, z: 32}
   noiseSize: 1
   noiseOffset: {x: -533.1, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -12923,7 +12923,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 64, z: 32}
-  m_size: {x: 64, y: 192, z: 64}
+  m_scale: {x: 64, y: 192, z: 64}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -13030,7 +13030,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
-  m_size: {x: 32, y: 128, z: 32}
+  m_scale: {x: 32, y: 128, z: 32}
   noiseSize: 1
   noiseOffset: {x: -533.1, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -13276,7 +13276,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 128, z: 32}
-  m_size: {x: 32, y: 192, z: 32}
+  m_scale: {x: 32, y: 192, z: 32}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -13522,7 +13522,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
-  m_size: {x: 256, y: 192, z: 256}
+  m_scale: {x: 256, y: 192, z: 256}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -13629,7 +13629,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
-  m_size: {x: 256, y: 192, z: 256}
+  m_scale: {x: 256, y: 192, z: 256}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
@@ -13841,7 +13841,7 @@ MonoBehaviour:
   updateInEditor: 1
   terrainManager: {fileID: 0}
   m_resolution: {x: 32, y: 16, z: 32}
-  m_size: {x: 256, y: 192, z: 256}
+  m_scale: {x: 256, y: 192, z: 256}
   noiseSize: 1
   noiseOffset: {x: -1102, y: 0, z: 0}
   terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}

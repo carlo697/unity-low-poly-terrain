@@ -40,8 +40,8 @@ public class FalloffNoiseGenerator {
       for (int _x = 0; _x < chunk.resolution.x; _x++) {
         // Transform the coordinates
         int _index2D = _y * chunk.resolution.x + _x;
-        float localX = ((float)_x / chunk.resolution.x) * chunk.size.x;
-        float localY = ((float)_y / chunk.resolution.z) * chunk.size.z;
+        float localX = ((float)_x / chunk.resolution.x) * chunk.scale.x;
+        float localY = ((float)_y / chunk.resolution.z) * chunk.scale.z;
 
         // Clamped coordinates for creating the falloff map
         float posX = ((chunk.position.x + localX) / mapSize.x) * 0.5f;

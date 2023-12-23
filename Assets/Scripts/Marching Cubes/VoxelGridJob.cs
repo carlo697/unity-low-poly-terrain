@@ -3,25 +3,25 @@ using Unity.Jobs;
 using Unity.Collections;
 using System.Runtime.InteropServices;
 
-public struct CubeGridJob : IJob {
+public struct VoxelGridJob : IJob {
   private NativeList<Vector3> vertices;
   private NativeList<int> triangles;
   private NativeList<Vector3> uvs;
   private NativeList<Color> colors;
-  private NativeList<CubeGridPoint> points;
+  private NativeList<VoxelPoint> points;
   private GCHandle samplerHandle;
-  private Vector3 size;
+  private Vector3 scale;
   private Vector3Int resolution;
   private float threshold;
   private bool debug;
 
-  public CubeGridJob(
+  public VoxelGridJob(
     NativeList<Vector3> vertices,
     NativeList<int> triangles,
     NativeList<Vector3> uvs,
     NativeList<Color> colors,
-    NativeList<CubeGridPoint> points,
-    Vector3 size,
+    NativeList<VoxelPoint> points,
+    Vector3 scale,
     Vector3Int resolution,
     GCHandle samplerHandle,
     float threshold = 0f,
@@ -33,17 +33,17 @@ public struct CubeGridJob : IJob {
     this.colors = colors;
     this.points = points;
     this.samplerHandle = samplerHandle;
-    this.size = size;
+    this.scale = scale;
     this.resolution = resolution;
     this.threshold = threshold;
     this.debug = debug;
   }
 
   public void Execute() {
-    var samplerFunc = (CubeGridSamplerFunc)samplerHandle.Target;
+    var samplerFunc = (VoxelGridSamplerFunc)samplerHandle.Target;
 
-    CubeGrid grid = new CubeGrid(
-      size,
+    VoxelGrid grid = new VoxelGrid(
+      scale,
       resolution,
       threshold
     );
@@ -57,8 +57,8 @@ public struct CubeGridJob : IJob {
       debug
     );
 
-    for (int i = 0; i < grid.gridPoints.Length; i++) {
-      this.points.Add(grid.gridPoints[i]);
+    for (int i = 0; i < grid.points.Length; i++) {
+      this.points.Add(grid.points[i]);
     }
   }
 }

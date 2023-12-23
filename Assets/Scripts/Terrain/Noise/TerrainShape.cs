@@ -105,8 +105,8 @@ public class TerrainShape : ScriptableObject {
     Noise,
   }
 
-  public CubeGridSamplerFunc GetSampler(FastNoiseChunk chunk) {
-    return (CubeGrid grid) => {
+  public VoxelGridSamplerFunc GetSampler(FastNoiseChunk chunk) {
+    return (VoxelGrid grid) => {
       // Create copies of the curves
       AnimationCurve curve = new AnimationCurve(this.curve.keys);
       AnimationCurve normalizerCurve = new AnimationCurve(this.normalizerCurve.keys);
@@ -166,7 +166,7 @@ public class TerrainShape : ScriptableObject {
       }
 
       // Generate the noises for plateous
-      float relativeMaximunPlateauHeight = (1f / chunk.size.y) * absoluteMaximunPlateauHeight;
+      float relativeMaximunPlateauHeight = (1f / chunk.scale.y) * absoluteMaximunPlateauHeight;
       TerrainNoiseGenerator plateauMaskGenerator = plateauMask.GetGenerator();
       float[] plateauMaskPixels = plateauMaskGenerator.GenerateGrid2d(chunk, noiseScale, terrainSeed);
       TerrainNoiseGenerator plateauGroundGenerator = plateauGround.GetGenerator();
@@ -174,30 +174,30 @@ public class TerrainShape : ScriptableObject {
       TerrainNoiseGenerator plateauShapeGenerator = plateauShape.GetGenerator();
       float[] plateauShapePixels = plateauShapeGenerator.GenerateGrid2d(chunk, noiseScale, terrainSeed);
 
-      for (int z = 0; z < grid.sizes.z; z++) {
-        for (int y = 0; y < grid.sizes.y; y++) {
-          for (int x = 0; x < grid.sizes.x; x++) {
+      for (int z = 0; z < grid.size.z; z++) {
+        for (int y = 0; y < grid.size.y; y++) {
+          for (int x = 0; x < grid.size.x; x++) {
             // Get 1D index from the coords
             int index = grid.GetIndexFromCoords(x, y, z);
 
             // Get the position of the point
             Vector3 pointPosition = grid.GetPointPosition(x, y, z);
 
-            CubeGridPoint point = new CubeGridPoint {
+            VoxelPoint point = new VoxelPoint {
               index = index,
               position = pointPosition
             };
 
             // Coords for 2d maps
-            int index2D = z * grid.gridSize.x + x;
+            int index2D = z * grid.size.x + x;
 
             // Start sampling
             float output = 0;
-            float heightGradient = point.position.y / chunk.size.y;
+            float heightGradient = point.position.y / chunk.scale.y;
 
             if (debugMode == DebugMode.Noise) {
               point.value = baseTerrainPixels[point.index] * -1f;
-              grid.gridPoints[index] = point;
+              grid.points[index] = point;
               continue;
             }
 
@@ -266,19 +266,19 @@ public class TerrainShape : ScriptableObject {
 
             // Set the density and save the point
             point.value = output;
-            grid.gridPoints[index] = point;
+            grid.points[index] = point;
           }
         }
       }
 
       // Initialize colors
       Color black = Color.black;
-      for (int z = 0; z < grid.gridSize.z; z++) {
-        for (int y = 0; y < grid.gridSize.y; y++) {
-          for (int x = 0; x < grid.gridSize.x; x++) {
+      for (int z = 0; z < grid.size.z; z++) {
+        for (int y = 0; y < grid.size.y; y++) {
+          for (int x = 0; x < grid.size.x; x++) {
             int index = grid.GetIndexFromCoords(x, y, z);
-            int index2D = z * grid.gridSize.x + x;
-            ref CubeGridPoint point = ref grid.gridPoints[index];
+            int index2D = z * grid.size.x + x;
+            ref VoxelPoint point = ref grid.points[index];
             point.roughness = 0.1f;
 
             // Approximate normals
@@ -312,7 +312,7 @@ public class TerrainShape : ScriptableObject {
             } else if (debugMode == DebugMode.Noise) {
               point.color = Color.white * 0.5f;
             } else {
-              float normalizedHeight = point.position.y / chunk.size.y;
+              float normalizedHeight = point.position.y / chunk.scale.y;
 
               if (normal.y <= 0.85f) {
                 // Rock

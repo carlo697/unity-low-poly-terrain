@@ -1,41 +1,39 @@
 using UnityEngine;
-using System;
 using Unity.Collections;
+using System;
 using System.Runtime.CompilerServices;
 
-public delegate void CubeGridSamplerFunc(CubeGrid grid);
+public delegate void VoxelGridSamplerFunc(VoxelGrid grid);
 
-public class CubeGrid {
-  public Vector3 size;
+public class VoxelGrid {
+  public Vector3 scale;
   public Vector3Int resolution;
   public float threshold;
 
-  public Vector3Int gridSize { get { return m_sizes; } }
-  public int gridPointCount { get { return m_pointCount; } }
-  public Vector3 resolutionSizeRatio { get { return m_resolutionSizeRatio; } }
-  public CubeGridPoint[] gridPoints {
+  public Vector3Int size { get { return m_size; } }
+  private Vector3Int m_size;
+
+  public int totalPointCount { get { return m_totalPointCount; } }
+  private int m_totalPointCount;
+
+  public VoxelPoint[] points {
     get {
       return m_points;
     }
     set {
-      if (value.Length != m_pointCount) {
+      if (value.Length != m_totalPointCount) {
         throw new Exception("The new array don't have the correct amount of points");
       }
 
       m_points = value;
     }
   }
+  private VoxelPoint[] m_points;
 
-  public Vector3Int sizes { get { return m_sizes; } }
-  private Vector3Int m_sizes;
+  private Vector3 m_resolutionScaleRatio;
+  private static readonly Vector3[] roughnessVectors;
 
-  private int m_pointCount;
-  private Vector3 m_resolutionSizeRatio;
-  private CubeGridPoint[] m_points;
-
-  public static readonly Vector3[] roughnessVectors;
-
-  static CubeGrid() {
+  static VoxelGrid() {
     System.Random random = new System.Random(7091999);
 
     roughnessVectors = new Vector3[1000];
@@ -48,40 +46,40 @@ public class CubeGrid {
     }
   }
 
-  public CubeGrid(
-    Vector3 size,
+  public VoxelGrid(
+    Vector3 scale,
     Vector3Int resolution,
     float threshold = 0f
   ) {
-    this.size = size;
+    this.scale = scale;
     this.resolution = resolution;
     this.threshold = threshold;
 
     // Calculations needed to create the grid array
-    m_sizes = new Vector3Int(resolution.x + 1, resolution.y + 1, resolution.z + 1);
-    m_pointCount = m_sizes.x * m_sizes.y * m_sizes.z;
+    m_size = new Vector3Int(resolution.x + 1, resolution.y + 1, resolution.z + 1);
+    m_totalPointCount = m_size.x * m_size.y * m_size.z;
 
     // This value can be useful when the size of the chunk is different from the resolution 
-    m_resolutionSizeRatio = new Vector3(
-      resolution.x / size.x,
-      resolution.y / size.y,
-      resolution.z / size.z
+    m_resolutionScaleRatio = new Vector3(
+      resolution.x / scale.x,
+      resolution.y / scale.y,
+      resolution.z / scale.z
     );
   }
 
   [MethodImpl(MethodImplOptions.AggressiveInlining)]
-  public CubeGridPoint GetPoint(int index) {
+  public VoxelPoint GetPoint(int index) {
     return m_points[index];
   }
 
   [MethodImpl(MethodImplOptions.AggressiveInlining)]
-  public CubeGridPoint GetPoint(int x, int y, int z) {
+  public VoxelPoint GetPoint(int x, int y, int z) {
     int index = GetIndexFromCoords(x, y, z);
     return m_points[index];
   }
 
   [MethodImpl(MethodImplOptions.AggressiveInlining)]
-  public ref CubeGridPoint GetPointRef(int x, int y, int z) {
+  public ref VoxelPoint GetPointRef(int x, int y, int z) {
     int index = GetIndexFromCoords(x, y, z);
     return ref m_points[index];
   }
@@ -89,23 +87,23 @@ public class CubeGrid {
   [MethodImpl(MethodImplOptions.AggressiveInlining)]
   public Vector3 GetPointPosition(int x, int y, int z) {
     return new Vector3(
-      ((float)x / ((float)resolution.x)) * size.x,
-      ((float)y / ((float)resolution.y)) * size.y,
-      ((float)z / ((float)resolution.z)) * size.z
+      ((float)x / ((float)resolution.x)) * scale.x,
+      ((float)y / ((float)resolution.y)) * scale.y,
+      ((float)z / ((float)resolution.z)) * scale.z
     );
   }
 
   [MethodImpl(MethodImplOptions.AggressiveInlining)]
   public Vector3Int GetCoordsFromIndex(int index) {
-    int z = index % m_sizes.x;
-    int y = (index / m_sizes.x) % m_sizes.y;
-    int x = index / (m_sizes.y * m_sizes.x);
+    int z = index % m_size.x;
+    int y = (index / m_size.x) % m_size.y;
+    int x = index / (m_size.y * m_size.x);
     return new Vector3Int(x, y, z);
   }
 
   [MethodImpl(MethodImplOptions.AggressiveInlining)]
   public int GetIndexFromCoords(int x, int y, int z) {
-    return z + y * (m_sizes.z) + x * (m_sizes.z) * (m_sizes.y);
+    return z + y * (m_size.z) + x * (m_size.z) * (m_size.y);
   }
 
   public Vector3 GetPointNormalApproximation(int x, int y, int z) {
@@ -118,36 +116,36 @@ public class CubeGrid {
 
     // Left
     if (x > 0)
-      sumX += -1f * (value - GetPointRef(x - 1, y, z).value) * resolutionSizeRatio.x;
+      sumX += -1f * (value - GetPointRef(x - 1, y, z).value) * m_resolutionScaleRatio.x;
 
     // Right
-    if (x < gridSize.x - 1)
-      sumX += (value - GetPointRef(x + 1, y, z).value) * resolutionSizeRatio.x;
+    if (x < size.x - 1)
+      sumX += (value - GetPointRef(x + 1, y, z).value) * m_resolutionScaleRatio.x;
 
     // Down
     if (y > 0)
-      sumY += -1f * (value - GetPointRef(x, y - 1, z).value) * resolutionSizeRatio.y;
+      sumY += -1f * (value - GetPointRef(x, y - 1, z).value) * m_resolutionScaleRatio.y;
 
     // Up
-    if (y < gridSize.y - 1)
-      sumY += (value - GetPointRef(x, y + 1, z).value) * resolutionSizeRatio.y;
+    if (y < size.y - 1)
+      sumY += (value - GetPointRef(x, y + 1, z).value) * m_resolutionScaleRatio.y;
 
     // Back
     if (z > 0)
-      sumZ = -1f * (value - GetPointRef(x, y, z - 1).value) * resolutionSizeRatio.z;
+      sumZ = -1f * (value - GetPointRef(x, y, z - 1).value) * m_resolutionScaleRatio.z;
 
     // Forward
-    if (z < gridSize.z - 1)
-      sumZ += (value - GetPointRef(x, y, z + 1).value) * resolutionSizeRatio.z;
+    if (z < size.z - 1)
+      sumZ += (value - GetPointRef(x, y, z + 1).value) * m_resolutionScaleRatio.z;
 
     return new Vector3(-sumX, -sumY, -sumZ).normalized;
   }
 
   public void InitializeGrid(
-    CubeGridSamplerFunc samplerFunc = null
+    VoxelGridSamplerFunc samplerFunc = null
   ) {
     // Initialize the grid with points (all of them will start with a value = 0)
-    m_points = new CubeGridPoint[m_pointCount];
+    m_points = new VoxelPoint[m_totalPointCount];
     samplerFunc(this);
   }
 
@@ -156,9 +154,9 @@ public class CubeGrid {
     NativeList<Vector3> uvs,
     NativeList<Color> colors
   ) {
-    for (int z = 0; z < m_sizes.z - 1; z++) {
-      for (int y = 0; y < m_sizes.y - 1; y++) {
-        for (int x = 0; x < m_sizes.x - 1; x++) {
+    for (int z = 0; z < m_size.z - 1; z++) {
+      for (int y = 0; y < m_size.y - 1; y++) {
+        for (int x = 0; x < m_size.x - 1; x++) {
           // Find the case index
           int caseIndex = 0;
           for (int i = 0; i < 8; i++) {
@@ -193,16 +191,16 @@ public class CubeGrid {
             Vector3 positionB = m_points[indexB].position;
 
             // Apply a random position to get a rougher mesh
-            if (coordsA.x > 0 && coordsA.x < m_sizes.x - 1
-              && coordsA.y > 0 && coordsA.y < m_sizes.y - 1
-              && coordsA.z > 0 && coordsA.z < m_sizes.z - 1
+            if (coordsA.x > 0 && coordsA.x < m_size.x - 1
+              && coordsA.y > 0 && coordsA.y < m_size.y - 1
+              && coordsA.z > 0 && coordsA.z < m_size.z - 1
             ) {
               positionA +=
                 roughnessVectors[indexA % roughnessVectors.Length] * m_points[indexA].roughness;
             }
-            if (coordsB.x > 0 && coordsB.x < m_sizes.x - 1
-              && coordsB.y > 0 && coordsB.y < m_sizes.y - 1
-              && coordsB.z > 0 && coordsB.z < m_sizes.z - 1
+            if (coordsB.x > 0 && coordsB.x < m_size.x - 1
+              && coordsB.y > 0 && coordsB.y < m_size.y - 1
+              && coordsB.z > 0 && coordsB.z < m_size.z - 1
             ) {
               positionB +=
                 roughnessVectors[indexB % roughnessVectors.Length] * m_points[indexB].roughness;
@@ -238,7 +236,7 @@ public class CubeGrid {
     ref NativeList<int> outputTriangles,
     ref NativeList<Vector3> outputUVs,
     ref NativeList<Color> outputColors,
-    CubeGridSamplerFunc samplerFunc = null,
+    VoxelGridSamplerFunc samplerFunc = null,
     bool debug = false
   ) {
     var stepTimer = new System.Diagnostics.Stopwatch();

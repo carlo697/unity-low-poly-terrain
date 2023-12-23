@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public struct CubeGridPoint {
+public struct VoxelPoint {
   public int index;
   public Vector3 position;
   public float value;

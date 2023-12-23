@@ -4,45 +4,45 @@ using UnityEngine;
 public struct FastNoiseChunk {
   public Vector3Int resolution;
   public Vector3 position;
-  public Vector3 size;
-  public float scale;
+  public Vector3 scale;
+  public float noiseScale;
 
   public FastNoiseChunk(
     Vector3Int resolution,
     Vector3 position,
-    Vector3 size,
-    float scale = 1f
+    Vector3 scale,
+    float noiseScale = 1f
   ) {
     this.resolution = resolution;
     this.position = position;
-    this.size = size;
     this.scale = scale;
+    this.noiseScale = noiseScale;
   }
 
   public FastNoiseChunk(TerrainChunk chunk) {
     this.resolution = chunk.gridSize;
     this.position = chunk.noisePosition;
-    this.size = chunk.size;
-    this.scale = chunk.noiseSize;
+    this.scale = chunk.scale;
+    this.noiseScale = chunk.noiseSize;
   }
 
   public float[] GenerateGrid(
     bool is3D,
     FastNoise noise,
     int seed,
-    float scale = 1f
+    float noiseScale = 1f
   ) {
     // Variables needed to sample the point in world space
-    float totalNoiseScale = this.scale * scale;
+    float totalNoiseScale = this.noiseScale * noiseScale;
     Vector3 noiseFrequency = new Vector3(
-      (32f / totalNoiseScale) * (1f / (resolution.x - 1)) * (size.x / 32f),
-      (32f / totalNoiseScale) * (1f / (resolution.y - 1)) * (size.y / 32f),
-      (32f / totalNoiseScale) * (1f / (resolution.z - 1)) * (size.z / 32f)
+      (32f / totalNoiseScale) * (1f / (resolution.x - 1)) * (scale.x / 32f),
+      (32f / totalNoiseScale) * (1f / (resolution.y - 1)) * (scale.y / 32f),
+      (32f / totalNoiseScale) * (1f / (resolution.z - 1)) * (scale.z / 32f)
     );
     Vector3 offset = new Vector3(
-      (position.x / size.x) * noiseFrequency.x * (resolution.x - 1),
-      (position.y / size.y) * noiseFrequency.y * (resolution.y - 1),
-      (position.z / size.z) * noiseFrequency.z * (resolution.z - 1)
+      (position.x / scale.x) * noiseFrequency.x * (resolution.x - 1),
+      (position.y / scale.y) * noiseFrequency.y * (resolution.y - 1),
+      (position.z / scale.z) * noiseFrequency.z * (resolution.z - 1)
     );
 
     // Apply offset to noise

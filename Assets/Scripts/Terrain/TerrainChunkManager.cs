@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 using System.Collections.Generic;
 
 struct DistanceToCameraComparer : IComparer<Bounds> {
@@ -34,13 +35,14 @@ public class TerrainChunkManager : MonoBehaviour {
   public Camera usedCamera { get { return Camera.main; } }
 
   public float viewDistance = 100f;
-  public Vector3 chunkSize = new Vector3(32f, 128f, 32f);
+  [FormerlySerializedAs("chunkSize")]
+  public Vector3 chunkScale = new Vector3(32f, 128f, 32f);
   public Vector3Int chunkResolution = new Vector3Int(32, 128, 32);
   public Material chunkMaterial;
   public bool debug;
   public bool debugConsecutiveChunksGenerations;
 
-  public float seaWorldLevel { get { return m_terrainShape.seaLevel * chunkSize.y; } }
+  public float seaWorldLevel { get { return m_terrainShape.seaLevel * chunkScale.y; } }
 
   private List<QuadtreeChunk> m_quadtreeChunks = new List<QuadtreeChunk>();
   private List<TerrainChunk> m_spawnedChunks = new List<TerrainChunk>();
@@ -103,14 +105,14 @@ public class TerrainChunkManager : MonoBehaviour {
     gameObject.AddComponent<MeshCollider>();
 
     // Calculate the resolution level
-    float resolutionLevel = chunkSize.x / bounds.size.x;
+    float resolutionLevel = chunkScale.x / bounds.size.x;
 
     // Set variables
     chunk.terrainManager = this;
     chunk.drawGizmos = false;
     chunk.debug = debug;
     chunk.terrainShape = m_terrainShape;
-    chunk.size = bounds.size;
+    chunk.scale = bounds.size;
     chunk.resolution = new Vector3Int(
       chunkResolution.x,
       Mathf.CeilToInt(chunkResolution.y * resolutionLevel),
@@ -132,10 +134,10 @@ public class TerrainChunkManager : MonoBehaviour {
 
   private void UpdateVisibleChunks(Camera camera, bool drawGizmos = false) {
     Vector3 cameraPosition = FlatY(camera.transform.position);
-    Vector3 quadChunkOffset = new Vector3(0f, -seaWorldLevel + chunkSize.y / 2f, 0f);
+    Vector3 quadChunkOffset = new Vector3(0f, -seaWorldLevel + chunkScale.y / 2f, 0f);
 
     m_levelDistances = QuadtreeChunk.CalculateLevelDistances(
-      chunkSize.x,
+      chunkScale.x,
       levelsOfDetail,
       detailDistanceBase,
       detailDistanceMultiplier,
@@ -145,7 +147,7 @@ public class TerrainChunkManager : MonoBehaviour {
 
     m_quadtreeChunks = QuadtreeChunk.CreateQuadtree(
       cameraPosition,
-      chunkSize,
+      chunkScale,
       quadChunkOffset,
       m_levelDistances,
       viewDistance,

@@ -29,16 +29,16 @@ public class TerrainChunk : MonoBehaviour {
   }
   [SerializeField] private Vector3Int m_resolution = Vector3Int.one * 10;
 
-  public Vector3 size {
+  public Vector3 scale {
     get {
-      return m_size;
+      return m_scale;
     }
     set {
-      m_size = value;
+      m_scale = value;
       UpdateCachedFields();
     }
   }
-  [SerializeField] private Vector3 m_size = Vector3.one * 10;
+  [SerializeField] private Vector3 m_scale = Vector3.one * 10;
   public float noiseSize = 1f;
   public Vector3 noiseOffset = Vector3.zero;
   public TerrainShape terrainShape;
@@ -61,7 +61,7 @@ public class TerrainChunk : MonoBehaviour {
       int levelOfDetail = 1;
       if (terrainManager) {
         levelOfDetail = 1 + (int)Mathf.Log(
-          m_size.x / terrainManager.chunkSize.x,
+          m_scale.x / terrainManager.chunkScale.x,
           2
         );
       }
@@ -108,7 +108,7 @@ public class TerrainChunk : MonoBehaviour {
   private NativeList<int> m_jobTriangles;
   private NativeList<Vector3> m_jobUVs;
   private NativeList<Color> m_jobColors;
-  private NativeList<CubeGridPoint> m_jobPoints;
+  private NativeList<VoxelPoint> m_jobPoints;
   private JobHandle? m_terrainJobHandle;
   #endregion
 
@@ -167,7 +167,7 @@ public class TerrainChunk : MonoBehaviour {
     m_gridSize = new Vector3Int(m_resolution.x + 1, m_resolution.y + 1, m_resolution.z + 1);
     m_position = transform.position;
     m_noisePosition = m_position + noiseOffset;
-    m_bounds = new Bounds(m_position + m_size / 2f, m_size);
+    m_bounds = new Bounds(m_position + m_scale / 2f, m_scale);
   }
 
   [ContextMenu("InstantRegenerate")]
@@ -189,7 +189,7 @@ public class TerrainChunk : MonoBehaviour {
     }
 
     // Create the delegates for sampling the noise
-    CubeGridSamplerFunc samplerFunc;
+    VoxelGridSamplerFunc samplerFunc;
     if (terrainShape != null) {
       FastNoiseChunk chunk = new FastNoiseChunk(this);
       samplerFunc = terrainShape.GetSampler(chunk);
@@ -206,16 +206,16 @@ public class TerrainChunk : MonoBehaviour {
     m_jobUVs = new NativeList<Vector3>(Allocator.Persistent);
     m_jobColors = new NativeList<Color>(Allocator.Persistent);
     int pointCount = (resolution.x + 1) * (resolution.y + 1) * (resolution.z + 1);
-    m_jobPoints = new NativeList<CubeGridPoint>(pointCount, Allocator.Persistent);
+    m_jobPoints = new NativeList<VoxelPoint>(pointCount, Allocator.Persistent);
 
     // Create job
-    CubeGridJob job = new CubeGridJob(
+    VoxelGridJob job = new VoxelGridJob(
       m_jobVertices,
       m_jobTriangles,
       m_jobUVs,
       m_jobColors,
       m_jobPoints,
-      size,
+      scale,
       resolution,
       samplerHandle,
       threshold,
@@ -297,7 +297,7 @@ public class TerrainChunk : MonoBehaviour {
           // m_meshColors = m_jobColors.ToArray();
 
           // Create a mesh
-          m_mesh = CubeGrid.CreateMesh(
+          m_mesh = VoxelGrid.CreateMesh(
             m_jobVertices,
             m_jobTriangles,
             m_jobUVs,

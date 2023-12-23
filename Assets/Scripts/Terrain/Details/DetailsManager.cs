@@ -159,23 +159,23 @@ public class DetailsManager : MonoBehaviour {
     Vector3 camera3dPosition = m_terrainManager.usedCamera.transform.position;
     Vector2 camera2dPosition = new Vector2(camera3dPosition.x, camera3dPosition.z);
 
-    Vector3 chunk3dSize = m_terrainManager.chunkSize;
-    Vector3 chunk3dExtents = chunk3dSize / 2f;
+    Vector3 chunk3dScale = m_terrainManager.chunkScale;
+    Vector3 chunk3dExtents = chunk3dScale / 2f;
 
-    Vector2 chunk2dSize = new Vector2(
-      m_terrainManager.chunkSize.x,
-      m_terrainManager.chunkSize.z
+    Vector2 chunk2dScale = new Vector2(
+      m_terrainManager.chunkScale.x,
+      m_terrainManager.chunkScale.z
     );
-    Vector2 chunk2dExtents = chunk2dSize / 2f;
+    Vector2 chunk2dExtents = chunk2dScale / 2f;
 
     // Get the area the player is standing right now
     Vector2Int currentChunk2dCoords = new Vector2Int(
-      Mathf.FloorToInt(camera2dPosition.x / chunk2dSize.x),
-      Mathf.FloorToInt(camera2dPosition.y / chunk2dSize.y)
+      Mathf.FloorToInt(camera2dPosition.x / chunk2dScale.x),
+      Mathf.FloorToInt(camera2dPosition.y / chunk2dScale.y)
     );
 
-    int visibleX = Mathf.CeilToInt(viewDistance / chunk2dSize.x);
-    int visibleY = Mathf.CeilToInt(viewDistance / chunk2dSize.y);
+    int visibleX = Mathf.CeilToInt(viewDistance / chunk2dScale.x);
+    int visibleY = Mathf.CeilToInt(viewDistance / chunk2dScale.y);
 
     // Delete last chunks
     m_visibleChunkBounds.Clear();
@@ -193,9 +193,9 @@ public class DetailsManager : MonoBehaviour {
         x++
       ) {
         Vector2Int coords2d = new Vector2Int(x, y);
-        Vector2 position2d = Vector2.Scale(coords2d, chunk2dSize) + chunk2dExtents;
+        Vector2 position2d = Vector2.Scale(coords2d, chunk2dScale) + chunk2dExtents;
         Vector3 position3d = new Vector3(position2d.x, m_terrainManager.seaWorldLevel, position2d.y);
-        Bounds bounds = new Bounds(position3d, chunk3dSize);
+        Bounds bounds = new Bounds(position3d, chunk3dScale);
 
         float distanceToChunk = Mathf.Sqrt(bounds.SqrDistance(camera3dPosition));
         if (distanceToChunk > viewDistance) {
@@ -277,7 +277,7 @@ public class DetailsManager : MonoBehaviour {
     if (terrainChunk) {
       // Calculate a level of detail integer between 1 and the maximun level
       int integer = 1 + (int)Mathf.Log(
-        terrainChunk.size.x / m_terrainManager.chunkSize.x,
+        terrainChunk.scale.x / m_terrainManager.chunkScale.x,
         2
       );
       // Calculate the a normalized level of detail (between 0 and 1)
