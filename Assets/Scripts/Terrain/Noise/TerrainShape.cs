@@ -278,7 +278,6 @@ public class TerrainShape : ScriptableObject {
             int index = grid.GetIndexFromCoords(x, y, z);
             int index2D = z * grid.size.x + x;
             ref VoxelPoint point = ref grid.points[index];
-            point.roughness = 0.1f;
 
             // Approximate normals
             Vector3 normal = grid.GetPointNormalApproximation(x, y, z);
@@ -316,28 +315,29 @@ public class TerrainShape : ScriptableObject {
               if (normal.y <= 0.85f) {
                 // Rock
                 point.color = rockColor;
-                point.roughness = 0.5f;
+                point.roughness = 0.35f;
                 point.material = rockId;
               } else if (normalizedHeight >= snowHeight) {
                 // Snow
                 point.color = snowColor;
-                point.roughness = 0.05f;
+                point.roughness = 0.15f;
                 point.material = snowId;
               } else if (normalizedHeight <= seaLevel) {
                 // Underwater Beach Sand
                 float t = Mathf.InverseLerp(0f, sandHeight, normalizedHeight);
                 point.color = Color.Lerp(darkSandColor, wetSandColor, t);
-                point.roughness = 0.05f;
+                point.roughness = 0.15f;
                 point.material = sandId;
               } else if (normalizedHeight <= sandHeight) {
                 // Beach Sand
                 point.color = sandColor;
-                point.roughness = 0.1f;
+                point.roughness = 0.25f;
                 point.material = sandId;
               } else {
                 // Grass
                 float t = Mathf.InverseLerp(sandHeight, snowHeight, normalizedHeight);
                 point.color = Color.Lerp(grassColor, darkGrassColor, t);
+                point.roughness = 0.15f;
                 point.material = grassId;
               }
             }
