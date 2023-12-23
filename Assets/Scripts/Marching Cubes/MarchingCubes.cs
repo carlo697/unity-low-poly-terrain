@@ -4,21 +4,6 @@ using Unity.Collections;
 public delegate void VoxelGridSamplerFunc(VoxelGrid grid);
 
 public static class MarchingCubes {
-  private static readonly Vector3[] roughnessVectors;
-
-  static MarchingCubes() {
-    System.Random random = new System.Random(7091999);
-
-    roughnessVectors = new Vector3[1000];
-    for (int i = 0; i < roughnessVectors.Length; i++) {
-      roughnessVectors[i] = new Vector3(
-        ((float)random.NextDouble() * 2f - 1f),
-        0f,
-        ((float)random.NextDouble() * 2f - 1f)
-      ).normalized;
-    }
-  }
-
   private static void MarchCubes(
     VoxelGrid grid,
     float threshold,
@@ -67,15 +52,17 @@ public static class MarchingCubes {
               && coordsA.y > 0 && coordsA.y < grid.size.y - 1
               && coordsA.z > 0 && coordsA.z < grid.size.z - 1
             ) {
-              positionA +=
-                roughnessVectors[indexA % roughnessVectors.Length] * grid.points[indexA].roughness;
+              XorshiftStar rngA = new XorshiftStar((ulong)indexA);
+              Vector3 roughnessOffsetA = rngA.NextFlatVector3();
+              positionA += roughnessOffsetA * grid.points[indexA].roughness;
             }
             if (coordsB.x > 0 && coordsB.x < grid.size.x - 1
               && coordsB.y > 0 && coordsB.y < grid.size.y - 1
               && coordsB.z > 0 && coordsB.z < grid.size.z - 1
             ) {
-              positionB +=
-                roughnessVectors[indexB % roughnessVectors.Length] * grid.points[indexB].roughness;
+              XorshiftStar rngB = new XorshiftStar((ulong)indexB);
+              Vector3 roughnessOffsetB = rngB.NextFlatVector3();
+              positionB += roughnessOffsetB * grid.points[indexB].roughness;
             }
 
             // Calculate the difference and interpolate
