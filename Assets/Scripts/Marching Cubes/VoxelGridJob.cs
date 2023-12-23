@@ -48,7 +48,9 @@ public struct VoxelGridJob : IJob {
       threshold
     );
 
-    grid.Generate(
+    MarchingCubes.Generate(
+      grid,
+      threshold,
       ref vertices,
       ref triangles,
       ref uvs,

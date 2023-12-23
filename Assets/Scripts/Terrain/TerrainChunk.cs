@@ -297,7 +297,7 @@ public class TerrainChunk : MonoBehaviour {
           // m_meshColors = m_jobColors.ToArray();
 
           // Create a mesh
-          m_mesh = VoxelGrid.CreateMesh(
+          m_mesh = MarchingCubes.CreateMesh(
             m_jobVertices,
             m_jobTriangles,
             m_jobUVs,
