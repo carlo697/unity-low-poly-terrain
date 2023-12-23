@@ -184,7 +184,6 @@ public class TerrainShape : ScriptableObject {
             Vector3 pointPosition = grid.GetPointPosition(x, y, z);
 
             VoxelPoint point = new VoxelPoint {
-              index = index,
               position = pointPosition
             };
 
@@ -196,13 +195,13 @@ public class TerrainShape : ScriptableObject {
             float heightGradient = point.position.y / chunk.scale.y;
 
             if (debugMode == DebugMode.Noise) {
-              point.value = baseTerrainPixels[point.index] * -1f;
+              point.value = baseTerrainPixels[index] * -1f;
               grid.points[index] = point;
               continue;
             }
 
             // Land output
-            float terrainHeight = TextureUtils.Normalize(baseTerrainPixels[point.index]);
+            float terrainHeight = TextureUtils.Normalize(baseTerrainPixels[index]);
 
             if (usePlateaus) {
               // Overall shape of Plateaus
