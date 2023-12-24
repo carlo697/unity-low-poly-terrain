@@ -209,7 +209,7 @@ public class TerrainChunk : MonoBehaviour {
     m_jobPoints = new NativeList<VoxelPoint>(pointCount, Allocator.Persistent);
 
     // Create job
-    VoxelGridJob job = new VoxelGridJob(
+    MarchingCubesJob job = new MarchingCubesJob(
       m_jobVertices,
       m_jobTriangles,
       m_jobUVs,

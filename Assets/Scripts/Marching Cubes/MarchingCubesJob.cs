@@ -3,7 +3,7 @@ using Unity.Jobs;
 using Unity.Collections;
 using System.Runtime.InteropServices;
 
-public struct VoxelGridJob : IJob {
+public struct MarchingCubesJob : IJob {
   private NativeList<Vector3> vertices;
   private NativeList<int> triangles;
   private NativeList<Vector3> uvs;
@@ -15,7 +15,7 @@ public struct VoxelGridJob : IJob {
   private float threshold;
   private bool debug;
 
-  public VoxelGridJob(
+  public MarchingCubesJob(
     NativeList<Vector3> vertices,
     NativeList<int> triangles,
     NativeList<Vector3> uvs,
