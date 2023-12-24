@@ -4,40 +4,16 @@ using Unity.Collections;
 using System.Runtime.InteropServices;
 
 public struct MarchingCubesJob : IJob {
-  private NativeList<Vector3> vertices;
-  private NativeList<int> triangles;
-  private NativeList<Vector3> uvs;
-  private NativeList<Color> colors;
-  private NativeList<VoxelPoint> points;
-  private GCHandle samplerHandle;
-  private Vector3 scale;
-  private Vector3Int resolution;
-  private float threshold;
-  private bool debug;
-
-  public MarchingCubesJob(
-    NativeList<Vector3> vertices,
-    NativeList<int> triangles,
-    NativeList<Vector3> uvs,
-    NativeList<Color> colors,
-    NativeList<VoxelPoint> points,
-    Vector3 scale,
-    Vector3Int resolution,
-    GCHandle samplerHandle,
-    float threshold = 0f,
-    bool debug = false
-  ) {
-    this.vertices = vertices;
-    this.triangles = triangles;
-    this.uvs = uvs;
-    this.colors = colors;
-    this.points = points;
-    this.samplerHandle = samplerHandle;
-    this.scale = scale;
-    this.resolution = resolution;
-    this.threshold = threshold;
-    this.debug = debug;
-  }
+  public NativeList<Vector3> vertices;
+  public NativeList<int> triangles;
+  public NativeList<Vector3> uvs;
+  public NativeList<Color> colors;
+  public NativeList<VoxelPoint> points;
+  public GCHandle samplerHandle;
+  public Vector3 scale;
+  public Vector3Int resolution;
+  public float threshold;
+  public bool debug;
 
   public void Execute() {
     var samplerFunc = (VoxelGridSamplerFunc)samplerHandle.Target;

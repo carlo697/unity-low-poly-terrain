@@ -209,18 +209,18 @@ public class TerrainChunk : MonoBehaviour {
     m_jobPoints = new NativeList<VoxelPoint>(pointCount, Allocator.Persistent);
 
     // Create job
-    MarchingCubesJob job = new MarchingCubesJob(
-      m_jobVertices,
-      m_jobTriangles,
-      m_jobUVs,
-      m_jobColors,
-      m_jobPoints,
-      scale,
-      resolution,
-      samplerHandle,
-      threshold,
-      debug
-    );
+    MarchingCubesJob job = new MarchingCubesJob {
+      vertices = m_jobVertices,
+      triangles = m_jobTriangles,
+      uvs = m_jobUVs,
+      colors = m_jobColors,
+      points = m_jobPoints,
+      samplerHandle = samplerHandle,
+      scale = scale,
+      resolution = resolution,
+      threshold = threshold,
+      debug = debug
+    };
     m_terrainJobHandle = job.Schedule();
   }
 
