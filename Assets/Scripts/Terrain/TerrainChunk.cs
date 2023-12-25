@@ -302,7 +302,6 @@ public class TerrainChunk : MonoBehaviour {
             m_jobTriangles,
             m_jobUVs,
             m_jobColors,
-            debug,
             meshFilter.sharedMesh
           );
           m_mesh.name = gameObject.name;
@@ -311,12 +310,13 @@ public class TerrainChunk : MonoBehaviour {
           m_meshFilter.sharedMesh = m_mesh;
 
           timer.Stop();
-          if (debug)
+          if (debug) {
             Debug.Log(
               string.Format(
                 "Total to apply mesh: {0} ms", timer.ElapsedMilliseconds
               )
             );
+          }
 
           // If the object has a collider, start baking the mesh, otherwise,
           // finish the generation process

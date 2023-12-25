@@ -2,6 +2,8 @@ using UnityEngine;
 using System;
 using System.Runtime.CompilerServices;
 
+public delegate void VoxelGridSamplerFunc(VoxelGrid grid);
+
 public class VoxelGrid {
   public Vector3 scale;
   public Vector3Int resolution;
@@ -126,6 +128,6 @@ public class VoxelGrid {
 
   public void Initialize(VoxelGridSamplerFunc samplerFunc = null) {
     m_points = new VoxelPoint[m_totalPointCount];
-    samplerFunc(this);
+    samplerFunc?.Invoke(this);
   }
 }
