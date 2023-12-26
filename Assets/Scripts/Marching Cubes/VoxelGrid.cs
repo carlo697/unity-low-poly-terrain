@@ -87,6 +87,11 @@ public class VoxelGrid {
   }
 
   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+  public int GetIndexFromCoords(Vector3Int coords) {
+    return GetIndexFromCoords(coords.x, coords.y, coords.z);
+  }
+
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]
   public int GetIndexFromCoords(int x, int y, int z) {
     return z + y * (m_size.z) + x * (m_size.z) * (m_size.y);
   }

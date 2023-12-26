@@ -2,6 +2,24 @@ using UnityEngine;
 using Unity.Collections;
 
 public static class MarchingCubes {
+  public static int FindCaseIndex(VoxelGrid grid, float threshold, Vector3Int coords) {
+    int caseIndex = 0;
+    for (int i = 0; i < 8; i++) {
+      int sampleIndex = grid.GetIndexFromCoords(
+        coords.x + MarchingCubesConsts.corners[i].x,
+        coords.y + MarchingCubesConsts.corners[i].y,
+        coords.z + MarchingCubesConsts.corners[i].z
+      );
+      float sample = grid.points[sampleIndex].value;
+
+      if (sample > threshold) {
+        caseIndex |= 1 << i;
+      }
+    }
+
+    return caseIndex;
+  }
+
   public static void MarchCubes(
     VoxelGrid grid,
     float threshold,
@@ -13,24 +31,15 @@ public static class MarchingCubes {
     for (int z = 0; z < grid.size.z - 1; z++) {
       for (int y = 0; y < grid.size.y - 1; y++) {
         for (int x = 0; x < grid.size.x - 1; x++) {
-          // Find the case index
-          int caseIndex = 0;
-          for (int i = 0; i < 8; i++) {
-            int sampleIndex = grid.GetIndexFromCoords(
-              x + MarchingCubesConsts.corners[i].x,
-              y + MarchingCubesConsts.corners[i].y,
-              z + MarchingCubesConsts.corners[i].z
-            );
-            float sample = grid.points[sampleIndex].value;
-
-            if (sample > threshold)
-              caseIndex |= 1 << i;
-          }
-
-          if (caseIndex == 0 || caseIndex == 0xFF)
-            continue;
-
           Vector3Int coords = new Vector3Int(x, y, z);
+
+          // Find the case index
+          int caseIndex = FindCaseIndex(grid, threshold, coords);
+
+          // Skip first and last case since they don't have geometry
+          if (caseIndex == 0 || caseIndex == 0xFF) {
+            continue;
+          }
 
           for (int triangle = 0; triangle < 5; triangle++) {
             int nextVertexIndex = vertices.Length;
@@ -45,12 +54,12 @@ public static class MarchingCubes {
               }
 
               Vector3Int coordsA = coords + MarchingCubesConsts.edgeVerticesIndexes[edgeIndex, 0];
-              int indexA = grid.GetIndexFromCoords(coordsA.x, coordsA.y, coordsA.z);
+              int indexA = grid.GetIndexFromCoords(coordsA);
               float sampleA = grid.points[indexA].value;
               Vector3 positionA = grid.points[indexA].position;
 
               Vector3Int coordsB = coords + MarchingCubesConsts.edgeVerticesIndexes[edgeIndex, 1];
-              int indexB = grid.GetIndexFromCoords(coordsB.x, coordsB.y, coordsB.z);
+              int indexB = grid.GetIndexFromCoords(coordsB);
               float sampleB = grid.points[indexB].value;
               Vector3 positionB = grid.points[indexB].position;
 
