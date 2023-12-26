@@ -7755,24 +7755,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08456e3abdb014a459889ce5b01ae6c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  viewDistance: 5000
   chunkScale: {x: 32, y: 192, z: 32}
   chunkResolution: {x: 32, y: 128, z: 32}
   chunkMaterial: {fileID: 2100000, guid: 52e67680063911d45af4a52211b84f8f, type: 2}
-  debug: 1
-  debugConsecutiveChunksGenerations: 0
-  updatePeriod: 0.15
-  generatePeriod: 0.02
-  maxConsecutiveChunks: 8
-  drawGizmos: 0
   m_terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
+  viewDistance: 5000
   distanceShape: 1
   levelsOfDetail: 8
   detailDistanceBase: 2
   detailDistanceMultiplier: 2.5
   detailDistanceDecreaseAtLevel: 1
   detailDistanceConstantDecrease: 0
-  m_debugChunkCount: 568
+  updatePeriod: 0.15
+  generatePeriod: 0.02
+  maxConsecutiveChunks: 8
+  logGenerationInfo: 0
+  logGenerationsInProgress: 0
+  drawGizmos: 0
 --- !u!114 &1205162107
 MonoBehaviour:
   m_ObjectHideFlags: 0

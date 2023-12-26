@@ -5,52 +5,53 @@ using System.Collections.Generic;
 public class TerrainChunkManager : MonoBehaviour {
   public Camera usedCamera { get { return Camera.main; } }
 
-  public float viewDistance = 100f;
+  [Header("Chunks")]
   [FormerlySerializedAs("chunkSize")]
   public Vector3 chunkScale = new Vector3(32f, 128f, 32f);
   public Vector3Int chunkResolution = new Vector3Int(32, 128, 32);
   public Material chunkMaterial;
-  public bool debug;
-  public bool debugConsecutiveChunksGenerations;
+  public TerrainShape terrainShape { get { return m_terrainShape; } }
+  [SerializeField] private TerrainShape m_terrainShape;
 
-  public float seaWorldLevel { get { return m_terrainShape.seaLevel * chunkScale.y; } }
+  [Header("Chunk Distribution")]
+  public float viewDistance = 5000f;
+  public DistanceShape distanceShape = DistanceShape.Circle;
+  public int levelsOfDetail = 8;
+  public float detailDistanceBase = 2f;
+  public float detailDistanceMultiplier = 2.5f;
+  public int detailDistanceDecreaseAtLevel = 1;
+  public float detailDistanceConstantDecrease = 0f;
 
-  private List<QuadtreeChunk> m_quadtreeChunks = new List<QuadtreeChunk>();
-  private List<TerrainChunk> m_spawnedChunks = new List<TerrainChunk>();
-  private List<TerrainChunk> m_spawnedChunksToDelete = new List<TerrainChunk>();
-  private Dictionary<Bounds, TerrainChunk> m_spawnedChunksDictionary =
-    new Dictionary<Bounds, TerrainChunk>();
-
-  private List<Bounds> m_visibleChunkBounds = new List<Bounds>();
-  private HashSet<Bounds> m_visibleChunkBoundsHashSet =
-    new HashSet<Bounds>();
-
-  public event System.Action<TerrainChunk> ChunkGenerated;
-  public event System.Action<TerrainChunk> ChunkSpawned;
-  public event System.Action<TerrainChunk, List<TerrainChunk>> ChunkReplaced;
-  public event System.Action<TerrainChunk> ChunkDeleted;
-
+  [Header("Generation Periods")]
   public float updatePeriod = 0.3f;
   private float m_updateTimer = 0.0f;
   public float generatePeriod = 0.02f;
   private float m_generateTimer = 0.0f;
   public int maxConsecutiveChunks = 8;
 
-  public bool drawGizmos = true;
+  [Header("Debug")]
+  public bool logGenerationInfo;
+  public bool logGenerationsInProgress;
+  public bool drawGizmos;
+
+  public float seaWorldLevel { get { return m_terrainShape.seaLevel * chunkScale.y; } }
+
+  private List<QuadtreeChunk> m_quadtreeChunks = new();
+  private List<TerrainChunk> m_spawnedChunks = new();
+  private List<TerrainChunk> m_spawnedChunksToDelete = new();
+  private Dictionary<Bounds, TerrainChunk> m_spawnedChunksDictionary = new();
+
+  private List<Bounds> m_visibleChunkBounds = new();
+  private HashSet<Bounds> m_visibleChunkBoundsHashSet = new();
 
   private Vector3 m_lastCameraPosition;
 
-  public TerrainShape terrainShape { get { return m_terrainShape; } }
-  [SerializeField] private TerrainShape m_terrainShape;
-
-  public DistanceShape distanceShape;
-  public int levelsOfDetail = 8;
-  public float detailDistanceBase = 2f;
-  public float detailDistanceMultiplier = 1f;
-  public int detailDistanceDecreaseAtLevel = 1;
-  public float detailDistanceConstantDecrease = 0f;
   private List<float> m_levelDistances;
-  [SerializeField] private int m_debugChunkCount;
+
+  public event System.Action<TerrainChunk> ChunkGenerated;
+  public event System.Action<TerrainChunk> ChunkSpawned;
+  public event System.Action<TerrainChunk, List<TerrainChunk>> ChunkReplaced;
+  public event System.Action<TerrainChunk> ChunkDeleted;
 
   private void CreateChunk(Bounds bounds) {
     // Create empty GameObject
@@ -81,7 +82,7 @@ public class TerrainChunkManager : MonoBehaviour {
     // Set variables
     chunk.terrainManager = this;
     chunk.drawGizmos = false;
-    chunk.debug = debug;
+    chunk.debug = logGenerationInfo;
     chunk.terrainShape = m_terrainShape;
     chunk.scale = bounds.size;
     chunk.resolution = new Vector3Int(
@@ -146,7 +147,6 @@ public class TerrainChunkManager : MonoBehaviour {
     // Sort the array by measuring the distance from the chunk to the camera
     m_lastCameraPosition = cameraPosition;
     m_visibleChunkBounds.Sort(new ChunkDistanceToCameraComparer(camera));
-    m_debugChunkCount = m_visibleChunkBounds.Count;
 
     // Set camera fog
     RenderSettings.fogStartDistance = 100f;
@@ -203,8 +203,11 @@ public class TerrainChunkManager : MonoBehaviour {
       }
     }
 
-    if (debugConsecutiveChunksGenerations) {
-      Debug.LogFormat("totalInProgress: {0}, totalSpawned: {1}", totalInProgress, totalSpawned);
+    if (logGenerationsInProgress) {
+      Debug.LogFormat("Total generations in progress: {0}, totalSpawned: {1}",
+        totalInProgress,
+        totalSpawned
+      );
     }
 
     // Skip if we reach the limit of consecutive updates
