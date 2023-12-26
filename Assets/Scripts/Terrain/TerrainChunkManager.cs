@@ -96,16 +96,8 @@ public class TerrainChunkManager : MonoBehaviour {
     ChunkSpawned?.Invoke(chunk);
   }
 
-  private Vector3 FlatY(Vector3 worldPosition) {
-    return new Vector3(
-      worldPosition.x,
-      0f,
-      worldPosition.z
-    );
-  }
-
   private void UpdateVisibleChunks(Camera camera, bool drawGizmos = false) {
-    Vector3 cameraPosition = FlatY(camera.transform.position);
+    Vector3 cameraPosition = camera.transform.position;
     Vector3 quadChunkOffset = new Vector3(0f, -seaWorldLevel + chunkScale.y / 2f, 0f);
 
     m_levelDistances = QuadtreeChunk.CalculateLevelDistances(

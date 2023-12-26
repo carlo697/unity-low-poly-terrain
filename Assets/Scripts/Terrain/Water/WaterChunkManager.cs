@@ -65,16 +65,8 @@ public class WaterChunkManager : MonoBehaviour {
     m_chunkDictionary.Add(bounds, data);
   }
 
-  private Vector3 FlatY(Vector3 worldPosition) {
-    return new Vector3(
-      worldPosition.x,
-      0f,
-      worldPosition.z
-    );
-  }
-
   private void UpdateVisibleChunkPositions(Camera camera, bool drawGizmos = false) {
-    Vector3 cameraPosition = FlatY(camera.transform.position);
+    Vector3 cameraPosition = camera.transform.position;
 
     m_levelDistances = QuadtreeChunk.CalculateLevelDistances(
       chunkSize.x,

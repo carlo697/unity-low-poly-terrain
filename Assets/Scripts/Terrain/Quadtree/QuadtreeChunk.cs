@@ -192,8 +192,6 @@ class QuadtreeChunk {
     List<QuadtreeChunk> list = null,
     bool drawGizmos = false
   ) {
-    cameraPosition.y = chunkOffset.y;
-
     // Calculate the whole size of the tree so that the minimun size of a chunk
     // is equal to chunkSize.x
     float quadMinimunSize = chunkSize.x;
