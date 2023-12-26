@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Serialization;
+using System.Collections;
 using System.Collections.Generic;
 
 public class TerrainChunkManager : MonoBehaviour {
@@ -23,10 +24,8 @@ public class TerrainChunkManager : MonoBehaviour {
   public float detailDistanceConstantDecrease = 0f;
 
   [Header("Generation Periods")]
-  public float updatePeriod = 0.3f;
-  private float m_updateTimer = 0.0f;
+  public float updatePeriod = 0.1f;
   public float generatePeriod = 0.02f;
-  private float m_generateTimer = 0.0f;
   public int maxConsecutiveChunks = 8;
 
   [Header("Debug")]
@@ -52,6 +51,29 @@ public class TerrainChunkManager : MonoBehaviour {
   public event System.Action<TerrainChunk> ChunkSpawned;
   public event System.Action<TerrainChunk, List<TerrainChunk>> ChunkReplaced;
   public event System.Action<TerrainChunk> ChunkDeleted;
+
+  private void Start() {
+    StartCoroutine(UpdateVisibleChunksCoroutine());
+    StartCoroutine(GenerationCoroutine());
+  }
+
+  private IEnumerator UpdateVisibleChunksCoroutine() {
+    while (true) {
+      yield return new WaitForSeconds(updatePeriod);
+
+      UpdateVisibleChunks();
+      UpdateSpawnedChunks();
+    }
+  }
+
+  private IEnumerator GenerationCoroutine() {
+    while (true) {
+      yield return new WaitForSeconds(generatePeriod);
+
+      DeleteReplacedChunks();
+      RequestChunksGeneration();
+    }
+  }
 
   private void CreateChunk(Bounds bounds) {
     // Create empty GameObject
@@ -96,8 +118,8 @@ public class TerrainChunkManager : MonoBehaviour {
     ChunkSpawned?.Invoke(chunk);
   }
 
-  private void UpdateVisibleChunks(Camera camera, bool drawGizmos = false) {
-    Vector3 cameraPosition = camera.transform.position;
+  private void UpdateVisibleChunks(bool drawGizmos = false) {
+    Vector3 cameraPosition = usedCamera.transform.position;
     Vector3 quadChunkOffset = new Vector3(0f, -seaWorldLevel + chunkScale.y / 2f, 0f);
 
     m_levelDistances = QuadtreeChunk.CalculateLevelDistances(
@@ -138,7 +160,7 @@ public class TerrainChunkManager : MonoBehaviour {
 
     // Sort the array by measuring the distance from the chunk to the camera
     m_lastCameraPosition = cameraPosition;
-    m_visibleChunkBounds.Sort(new ChunkDistanceToCameraComparer(camera));
+    m_visibleChunkBounds.Sort(new ChunkDistanceToCameraComparer(usedCamera));
 
     // Set camera fog
     RenderSettings.fogStartDistance = 100f;
@@ -289,31 +311,12 @@ public class TerrainChunkManager : MonoBehaviour {
     }
   }
 
-  private void Update() {
-    m_generateTimer += Time.deltaTime;
-    if (m_generateTimer > generatePeriod) {
-      m_generateTimer = 0f;
-      DeleteReplacedChunks();
-      RequestChunksGeneration();
-    }
-
-    if (usedCamera) {
-      m_updateTimer += Time.deltaTime;
-      if (m_updateTimer > updatePeriod) {
-        m_updateTimer = 0f;
-
-        UpdateVisibleChunks(usedCamera);
-        UpdateSpawnedChunks();
-      }
-    }
-  }
-
   private void OnDrawGizmos() {
     if (drawGizmos) {
       Gizmos.color = new Color(1f, 1f, 1f, 0.1f);
       Gizmos.DrawSphere(m_lastCameraPosition, viewDistance);
 
-      UpdateVisibleChunks(Camera.main, true);
+      UpdateVisibleChunks(true);
 
       Gizmos.color = Color.white;
       for (int i = 0; i < m_visibleChunkBounds.Count; i++) {

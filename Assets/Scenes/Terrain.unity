@@ -7766,7 +7766,7 @@ MonoBehaviour:
   detailDistanceMultiplier: 2.5
   detailDistanceDecreaseAtLevel: 1
   detailDistanceConstantDecrease: 0
-  updatePeriod: 0.15
+  updatePeriod: 0.1
   generatePeriod: 0.02
   maxConsecutiveChunks: 8
   logGenerationInfo: 0
