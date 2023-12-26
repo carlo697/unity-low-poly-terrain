@@ -2,35 +2,6 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using System.Collections.Generic;
 
-struct DistanceToCameraComparer : IComparer<Bounds> {
-  public Vector3 cameraPosition;
-  public Plane[] cameraPlanes;
-
-  public DistanceToCameraComparer(Camera camera) {
-    this.cameraPosition = camera.transform.position;
-    this.cameraPlanes = GeometryUtility.CalculateFrustumPlanes(camera);
-  }
-
-  public int Compare(Bounds a, Bounds b) {
-    bool isAInside = GeometryUtility.TestPlanesAABB(cameraPlanes, a);
-    bool isBInside = GeometryUtility.TestPlanesAABB(cameraPlanes, b);
-
-    if (isAInside != isBInside) {
-      return isBInside.CompareTo(isAInside);
-    }
-
-    float distanceA =
-      (a.center.x - cameraPosition.x) * (a.center.x - cameraPosition.x)
-      + (a.center.z - cameraPosition.z) * (a.center.z - cameraPosition.z);
-
-    float distanceB =
-      (b.center.x - cameraPosition.x) * (b.center.x - cameraPosition.x)
-      + (b.center.z - cameraPosition.z) * (b.center.z - cameraPosition.z);
-
-    return distanceA.CompareTo(distanceB);
-  }
-}
-
 public class TerrainChunkManager : MonoBehaviour {
   public Camera usedCamera { get { return Camera.main; } }
 
@@ -174,7 +145,7 @@ public class TerrainChunkManager : MonoBehaviour {
 
     // Sort the array by measuring the distance from the chunk to the camera
     m_lastCameraPosition = cameraPosition;
-    m_visibleChunkBounds.Sort(new DistanceToCameraComparer(camera));
+    m_visibleChunkBounds.Sort(new ChunkDistanceToCameraComparer(camera));
     m_debugChunkCount = m_visibleChunkBounds.Count;
 
     // Set camera fog
