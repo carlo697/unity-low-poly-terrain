@@ -88,10 +88,11 @@ public static class MarchingCubes {
               vertices.Add(interpolatedPosition);
 
               // Add vertex color
-              colors.Add(Color.Lerp(grid.points[indexA].color, grid.points[indexB].color, interpolant));
+              float colorInterpolant = ((interpolant - 0.5f) * 4f) + 0.5f;
+              colors.Add(Color.Lerp(grid.points[indexA].color, grid.points[indexB].color, colorInterpolant));
 
               // Add UVs
-              if (interpolant < 0.5f) {
+              if (colorInterpolant < 0.5f) {
                 uvs.Add(new Vector3(
                   MaterialBitConverter.MaterialIdToFloat(grid.points[indexA].material), 0f, 0f
                 ));
