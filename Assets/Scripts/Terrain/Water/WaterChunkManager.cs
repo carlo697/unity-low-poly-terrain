@@ -36,7 +36,8 @@ public class WaterChunkManager : MonoBehaviour {
   [SerializeField] private TerrainShape m_terrainShape;
 
   public int levelsOfDetail = 8;
-  private List<float> m_levelDistances;
+  private List<float> m_levelDistances = new();
+  private List<QuadtreeChunk> m_visibleQuadtreeChunks = new();
 
   private void CreateChunk(Bounds bounds) {
     // Create water object
@@ -69,8 +70,9 @@ public class WaterChunkManager : MonoBehaviour {
     Vector3 cameraPosition = camera.transform.position;
 
     m_levelDistances = QuadtreeChunk.CalculateLevelDistances(
-      chunkSize.x,
+      m_levelDistances,
       levelsOfDetail,
+      chunkSize.x,
       2f,
       2.5f
     );
@@ -86,7 +88,8 @@ public class WaterChunkManager : MonoBehaviour {
       drawGizmos
     );
 
-    List<QuadtreeChunk> visibleQuadtreeChunks = QuadtreeChunk.RetrieveVisibleChunks(
+    m_visibleQuadtreeChunks = QuadtreeChunk.RetrieveVisibleChunks(
+      m_visibleQuadtreeChunks,
       m_quadtreeChunks,
       cameraPosition,
       viewDistance
@@ -94,8 +97,8 @@ public class WaterChunkManager : MonoBehaviour {
 
     m_visibleChunkPositions.Clear();
     m_visibleChunkPositionsHashSet.Clear();
-    for (int i = 0; i < visibleQuadtreeChunks.Count; i++) {
-      QuadtreeChunk chunk = visibleQuadtreeChunks[i];
+    for (int i = 0; i < m_visibleQuadtreeChunks.Count; i++) {
+      QuadtreeChunk chunk = m_visibleQuadtreeChunks[i];
 
       // Save the chunk
       Bounds bounds = new Bounds(

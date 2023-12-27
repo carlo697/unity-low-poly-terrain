@@ -45,7 +45,8 @@ public class TerrainChunkManager : MonoBehaviour {
 
   private Vector3 m_lastCameraPosition;
 
-  private List<float> m_levelDistances;
+  private List<float> m_levelDistances = new();
+  private List<QuadtreeChunk> m_visibleQuadtreeChunks = new();
 
   public event System.Action<TerrainChunk> ChunkGenerated;
   public event System.Action<TerrainChunk> ChunkSpawned;
@@ -123,8 +124,9 @@ public class TerrainChunkManager : MonoBehaviour {
     Vector3 quadChunkOffset = new Vector3(0f, -seaWorldLevel + chunkScale.y / 2f, 0f);
 
     m_levelDistances = QuadtreeChunk.CalculateLevelDistances(
-      chunkScale.x,
+      m_levelDistances,
       levelsOfDetail,
+      chunkScale.x,
       detailDistanceBase,
       detailDistanceMultiplier,
       detailDistanceDecreaseAtLevel,
@@ -142,7 +144,8 @@ public class TerrainChunkManager : MonoBehaviour {
       drawGizmos
     );
 
-    List<QuadtreeChunk> visibleQuadtreeChunks = QuadtreeChunk.RetrieveVisibleChunks(
+    m_visibleQuadtreeChunks = QuadtreeChunk.RetrieveVisibleChunks(
+      m_visibleQuadtreeChunks,
       m_quadtreeChunks,
       cameraPosition,
       viewDistance
@@ -150,8 +153,8 @@ public class TerrainChunkManager : MonoBehaviour {
 
     m_visibleChunkBounds.Clear();
     m_visibleChunkBoundsHashSet.Clear();
-    for (int i = 0; i < visibleQuadtreeChunks.Count; i++) {
-      QuadtreeChunk chunk = visibleQuadtreeChunks[i];
+    for (int i = 0; i < m_visibleQuadtreeChunks.Count; i++) {
+      QuadtreeChunk chunk = m_visibleQuadtreeChunks[i];
 
       // Save the chunk
       m_visibleChunkBounds.Add(chunk.bounds);

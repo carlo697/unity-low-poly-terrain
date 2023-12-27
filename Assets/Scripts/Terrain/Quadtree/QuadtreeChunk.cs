@@ -6,33 +6,27 @@ public enum DistanceShape {
   Circle
 }
 
-class QuadtreeChunk {
-  public List<float> levelDistances;
+public class QuadtreeChunk {
   public int level;
-  public Vector3 position;
-  public Vector3 extents;
   public QuadtreeChunk[] children;
   public Bounds bounds;
-  public DistanceShape distanceShape;
 
   public QuadtreeChunk(
-    List<float> levelDistances,
     int level,
     Vector3 position,
-    Vector3 extents,
-    DistanceShape distanceShape = DistanceShape.Square
+    Vector3 extents
   ) {
-    this.levelDistances = levelDistances;
     this.level = level;
-    this.position = position;
-    this.extents = extents;
-    this.distanceShape = distanceShape;
-
     this.children = null;
     this.bounds = new Bounds(position, extents * 2f);
   }
 
-  public void Build(Vector3 cameraPosition, bool drawGizmos = false) {
+  public void Build(
+    List<float> levelDistances,
+    DistanceShape distanceShape,
+    Vector3 cameraPosition,
+    bool drawGizmos = false
+  ) {
     if (level > levelDistances.Count - 1)
       return;
 
@@ -56,51 +50,50 @@ class QuadtreeChunk {
     }
 
     if (isInside) {
-      Vector3 halfExtents = new Vector3(extents.x / 2f, extents.y, extents.z / 2f);
+      Vector3 halfExtents = new Vector3(
+        bounds.extents.x / 2f,
+        bounds.extents.y,
+        bounds.extents.z / 2f
+      );
 
       children = new QuadtreeChunk[4] {
         // North east
         new QuadtreeChunk(
-          levelDistances,
           level + 1,
-          position + new Vector3(halfExtents.x, 0f, halfExtents.z),
-          halfExtents,
-          distanceShape
+          bounds.center + new Vector3(halfExtents.x, 0f, halfExtents.z),
+          halfExtents
         ),
         // South east
         new QuadtreeChunk(
-          levelDistances,
           level + 1,
-          position + new Vector3(halfExtents.x, 0f, -halfExtents.z),
-          halfExtents,
-          distanceShape
+          bounds.center + new Vector3(halfExtents.x, 0f, -halfExtents.z),
+          halfExtents
         ),
         // South west
         new QuadtreeChunk(
-          levelDistances,
           level + 1,
-          position + new Vector3(-halfExtents.x, 0f, -halfExtents.z),
-          halfExtents,
-          distanceShape
+          bounds.center + new Vector3(-halfExtents.x, 0f, -halfExtents.z),
+          halfExtents
         ),
         // North west
         new QuadtreeChunk(
-          levelDistances,
           level + 1,
-          position + new Vector3(-halfExtents.x, 0f, halfExtents.z),
-          halfExtents,
-          distanceShape
+          bounds.center + new Vector3(-halfExtents.x, 0f, halfExtents.z),
+          halfExtents
         )
       };
 
       for (int i = 0; i < children.Length; i++) {
-        children[i].Build(cameraPosition, drawGizmos);
+        children[i].Build(levelDistances, distanceShape, cameraPosition, drawGizmos);
       }
     }
   }
 
-  public List<QuadtreeChunk> GetChunksRecursively(List<QuadtreeChunk> list = null) {
-    list = list ?? new List<QuadtreeChunk>();
+  public List<QuadtreeChunk> GetChunksRecursively() {
+    return GetChunksRecursively(new List<QuadtreeChunk>());
+  }
+
+  public List<QuadtreeChunk> GetChunksRecursively(List<QuadtreeChunk> list) {
     list.Add(this);
 
     if (children != null) {
@@ -139,33 +132,52 @@ class QuadtreeChunk {
   }
 
   public static List<float> CalculateLevelDistances(
+    int levels,
     float baseChunkSize,
-    int levelsOfDetail = 8,
     float detailDistanceBase = 2f,
     float detailDistanceMultiplier = 1f,
     int detailDistanceDecreaseAtLevel = 1,
     float detailDistanceConstantDecrease = 0f
   ) {
-    List<float> levelDistances = new List<float>();
+    return CalculateLevelDistances(
+      new List<float>(),
+      levels,
+      baseChunkSize,
+      detailDistanceBase,
+      detailDistanceMultiplier,
+      detailDistanceDecreaseAtLevel,
+      detailDistanceConstantDecrease
+    );
+  }
+
+  public static List<float> CalculateLevelDistances(
+    List<float> results,
+    int levels,
+    float baseChunkSize,
+    float detailDistanceBase = 2f,
+    float detailDistanceMultiplier = 1f,
+    int detailDistanceDecreaseAtLevel = 1,
+    float detailDistanceConstantDecrease = 0f
+  ) {
+    results.Clear();
 
     // Calculate the whole size of the tree so that the minimun size of a chunk
     // is equal to chunkSize.x
     float minimunChunkSize = baseChunkSize;
-    float areaExtents = Mathf.Pow(2, levelsOfDetail - 1) * minimunChunkSize;
+    float areaExtents = Mathf.Pow(2, levels - 1) * minimunChunkSize;
     float areaSize = areaExtents * 2f;
     Vector2 extents = new Vector2(areaExtents, areaExtents);
 
     // Calculate the distances for the levels of detail
-    for (int i = 0; i < levelsOfDetail; i++) {
+    for (int i = levels - 1; i >= 0; i--) {
       int decreaseLevel = Mathf.Max(0, i - detailDistanceDecreaseAtLevel);
-      levelDistances.Add(
-        (
-          (Mathf.Pow(detailDistanceBase, i + 1f) * minimunChunkSize)
-          / (1f + (float)decreaseLevel * detailDistanceConstantDecrease)
-        ) * detailDistanceMultiplier
-      );
+      float distance = (
+        (Mathf.Pow(detailDistanceBase, i + 1f) * minimunChunkSize)
+        / (1f + (float)decreaseLevel * detailDistanceConstantDecrease)
+        ) * detailDistanceMultiplier;
+
+      results.Add(distance);
     }
-    levelDistances.Reverse();
 
     // Harcoded distances for the levels of detail
     // m_levelDistances = new List<float> {
@@ -179,7 +191,7 @@ class QuadtreeChunk {
     //   64f
     // };
 
-    return levelDistances;
+    return results;
   }
 
   public static List<QuadtreeChunk> CreateQuadtree(
@@ -248,11 +260,9 @@ class QuadtreeChunk {
         }
 
         QuadtreeChunk tree = new QuadtreeChunk(
-          levelDistances,
           0,
           position3d,
-          size3d / 2f,
-          distanceShape
+          size3d / 2f
         );
 
         if (drawGizmos) {
@@ -260,7 +270,7 @@ class QuadtreeChunk {
           Gizmos.DrawWireCube(tree.bounds.center, tree.bounds.size);
         }
 
-        tree.Build(cameraPosition, drawGizmos);
+        tree.Build(levelDistances, distanceShape, cameraPosition, drawGizmos);
         list.Add(tree);
       }
     }
@@ -273,24 +283,38 @@ class QuadtreeChunk {
     Vector3 cameraPosition,
     float viewDistance
   ) {
-    List<QuadtreeChunk> list = new List<QuadtreeChunk>();
+    return RetrieveVisibleChunks(new List<QuadtreeChunk>(), chunks, cameraPosition, viewDistance);
+  }
 
+  public static List<QuadtreeChunk> RetrieveVisibleChunks(
+    List<QuadtreeChunk> results,
+    List<QuadtreeChunk> chunks,
+    Vector3 cameraPosition,
+    float viewDistance
+  ) {
+    results.Clear();
+
+    // Get all the quadrants
     for (int i = 0; i < chunks.Count; i++) {
-      chunks[i].GetChunksRecursively(list);
+      chunks[i].GetChunksRecursively(results);
     }
 
-    List<QuadtreeChunk> visibleChunks = new List<QuadtreeChunk>();
-    for (int i = 0; i < list.Count; i++) {
-      QuadtreeChunk chunk = list[i];
-      if (chunk.children == null) {
-        Vector3 closestPoint = chunk.bounds.ClosestPoint(cameraPosition);
+    // Filter the list to leave only the quadrants with no children
+    // and that are inside the view distance
+    for (int i = results.Count - 1; i >= 0; i--) {
+      QuadtreeChunk chunk = results[i];
+      if (chunk.children != null) {
+        results.RemoveAt(i);
+        continue;
+      }
 
-        if (Vector3.Distance(closestPoint, cameraPosition) <= viewDistance) {
-          visibleChunks.Add(chunk);
-        }
+      Vector3 closestPoint = chunk.bounds.ClosestPoint(cameraPosition);
+      if (Vector3.Distance(closestPoint, cameraPosition) > viewDistance) {
+        results.RemoveAt(i);
+        continue;
       }
     }
 
-    return visibleChunks;
+    return results;
   }
 }
