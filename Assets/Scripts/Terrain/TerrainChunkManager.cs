@@ -163,7 +163,7 @@ public class TerrainChunkManager : MonoBehaviour {
 
     // Sort the array by measuring the distance from the chunk to the camera
     m_lastCameraPosition = cameraPosition;
-    m_visibleChunkBounds.Sort(new ChunkDistanceToCameraComparer(usedCamera));
+    BoundsVisibilitySorter.Sort(m_visibleChunkBounds, usedCamera);
 
     // Set camera fog
     RenderSettings.fogStartDistance = 100f;
