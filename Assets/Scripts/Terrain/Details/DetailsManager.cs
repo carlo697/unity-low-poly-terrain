@@ -242,9 +242,7 @@ public class DetailsManager : MonoBehaviour {
 
   private void CreateChunk(Bounds bounds) {
     // Create empty GameObject
-    GameObject gameObject = new GameObject(string.Format(
-      "{0}, {1}", bounds.center.x, bounds.center.z
-    ));
+    GameObject gameObject = new GameObject($"{bounds.center.x}, {bounds.center.z}");
 
     // Set position and parent
     gameObject.transform.position = bounds.center - bounds.extents;
@@ -440,20 +438,11 @@ public class DetailsManager : MonoBehaviour {
     // Log the times to the console
     if (logGpuInstancingInfo) {
       Debug.Log(
-        string.Format(
-          "{0} ms to create buffers in GPU by coping instances from CPU",
-          buffersTimer.ElapsedMilliseconds
-        )
+        $"{buffersTimer.ElapsedMilliseconds} ms to create buffers in GPU by coping instances from CPU"
       );
 
       Debug.Log(
-        string.Format(
-          "{0} ms ({1} ticks) to prepare {2} instances and {3} shadow instances instances (GPU instancing)",
-          timer.ElapsedMilliseconds,
-          timer.ElapsedTicks,
-          totalInstanceCount,
-          totalShadowInstanceCount
-        )
+        $"{timer.ElapsedMilliseconds} ms ({timer.ElapsedTicks} ticks) to prepare {totalInstanceCount} instances and {totalShadowInstanceCount} shadow instances instances (GPU instancing)"
       );
     }
   }

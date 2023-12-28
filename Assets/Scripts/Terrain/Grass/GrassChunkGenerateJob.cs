@@ -79,11 +79,8 @@ public struct GrassChunkGenerateJob : IJob {
     uvs.Dispose();
 
     if (logTime) {
-      Debug.LogFormat(
-        "Grass: {0} ms, Triangles: {1}, Instances: {2}",
-        timer.ElapsedMilliseconds,
-        indexCount / 3,
-        instances.Length
+      Debug.Log(
+        $"Grass: {timer.ElapsedMilliseconds} ms, Triangles: {indexCount / 3}, Instances: {instances.Length}"
       );
     }
   }

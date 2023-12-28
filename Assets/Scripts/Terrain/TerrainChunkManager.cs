@@ -78,9 +78,7 @@ public class TerrainChunkManager : MonoBehaviour {
 
   private void CreateChunk(Bounds bounds) {
     // Create empty GameObject
-    GameObject gameObject = new GameObject(string.Format(
-      "{0}, {1}", bounds.center.x, bounds.center.z
-    ));
+    GameObject gameObject = new GameObject($"{bounds.center.x}, {bounds.center.z}");
 
     // Set position and parent
     gameObject.transform.position = bounds.center - bounds.extents;
@@ -191,7 +189,7 @@ public class TerrainChunkManager : MonoBehaviour {
       if (!foundPosition) {
         m_spawnedChunks.Remove(chunk);
         m_spawnedChunksDictionary.Remove(chunk.bounds);
-        chunk.gameObject.name = string.Format("(To Delete) {0}", chunk.gameObject.name);
+        chunk.gameObject.name = $"(To Delete) {chunk.gameObject.name}";
 
         if (chunk.hasEverBeenGenerated) {
           m_spawnedChunksToDelete.Add(chunk);
@@ -221,9 +219,8 @@ public class TerrainChunkManager : MonoBehaviour {
     }
 
     if (logGenerationsInProgress) {
-      Debug.LogFormat("Total generations in progress: {0}, totalSpawned: {1}",
-        totalInProgress,
-        totalSpawned
+      Debug.Log(
+        $"Total generations in progress: {totalInProgress}, totalSpawned: {totalSpawned}"
       );
     }
 

@@ -73,8 +73,9 @@ public class NoisePreview : MonoBehaviour {
     float[,] heightmap = GenerateNoise();
 
     watch.Stop();
-    if (debugTime)
-      Debug.Log(string.Format("Time: {0} ms", watch.ElapsedMilliseconds));
+    if (debugTime) {
+      Debug.Log($"Time: {watch.ElapsedMilliseconds} ms");
+    }
 
     AssignHeightmap(heightmap);
   }

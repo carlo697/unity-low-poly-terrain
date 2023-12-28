@@ -8,10 +8,6 @@ public struct VoxelPoint {
   public uint material;
 
   public override string ToString() {
-    return string.Format(
-      "pos: {0}, value: {1}",
-      position.ToString(),
-      value
-    );
+    return $"pos: {position}, value: {value}";
   }
 }

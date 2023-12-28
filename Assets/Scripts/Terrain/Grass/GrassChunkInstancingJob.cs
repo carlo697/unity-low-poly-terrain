@@ -69,11 +69,8 @@ public struct GrassChunkInstancingJob : IJob {
     }
 
     if (logTime) {
-      Debug.LogFormat(
-        "Grass mesh instancing prepared in {0} ms, resulting in {2} batches from {1} instances",
-        timer.ElapsedMilliseconds,
-        instances.Length,
-        totalBatches
+      Debug.Log(
+        "Grass mesh instancing prepared in {timer.ElapsedMilliseconds} ms, resulting in {instances.Length} batches from {totalBatches} instances"
       );
     }
   }

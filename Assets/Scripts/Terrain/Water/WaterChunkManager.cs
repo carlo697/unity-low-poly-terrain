@@ -41,9 +41,7 @@ public class WaterChunkManager : MonoBehaviour {
 
   private void CreateChunk(Bounds bounds) {
     // Create water object
-    GameObject waterObj = new GameObject(string.Format(
-      "{0}, {1}", bounds.center.x, bounds.center.z
-    ));
+    GameObject waterObj = new GameObject($"{bounds.center.x}, {bounds.center.z}");
 
     // Set position and parent
     waterObj.transform.position = new Vector3(

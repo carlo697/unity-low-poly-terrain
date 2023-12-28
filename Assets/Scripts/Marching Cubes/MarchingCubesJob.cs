@@ -16,8 +16,8 @@ public struct MarchingCubesJob : IJob {
   public bool debug;
 
   public void Execute() {
-    var stepTimer = new System.Diagnostics.Stopwatch();
-    stepTimer.Start();
+    var timer = new System.Diagnostics.Stopwatch();
+    timer.Start();
 
     var samplerFunc = (VoxelGridSamplerFunc)samplerHandle.Target;
 
@@ -31,17 +31,11 @@ public struct MarchingCubesJob : IJob {
     // Fill up the grid with values using the sampler function
     grid.Initialize(samplerFunc);
 
-    stepTimer.Stop();
+    timer.Stop();
     if (debug) {
-      Debug.Log(
-        string.Format(
-          "Grid: {0} ms, resolution: {1}",
-          stepTimer.ElapsedMilliseconds,
-          grid.resolution
-        )
-      );
+      Debug.Log($"Grid: {timer.ElapsedMilliseconds} ms, resolution: {grid.resolution}");
     }
-    stepTimer.Restart();
+    timer.Restart();
 
     // Apply marching cubes to the grid to generate vertices, uvs, colors, etc
     MarchingCubes.MarchCubes(
@@ -53,15 +47,9 @@ public struct MarchingCubesJob : IJob {
       ref colors
     );
 
-    stepTimer.Stop();
+    timer.Stop();
     if (debug) {
-      Debug.Log(
-        string.Format(
-          "Marching: {0} ms, resolution: {1}",
-          stepTimer.ElapsedMilliseconds,
-          grid.resolution
-        )
-      );
+      Debug.Log($"Marching: {timer.ElapsedMilliseconds} ms, resolution: {grid.resolution}");
     }
 
     for (int i = 0; i < grid.points.Length; i++) {

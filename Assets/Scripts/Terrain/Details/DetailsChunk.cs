@@ -213,12 +213,7 @@ public class DetailsChunk : MonoBehaviour {
 
     if (logGenerationInfo) {
       Debug.Log(
-        string.Format(
-          "{0} ms ({1} ticks) to generate {2} details",
-          timer.ElapsedMilliseconds,
-          timer.ElapsedTicks,
-          m_instances.Count
-        )
+        $"{timer.ElapsedMilliseconds} ms ({timer.ElapsedTicks} ticks) to generate {m_instances.Count} details"
       );
     }
   }
@@ -284,8 +279,8 @@ public class DetailsChunk : MonoBehaviour {
 
       // Stop recording time
       timer.Stop();
-      Debug.LogFormat("{0} ms", timer.ElapsedMilliseconds);
-      Debug.LogFormat("Total hits: {0}", totalHits);
+      Debug.Log($"{timer.ElapsedMilliseconds} ms");
+      Debug.Log($"Total hits: {totalHits}");
     }
   }
 
@@ -342,8 +337,8 @@ public class DetailsChunk : MonoBehaviour {
 
       // Stop recording time
       timer.Stop();
-      Debug.LogFormat("{0} ms", timer.ElapsedMilliseconds);
-      Debug.LogFormat("Total hits: {0}", totalHits);
+      Debug.Log($"{timer.ElapsedMilliseconds} ms");
+      Debug.Log($"Total hits: {totalHits}");
     }
   }
 
