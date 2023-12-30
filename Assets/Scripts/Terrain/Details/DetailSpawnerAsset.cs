@@ -36,7 +36,7 @@ public class DetailSpawnerAsset : DetailSpawner {
   public DetailSpawnerNoise noiseSettings;
 
   public override void Spawn(
-    List<TempDetailInstance> instances,
+    List<DetailInstance> instances,
     ulong seed,
     Bounds bounds,
     int integerLevelOfDetail,
@@ -66,10 +66,10 @@ public class DetailSpawnerAsset : DetailSpawner {
     // Array used by the ApplyTransform method
     Vector3[] cachePoints = new Vector3[8];
 
-    // Create a list of temporal instances
     Vector3 start = bounds.center - bounds.extents;
+
     for (int i = 0; i < totalPopulation; i++) {
-      // To maintain a stable sequence of random numbers, we need to always generate
+      // To maintain a stable sequence of random position, we need to always generate
       // these variables even if the chunk won't have all the details
       Vector3 position = new Vector3(
         start.x + (float)positionRng.NextDouble() * bounds.size.x,
@@ -91,91 +91,83 @@ public class DetailSpawnerAsset : DetailSpawner {
         }
       }
 
-      // Create a raycast command
-      QueryParameters parameters = QueryParameters.Default;
-      parameters.hitBackfaces = true;
-      parameters.layerMask = layerMask;
-      RaycastCommand raycastCommand = new RaycastCommand(
+      // Raycast
+      RaycastHit hit;
+      if (!Physics.Raycast(
         position,
         Vector3.down,
-        parameters,
-        1024
+        out hit,
+        1024f,
+        layerMask,
+        QueryTriggerInteraction.Ignore
+      )) {
+        continue;
+      }
+
+      // Get the material on the hit point
+      uint materialId = MaterialBitConverter.FloatToMaterialId(hit.textureCoord.x);
+      bool wasMaterialFound = false;
+      for (int materialIndex = 0; materialIndex < materials.Length; materialIndex++) {
+        if (materials[materialIndex] == materialId) {
+          wasMaterialFound = true;
+          break;
+        }
+      }
+
+      // Skip this instance if the material is not valid
+      if (!wasMaterialFound) {
+        continue;
+      }
+
+      if (useSlopeAngle) {
+        float slopeAngle = 90f - Vector3Extensions.SimplifiedAngle(Vector3.up, hit.normal);
+        if (slopeAngle < minAngle || slopeAngle > maxAngle) {
+          continue;
+        }
+      }
+
+      XorshiftStar instanceRng = new XorshiftStar(instanceSeed);
+
+      // Get the final position
+      position = hit.point;
+
+      // Generate rotation using the normal of the raycast hit and applying a random Y rotation
+      Quaternion rotation;
+      if (applyNormalRotation) {
+        rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
+      } else {
+        rotation = Quaternion.identity;
+      }
+      rotation *= Quaternion.Euler(
+        randomRotation.x > 0 ? (float)instanceRng.NextDouble() * randomRotation.x : 0f,
+        randomRotation.y > 0 ? (float)instanceRng.NextDouble() * randomRotation.y : 0f,
+        randomRotation.z > 0 ? (float)instanceRng.NextDouble() * randomRotation.z : 0f
       );
 
-      // Function to instance the final detail when the raycast is done
-      GetDetailResult GetFinalInstance = (RaycastHit hit, out DetailInstance instance) => {
-        // Get the material on the hit point
-        uint materialId = MaterialBitConverter.FloatToMaterialId(hit.textureCoord.x);
-        bool wasMaterialFound = false;
-        for (int i = 0; i < materials.Length; i++) {
-          if (materials[i] == materialId) {
-            wasMaterialFound = true;
-            break;
-          }
-        }
+      // Generate a scale vector
+      float scaleResult = scaleCurve.Evaluate((float)instanceRng.NextDouble());
+      Vector3 scale = new Vector3(scaleResult, scaleResult, scaleResult);
 
-        // Skip this instance if the material is not valid
-        if (!wasMaterialFound) {
-          instance = default;
-          return false;
-        }
+      // Transformation matrix
+      Matrix4x4 matrix = Matrix4x4.TRS(position, rotation, scale);
 
-        if (useSlopeAngle) {
-          float slopeAngle = 90f - Vector3Extensions.SimplifiedAngle(Vector3.up, hit.normal);
-          if (slopeAngle < minAngle || slopeAngle > maxAngle) {
-            instance = default;
-            return false;
-          }
-        }
+      // Select a mesh/prefab
+      int meshIndex = instanceRng.Next(detail.meshes.Length);
 
-        XorshiftStar instanceRng = new XorshiftStar(instanceSeed);
-
-        Vector3 position = hit.point;
-
-        // Generate rotation using the normal of the raycast hit and applying a random Y rotation
-        Quaternion rotation;
-        if (applyNormalRotation) {
-          rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
-        } else {
-          rotation = Quaternion.identity;
-        }
-        rotation *= Quaternion.Euler(
-          randomRotation.x > 0 ? (float)instanceRng.NextDouble() * randomRotation.x : 0f,
-          randomRotation.y > 0 ? (float)instanceRng.NextDouble() * randomRotation.y : 0f,
-          randomRotation.z > 0 ? (float)instanceRng.NextDouble() * randomRotation.z : 0f
-        );
-
-        // Generate a scale vector
-        float scaleResult = scaleCurve.Evaluate((float)instanceRng.NextDouble());
-        Vector3 scale = new Vector3(scaleResult, scaleResult, scaleResult);
-
-        // Transformation matrix
-        Matrix4x4 matrix = Matrix4x4.TRS(position, rotation, scale);
-
-        // Select a mesh/prefab
-        int meshIndex = instanceRng.Next(detail.meshes.Length);
-
-        // Generate a bounds
-        Bounds baseBounds = detail.meshes[meshIndex].levelOfDetails[0].submeshes[0].mesh.bounds;
-        Bounds rotatedBounds = baseBounds.ApplyTransform(matrix, cachePoints);
-        SphereBounds sphereBounds = new SphereBounds(rotatedBounds);
-
-        instance = new DetailInstance {
-          detailId = detail.id,
-          meshIndex = meshIndex,
-          position = position,
-          rotation = rotation,
-          scale = scale,
-          matrix = matrix,
-          sphereBounds = sphereBounds
-        };
-        return true;
-      };
+      // Generate a bounds
+      Bounds baseBounds = detail.meshes[meshIndex].levelOfDetails[0].submeshes[0].mesh.bounds;
+      Bounds rotatedBounds = baseBounds.ApplyTransform(matrix, cachePoints);
+      SphereBounds sphereBounds = new SphereBounds(rotatedBounds);
 
       // Add a temporal instance to the list
-      instances.Add(new TempDetailInstance {
-        raycastCommand = raycastCommand,
-        GetFinalInstance = GetFinalInstance
+      instances.Add(new DetailInstance {
+        detailId = detail.id,
+        meshIndex = meshIndex,
+        position = position,
+        rotation = rotation,
+        scale = scale,
+        matrix = matrix,
+        sphereBounds = sphereBounds
       });
     }
   }

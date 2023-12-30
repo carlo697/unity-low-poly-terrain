@@ -28,13 +28,10 @@ public class DetailsChunk : MonoBehaviour {
   private float m_normalizedLevelOfDetail;
 
   public List<DetailInstance> instances { get { return m_instances; } }
-  private List<DetailInstance> m_instances = new();
+  private List<DetailInstance> m_instances;
 
   private bool m_updateFlag;
   private bool m_destroyFlag;
-  private JobHandle? m_handle;
-  private NativeArray<RaycastHit> m_results;
-  private NativeArray<RaycastCommand> m_commands;
 
   private Dictionary<DetailSubmesh[], DetailsInstancingBatch> m_instancingBatches = new();
   private List<GameObject> m_instancedGameObjects;
@@ -74,7 +71,7 @@ public class DetailsChunk : MonoBehaviour {
   public void RequestUpdate(int integerLevelOfDetail, float normalizedLevelOfDetail) {
     // Only update if the level of detail changed or if the chunk
     // has 0 detail instances
-    if (integerLevelOfDetail != m_integerLevelOfDetail || m_instances.Count == 0) {
+    if (integerLevelOfDetail != m_integerLevelOfDetail || m_instances == null || m_instances.Count == 0) {
       m_updateFlag = true;
       m_integerLevelOfDetail = integerLevelOfDetail;
       m_normalizedLevelOfDetail = normalizedLevelOfDetail;
@@ -93,77 +90,26 @@ public class DetailsChunk : MonoBehaviour {
     System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
     timer.Start();
 
-    // Generate a seed for this chunk
-    ulong seed = (ulong)(terrainShape.terrainSeed + bounds.center.GetHashCode());
-
-    // Create a list of temporal instances using the spawners
-    List<TempDetailInstance> tempInstances = new List<TempDetailInstance>(1000);
-    for (int i = 0; i < terrainShape.detailSpawners.Length; i++) {
-      DetailSpawner spawner = terrainShape.detailSpawners[i];
-
-      // Call the "Spawn" method to add the temporal instances to the list
-      spawner.Spawn(tempInstances, seed, bounds, integerLevelOfDetail, normalizedLevelOfDetail);
-    }
-
-    // if (bounds.center.x == -304f && bounds.center.z == -112f) {
-    //   Debug.LogFormat("{0}, {1}, {2}", m_levelOfDetail, seed, tempInstances.Count);
-    // }
-
-    // Create the arrays needed to schedule the job for the raycasts
-    m_results = new NativeArray<RaycastHit>(tempInstances.Count, Allocator.Persistent);
-    m_commands = new NativeArray<RaycastCommand>(tempInstances.Count, Allocator.Persistent);
-
-    QueryParameters parameters = QueryParameters.Default;
-    parameters.hitBackfaces = true;
-
-    // Transfer the raycast commands from the temporal instances to the "commands" array
-    for (int i = 0; i < tempInstances.Count; i++) {
-      m_commands[i] = tempInstances[i].raycastCommand;
-    }
-
-    // if (bounds.center.x == -304f && bounds.center.z == -112f) {
-    //   Debug.LogFormat("instances: {0}", m_instances.Count);
-    //   Debug.Break();
-    // }
-
-    // Schedule the raycast commands
-    m_handle = RaycastCommand.ScheduleBatch(
-      m_commands,
-      m_results,
-      1000,
-      1
-    );
-
-    timer.Stop();
-
-    // Wait for the job to be completed
-    while (!m_handle.Value.IsCompleted) {
-      yield return new WaitForSeconds(.1f);
-    }
-
-    timer.Start();
-
-    // Complete the job
-    m_handle.Value.Complete();
-
     // Delete the old game objects
     DestroyInstances(false);
 
-    // Get the final instances and register them
-    for (int i = 0; i < m_results.Length; i++) {
-      if (m_results[i].collider != null) {
-        if (tempInstances[i].GetFinalInstance(m_results[i], out DetailInstance instance))
-          m_instances.Add(instance);
-      }
+    // Generate a seed for this chunk
+    ulong seed = (ulong)(terrainShape.terrainSeed + bounds.center.GetHashCode());
+
+    if (m_instances == null) {
+      m_instances = new(128);
+    }
+
+    // Iterate spawners to add the instances
+    for (int i = 0; i < terrainShape.detailSpawners.Length; i++) {
+      DetailSpawner spawner = terrainShape.detailSpawners[i];
+      spawner.Spawn(m_instances, seed, bounds, integerLevelOfDetail, normalizedLevelOfDetail);
     }
 
     // if (bounds.center.x == -304f && bounds.center.z == -112f) {
     //   Debug.LogFormat("instances: {0}", m_instances.Count);
     //   Debug.Break();
     // }
-
-    // Dispose the job
-    DisposeJob();
 
     if (manager.renderMode == DetailsRenderMode.InstancingFromChunk) {
       // Add GPU instancing batches
@@ -211,7 +157,7 @@ public class DetailsChunk : MonoBehaviour {
 
     timer.Stop();
 
-    if (logGenerationInfo) {
+    if (logGenerationInfo && m_instances.Count > 50) {
       Debug.Log(
         $"{timer.ElapsedMilliseconds} ms ({timer.ElapsedTicks} ticks) to generate {m_instances.Count} details"
       );
@@ -239,7 +185,9 @@ public class DetailsChunk : MonoBehaviour {
     }
 
     // Clear array
-    m_instances.Clear();
+    if (m_instances != null) {
+      m_instances.Clear();
+    }
   }
 
   private void OnDrawGizmosSelected() {
@@ -251,23 +199,7 @@ public class DetailsChunk : MonoBehaviour {
     m_destroyFlag = true;
   }
 
-  private void DisposeJob() {
-    m_results.Dispose();
-    m_commands.Dispose();
-    m_handle = null;
-  }
-
-  private void CancelJob() {
-    m_handle.Value.Complete();
-    DisposeJob();
-  }
-
   private void OnDestroy() {
-    if (m_handle.HasValue) {
-      Debug.Log("Details Chunk destroyed and there was a job running");
-      CancelJob();
-    }
-
     DestroyInstances(true);
   }
 

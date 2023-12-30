@@ -29,7 +29,7 @@ public struct DetailsInstancingJob : IJobParallelForBatch {
       DetailsChunk chunk = chunks[i];
 
       // Skip if the chunk don't have instances
-      if (chunk.instances.Count == 0) {
+      if (chunk.instances == null || chunk.instances.Count == 0) {
         continue;
       }
 
