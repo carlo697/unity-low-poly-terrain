@@ -12,26 +12,54 @@ public static class BoundsExtensions {
 
   [MethodImpl(MethodImplOptions.AggressiveInlining)]
   public static Bounds ApplyTransform(this Bounds bounds, Matrix4x4 transformation) {
-    return bounds.ApplyTransform(transformation, new Vector3[8]);
-  }
+    Vector3 originalMin = bounds.min;
+    Vector3 originalMax = bounds.max;
 
-  public static Bounds ApplyTransform(this Bounds bounds, Matrix4x4 transformation, Vector3[] corners) {
-    corners[0] = bounds.min;
-    corners[1] = new Vector3(bounds.min.x, bounds.min.y, bounds.max.z);
-    corners[2] = new Vector3(bounds.min.x, bounds.max.y, bounds.min.z);
-    corners[3] = new Vector3(bounds.max.x, bounds.min.y, bounds.min.z);
-    corners[4] = new Vector3(bounds.min.x, bounds.max.y, bounds.max.z);
-    corners[5] = new Vector3(bounds.max.x, bounds.min.y, bounds.max.z);
-    corners[6] = new Vector3(bounds.max.x, bounds.max.y, bounds.min.z);
-    corners[7] = bounds.max;
+    Vector3 min = new Vector3(float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity);
+    Vector3 max = new Vector3(float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity);
 
-    Vector3 firstPoint = transformation.MultiplyPoint(bounds.center);
-    Bounds newBounds = new Bounds(firstPoint, Vector3.zero);
+    // 0
+    Vector3 transformed = transformation.MultiplyPoint(originalMin);
+    min = Vector3.Min(min, transformed);
+    max = Vector3.Max(max, transformed);
 
-    for (int i = 1; i < 8; i++) {
-      Vector3 point = transformation.MultiplyPoint(corners[i]);
-      newBounds.Encapsulate(point);
-    }
+    // 1
+    transformed = transformation.MultiplyPoint(new Vector3(originalMax.x, originalMin.y, originalMin.z));
+    min = Vector3.Min(min, transformed);
+    max = Vector3.Max(max, transformed);
+
+    // 2
+    transformed = transformation.MultiplyPoint(new Vector3(originalMax.x, originalMax.y, originalMin.z));
+    min = Vector3.Min(min, transformed);
+    max = Vector3.Max(max, transformed);
+
+    // 3
+    transformed = transformation.MultiplyPoint(new Vector3(originalMin.x, originalMax.y, originalMin.z));
+    min = Vector3.Min(min, transformed);
+    max = Vector3.Max(max, transformed);
+
+    // 4
+    transformed = transformation.MultiplyPoint(new Vector3(originalMin.x, originalMin.y, originalMax.z));
+    min = Vector3.Min(min, transformed);
+    max = Vector3.Max(max, transformed);
+
+    // 5
+    transformed = transformation.MultiplyPoint(new Vector3(originalMax.x, originalMin.y, originalMax.z));
+    min = Vector3.Min(min, transformed);
+    max = Vector3.Max(max, transformed);
+
+    // 6
+    transformed = transformation.MultiplyPoint(originalMax);
+    min = Vector3.Min(min, transformed);
+    max = Vector3.Max(max, transformed);
+
+    // 7
+    transformed = transformation.MultiplyPoint(new Vector3(originalMin.x, originalMax.y, originalMax.z));
+    min = Vector3.Min(min, transformed);
+    max = Vector3.Max(max, transformed);
+
+    Bounds newBounds = new Bounds(bounds.center, Vector3.zero);
+    newBounds.SetMinMax(min, max);
 
     return newBounds;
   }

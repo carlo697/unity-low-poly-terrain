@@ -63,9 +63,6 @@ public class DetailSpawnerAsset : DetailSpawner {
     int groundLayer = LayerMask.NameToLayer("Ground");
     int layerMask = 1 << groundLayer;
 
-    // Array used by the ApplyTransform method
-    Vector3[] cachePoints = new Vector3[8];
-
     Vector3 start = bounds.center - bounds.extents;
 
     for (int i = 0; i < totalPopulation; i++) {
@@ -156,8 +153,8 @@ public class DetailSpawnerAsset : DetailSpawner {
 
       // Generate a bounds
       Bounds baseBounds = detail.meshes[meshIndex].levelOfDetails[0].submeshes[0].mesh.bounds;
-      Bounds rotatedBounds = baseBounds.ApplyTransform(matrix, cachePoints);
-      SphereBounds sphereBounds = new SphereBounds(rotatedBounds);
+      baseBounds = baseBounds.ApplyTransform(matrix);
+      SphereBounds sphereBounds = new SphereBounds(baseBounds);
 
       // Add a temporal instance to the list
       instances.Add(new DetailInstance {
