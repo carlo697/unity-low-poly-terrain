@@ -4,6 +4,8 @@ using System.Runtime.CompilerServices;
 // Source: https://en.wikipedia.org/wiki/Xorshift#xorshift*
 public struct XorshiftStar {
   private ulong x;
+  private const double doubleNormalizer = (1.0d / ulong.MaxValue);
+  private const float floatNormalizer = (1.0f / ulong.MaxValue);
 
   public XorshiftStar(ulong seed) {
     this.x = seed;
@@ -24,14 +26,23 @@ public struct XorshiftStar {
 
   [MethodImpl(MethodImplOptions.AggressiveInlining)]
   public double NextDouble() {
-    const double multiplier = (1.0 / ulong.MaxValue);
-    return Sample() * multiplier;
+    return Sample() * doubleNormalizer;
   }
 
   [MethodImpl(MethodImplOptions.AggressiveInlining)]
   public float NextFloat() {
-    const float multiplier = (1.0f / ulong.MaxValue);
-    return Sample() * multiplier;
+    return Sample() * floatNormalizer;
+  }
+
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]
+  public float NextFloat(float max) {
+    return Sample() * floatNormalizer * max;
+  }
+
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]
+  public float NextFloat(float min, float max) {
+    float value = Sample() * floatNormalizer;
+    return min + value * (max - min);
   }
 
   [MethodImpl(MethodImplOptions.AggressiveInlining)]
