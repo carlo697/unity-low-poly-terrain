@@ -149,8 +149,8 @@ public class GrassChunk : MonoBehaviour {
 
       // Set values in the material block
       float absoluteMaxDistance = maxDistance * batch.grass.maxDistance;
-      m_materialBlock.SetFloat("_FadeStart", absoluteMaxDistance / 2f);
-      m_materialBlock.SetFloat("_FadeEnd", absoluteMaxDistance * 0.95f);
+      m_materialBlock.SetFloat("_FadeStart", absoluteMaxDistance * 0.5f);
+      m_materialBlock.SetFloat("_FadeEnd", absoluteMaxDistance);
 
       if (batch.matrices.Count > 0) {
         for (int i = 0; i < submeshes.Length; i++) {
