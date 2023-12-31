@@ -107,6 +107,11 @@ Material:
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
+    - _SSIntensity: 0.8
+    - _SSSDistortion: 0.25
+    - _SSSIntensity: 0.75
+    - _SSSPower: 1.5
+    - _SSSShadowAttenuation: 0.98
     - _Smoothness: 0.2
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
@@ -122,6 +127,7 @@ Material:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 0.44313726, g: 0.8, b: 0.41960785, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _SSSColor: {r: 0.6392157, g: 1, b: 0.4392157, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
 --- !u!114 &5134987945657162207

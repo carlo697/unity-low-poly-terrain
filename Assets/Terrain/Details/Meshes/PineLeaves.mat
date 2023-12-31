@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: PineLeaves
-  m_Shader: {fileID: -6465566751694194690, guid: dc3a3eaa9c7d8a54bbc4ac55d12ae18a,
+  m_Shader: {fileID: -6465566751694194690, guid: 1796abcfc5d475c46a15d3fec8642674,
     type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -110,7 +110,11 @@ Material:
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _Smoothness: 0.279661
+    - _SSSDistortion: 0.75
+    - _SSSIntensity: 0.1
+    - _SSSPower: 1
+    - _SSSShadowAttenuation: 0.75
+    - _Smoothness: 0.13
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -123,6 +127,7 @@ Material:
     - _BaseColor: {r: 0.32201165, g: 0.5326469, b: 0.31063312, a: 1}
     - _Color: {r: 0.3220116, g: 0.5326469, b: 0.3106331, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _SSSColor: {r: 0.7614225, g: 1, b: 0.6367924, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
 --- !u!114 &3896656181721252834
