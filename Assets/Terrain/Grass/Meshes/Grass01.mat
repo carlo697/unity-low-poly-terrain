@@ -118,6 +118,9 @@ Material:
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _Surface: 0
+    - _WindForce: 0.4
+    - _WindLargeScale: 0.05
+    - _WindLargeSpeed: 0.075
     - _WindScale: 0.15
     - _WindSpeed: 1
     - _WindStrength: 0.5
