@@ -10,72 +10,63 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e1ee44cece33d6c42b19dd4e8b66b2e4, type: 3}
-  m_Name: PineSpawner
+  m_Name: MediumRockSpawner
   m_EditorClassIdentifier: 
-  seed: 0
-  populationDensity: 6
-  maximumLevelOfDetail: 8
-  m_detail: {fileID: 11400000, guid: 8e4701495890e3f41adc4ce9939f6103, type: 2}
+  seed: 10
+  populationDensity: 3
+  maximumLevelOfDetail: 1
+  m_detail: {fileID: 11400000, guid: 94f8c8b94a992f749b6582fbc8cb5e79, type: 2}
   scaleCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0.4
-      inSlope: 17.13384
-      outSlope: 17.13384
+      value: 0.9
+      inSlope: 0.35355547
+      outSlope: 0.35355547
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.42233098
+    - serializedVersion: 3
+      time: 0.8840225
+      value: 1.3612561
+      inSlope: 0.83098084
+      outSlope: 0.83098084
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
-      outWeight: 0.4902577
-    - serializedVersion: 3
-      time: 0.05
-      value: 0.75
-      inSlope: 0.6280884
-      outSlope: 0.6280884
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.95
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.035351682
-      outWeight: 0.33333334
+      outWeight: 0.18488245
     - serializedVersion: 3
       time: 1
       value: 2
-      inSlope: 59.662212
-      outSlope: 59.662212
+      inSlope: 10.938147
+      outSlope: 10.938147
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.13675255
+      inWeight: 0.138799
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
   applyNormalRotation: 0
-  randomRotation: {x: 3, y: 360, z: 3}
-  useSlopeAngle: 1
-  minAngle: 45
+  randomRotation: {x: 360, y: 360, z: 360}
+  useSlopeAngle: 0
+  minAngle: -90
   maxAngle: 90
   materials: 01000000
   useNoise: 1
   noiseSettings:
-    seed: 0
-    scale: 200
+    seed: 10
+    scale: 15
     amplitude: 1
-    noiseType: 2
+    noiseType: 0
     gain: 0.5
     weightedStrength: 0
     lacunarity: 2
     octaves: 1
     fractalType: 0
-    useCurve: 1
+    useCurve: 0
     curve:
       serializedVersion: 2
       m_Curve:
@@ -88,15 +79,6 @@ MonoBehaviour:
         weightedMode: 0
         inWeight: 0
         outWeight: 0
-      - serializedVersion: 3
-        time: 0.51813155
-        value: 0.36543107
-        inSlope: 1.4724033
-        outSlope: 1.4724033
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
       - serializedVersion: 3
         time: 1
         value: 1
