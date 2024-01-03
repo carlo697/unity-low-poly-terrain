@@ -189,7 +189,7 @@ public class TerrainChunk : MonoBehaviour {
     }
 
     // Create the delegates for sampling the noise
-    VoxelGridSamplerFunc samplerFunc;
+    TerrainSamplerFunc samplerFunc;
     if (terrainShape != null) {
       FastNoiseChunk chunk = new FastNoiseChunk(this);
       samplerFunc = terrainShape.GetSampler(chunk);
@@ -209,7 +209,7 @@ public class TerrainChunk : MonoBehaviour {
     m_jobPoints = new NativeList<VoxelPoint>(pointCount, Allocator.Persistent);
 
     // Create job
-    MarchingCubesJob job = new MarchingCubesJob {
+    TerrainMarchingCubesJob job = new TerrainMarchingCubesJob {
       vertices = m_jobVertices,
       triangles = m_jobTriangles,
       uvs = m_jobUVs,

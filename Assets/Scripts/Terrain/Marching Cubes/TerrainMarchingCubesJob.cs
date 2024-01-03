@@ -3,7 +3,9 @@ using Unity.Jobs;
 using Unity.Collections;
 using System.Runtime.InteropServices;
 
-public struct MarchingCubesJob : IJob {
+public delegate void TerrainSamplerFunc(VoxelGrid grid);
+
+public struct TerrainMarchingCubesJob : IJob {
   public NativeList<Vector3> vertices;
   public NativeList<int> triangles;
   public NativeList<Vector3> uvs;
@@ -19,7 +21,7 @@ public struct MarchingCubesJob : IJob {
     var timer = new System.Diagnostics.Stopwatch();
     timer.Start();
 
-    var samplerFunc = (VoxelGridSamplerFunc)samplerHandle.Target;
+    var samplerFunc = (TerrainSamplerFunc)samplerHandle.Target;
 
     // Create an instance of the grid
     VoxelGrid grid = new VoxelGrid(
@@ -28,8 +30,7 @@ public struct MarchingCubesJob : IJob {
       threshold
     );
 
-    // Fill up the grid with values using the sampler function
-    grid.Initialize(samplerFunc);
+    samplerFunc.Invoke(grid);
 
     timer.Stop();
     if (debug) {

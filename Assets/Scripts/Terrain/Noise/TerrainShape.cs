@@ -105,7 +105,7 @@ public class TerrainShape : ScriptableObject {
     Noise,
   }
 
-  public VoxelGridSamplerFunc GetSampler(FastNoiseChunk chunk) {
+  public TerrainSamplerFunc GetSampler(FastNoiseChunk chunk) {
     return (VoxelGrid grid) => {
       // Create copies of the curves
       AnimationCurve curve = new AnimationCurve(this.curve.keys);

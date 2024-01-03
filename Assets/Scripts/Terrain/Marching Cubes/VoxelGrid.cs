@@ -2,8 +2,6 @@ using UnityEngine;
 using System;
 using System.Runtime.CompilerServices;
 
-public delegate void VoxelGridSamplerFunc(VoxelGrid grid);
-
 public class VoxelGrid {
   public Vector3 scale;
   public Vector3Int resolution;
@@ -43,6 +41,9 @@ public class VoxelGrid {
     // Calculations needed to create the grid array
     m_size = new Vector3Int(resolution.x + 1, resolution.y + 1, resolution.z + 1);
     m_totalPointCount = m_size.x * m_size.y * m_size.z;
+
+    // Create the grid array
+    m_points = new VoxelPoint[m_totalPointCount];
 
     // This value can be useful when the size of the chunk is different from the resolution 
     m_resolutionScaleRatio = new Vector3(
@@ -129,10 +130,5 @@ public class VoxelGrid {
       sumZ += (value - GetPointRef(x, y, z + 1).value) * m_resolutionScaleRatio.z;
 
     return new Vector3(-sumX, -sumY, -sumZ).normalized;
-  }
-
-  public void Initialize(VoxelGridSamplerFunc samplerFunc = null) {
-    m_points = new VoxelPoint[m_totalPointCount];
-    samplerFunc?.Invoke(this);
   }
 }
