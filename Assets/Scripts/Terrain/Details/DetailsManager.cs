@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 using Unity.Jobs;
 using Unity.Collections;
 
@@ -327,8 +329,10 @@ public class DetailsManager : MonoBehaviour {
     GCHandle instancingBatches = GCHandle.Alloc(m_instancingBatches);
     GCHandle instancingShadowBatches = GCHandle.Alloc(m_instancingShadowBatches);
 
+    var urp = (UniversalRenderPipelineAsset)GraphicsSettings.currentRenderPipeline;
+
     DetailsInstancingJob job = new DetailsInstancingJob {
-      shadowDistance = QualitySettings.shadowDistance,
+      shadowDistance = urp.shadowDistance * 1.5f,
       maxDistance = viewDistance,
       cameraPosition = cameraPosition,
       cameraPlanes = nativeCameraPlanes,
