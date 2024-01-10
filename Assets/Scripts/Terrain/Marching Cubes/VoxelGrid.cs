@@ -101,34 +101,35 @@ public class VoxelGrid {
     float value = GetPointRef(x, y, z).value;
 
     // Approximate normals
-    float sumX = 0;
-    float sumY = 0;
-    float sumZ = 0;
+    float sumX = 0f;
+    float sumY = 0f;
+    float sumZ = 0f;
 
     // Left
     if (x > 0)
-      sumX += -1f * (value - GetPointRef(x - 1, y, z).value) * m_resolutionScaleRatio.x;
+      sumX = (value - GetPointRef(x - 1, y, z).value) * m_resolutionScaleRatio.x;
 
     // Right
-    if (x < size.x - 1)
-      sumX += (value - GetPointRef(x + 1, y, z).value) * m_resolutionScaleRatio.x;
+    if (x < resolution.x)
+      sumX -= (value - GetPointRef(x + 1, y, z).value) * m_resolutionScaleRatio.x;
 
     // Down
     if (y > 0)
-      sumY += -1f * (value - GetPointRef(x, y - 1, z).value) * m_resolutionScaleRatio.y;
+      sumY = (value - GetPointRef(x, y - 1, z).value) * m_resolutionScaleRatio.y;
 
     // Up
-    if (y < size.y - 1)
-      sumY += (value - GetPointRef(x, y + 1, z).value) * m_resolutionScaleRatio.y;
+    if (y < resolution.y)
+      sumY -= (value - GetPointRef(x, y + 1, z).value) * m_resolutionScaleRatio.y;
 
     // Back
     if (z > 0)
-      sumZ = -1f * (value - GetPointRef(x, y, z - 1).value) * m_resolutionScaleRatio.z;
+      sumZ = (value - GetPointRef(x, y, z - 1).value) * m_resolutionScaleRatio.z;
 
     // Forward
-    if (z < size.z - 1)
-      sumZ += (value - GetPointRef(x, y, z + 1).value) * m_resolutionScaleRatio.z;
+    if (z < resolution.z)
+      sumZ -= (value - GetPointRef(x, y, z + 1).value) * m_resolutionScaleRatio.z;
 
-    return new Vector3(-sumX, -sumY, -sumZ).normalized;
+    float inverseSquareRoot = MathUtils.FastInvSqrt(sumX * sumX + sumY * sumY + sumZ * sumZ);
+    return new Vector3(sumX * inverseSquareRoot, sumY * inverseSquareRoot, sumZ * inverseSquareRoot);
   }
 }
