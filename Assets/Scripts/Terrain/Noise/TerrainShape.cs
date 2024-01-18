@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 [CreateAssetMenu(menuName = "Terrain/Shape", order = 0)]
 public class TerrainShape : ScriptableObject {
@@ -30,7 +31,7 @@ public class TerrainShape : ScriptableObject {
   [Header("Base Noise Settings")]
   public int terrainSeed = 0;
   public float noiseScale = 1500f;
-  public FractalNoiseGenerator baseNoise = new FractalNoiseGenerator {
+  public FractalNoise baseNoise = new FractalNoise {
     seed = 0,
     scale = 1f,
     octaves = 8
@@ -39,12 +40,12 @@ public class TerrainShape : ScriptableObject {
 
   [Header("Falloff Settings")]
   public bool useFalloff = true;
-  public FalloffNoiseGenerator falloffMask = new FalloffNoiseGenerator {
+  public FalloffNoise falloffMask = new FalloffNoise {
     seed = 2,
     scale = 5.5f,
     octaves = 8
   };
-  public FractalNoiseGenerator landGradientSteepness = new FractalNoiseGenerator {
+  public FractalNoise landGradientSteepness = new FractalNoise {
     seed = 3,
     scale = 1f,
     noiseType = NoiseType.OpenSimplex2S,
@@ -52,24 +53,41 @@ public class TerrainShape : ScriptableObject {
     octaves = 3
   };
 
+  [Header("Biome Settings")]
+  public Biome defaultBiome;
+  public bool useBiomes = true;
+  public BiomeArray biomes;
+  public float biomesNoiseScale = 0.75f;
+  public float biomesVoronoiRandomness = 0.5f;
+  public FractalNoise biomeWarp = new FractalNoise {
+    seed = 4,
+    scale = 4f,
+    amplitude = 1.5f,
+    noiseType = NoiseType.OpenSimplex2S,
+    octaves = 6,
+    fractalType = FractalType.FractalFBm
+  };
+  public TemperatureNoise averageTemperature;
+  public PrecipitationNoise annualPrecipitation;
+
   [Header("Plateaus")]
   public bool usePlateaus = true;
   public float absoluteMaximunPlateauHeight = 48f;
-  public FractalNoiseGenerator plateauMask = new FractalNoiseGenerator {
+  public FractalNoise plateauMask = new FractalNoise {
     seed = 20,
     scale = 1f,
     noiseType = NoiseType.OpenSimplex2S,
     octaves = 2,
     useCurve = true
   };
-  public FractalNoiseGenerator plateauShape = new FractalNoiseGenerator {
+  public FractalNoise plateauShape = new FractalNoise {
     seed = 22,
     scale = 0.15f,
     noiseType = NoiseType.OpenSimplex2S,
     octaves = 5,
     useCurve = true
   };
-  public FractalNoiseGenerator plateauGround = new FractalNoiseGenerator {
+  public FractalNoise plateauGround = new FractalNoise {
     seed = 24,
     scale = 2.5f,
     noiseType = NoiseType.OpenSimplex2S,
@@ -85,264 +103,243 @@ public class TerrainShape : ScriptableObject {
   public GrassSpawner[] grassSpawners = new GrassSpawner[] { };
 
   [Header("Debug")]
-  public float debugHeightmapMultiplier = 1f;
+  public float debugPixelsMultiplier = 1f;
+  public int debugBiomeIndex;
   public DebugMode debugMode = DebugMode.None;
 
   public enum DebugMode {
     None,
-    Value,
     Normals,
     Slope,
-    Falloff,
-    LandGradient,
-    OceanGradient,
-    OceanAndLandGradient,
-    LandGradientSteepness,
-    PlateauMask,
-    PlateauShape,
-    PlateauShapeAndMask,
-    PlateauGround,
     Noise,
+    BiomeMasks,
+    Custom2d,
+    AverageTemperature,
+    AnnualPrecipitation
   }
 
   public TerrainSamplerFunc GetSampler(FastNoiseChunk chunk) {
     return (VoxelGrid grid) => {
+      int pixelCount2d = chunk.resolution.x * chunk.resolution.z;
+
+      Biome[] biomes = this.biomes;
+
       // Create copies of the curves
       AnimationCurve curve = new AnimationCurve(this.curve.keys);
       AnimationCurve normalizerCurve = new AnimationCurve(this.normalizerCurve.keys);
 
-      // Debug pixels
-      float[] debug2dPixels = null;
-      if (debugMode == DebugMode.Falloff
-        || debugMode == DebugMode.LandGradient
-        || debugMode == DebugMode.OceanGradient
-        || debugMode == DebugMode.OceanAndLandGradient
-        || debugMode == DebugMode.LandGradientSteepness
-      ) {
-        debug2dPixels = new float[chunk.resolution.x * chunk.resolution.z];
+      TemperatureNoise.Generator temperatureGenerator = averageTemperature.GetGenerator();
+      PrecipitationNoise.Generator precipitationGenerator = annualPrecipitation.GetGenerator();
+
+      // Determine the biomes in this chunk
+      Dictionary<Biome, float[]> selectedBiomes = null;
+      if (useBiomes || debugMode == DebugMode.BiomeMasks) {
+        selectedBiomes = BiomeSelector.DetermineBiomes(
+          chunk,
+          terrainSeed,
+          biomes,
+          noiseScale,
+          noiseScale * biomesNoiseScale,
+          biomesVoronoiRandomness,
+          biomeWarp.GetGenerator(),
+          temperatureGenerator,
+          precipitationGenerator
+        );
       }
 
-      // Generate the base terrain noise
-      TerrainNoiseGenerator baseTerrainGenerator = baseNoise.GetGenerator();
-      float[] baseTerrainPixels = baseTerrainGenerator.GenerateGrid3d(chunk, noiseScale, terrainSeed);
+      // Array to store the debug pixels
+      float[] debug2dPixels = null;
+      if (debugMode == DebugMode.Custom2d || debugMode == DebugMode.BiomeMasks) {
+        debug2dPixels = new float[pixelCount2d];
+      }
 
-      // Generate the falloff map and the gradient maps
-      float[] falloffPixels = null;
-      float[] landGradientSteepnessPixels = null;
-      float[] landGradientPixels = null;
-      float[] oceanGradientPixels = null;
-      if (useFalloff) {
-        falloffPixels = falloffMask.GenerateNoise(chunk, noiseScale, terrainSeed);
-        landGradientSteepnessPixels =
-          landGradientSteepness.GetGenerator().GenerateGrid2d(chunk, noiseScale, terrainSeed);
+      if (debugMode == DebugMode.AverageTemperature) {
+        debug2dPixels = temperatureGenerator.GenerateGrid2d(chunk, noiseScale, terrainSeed);
+      }
 
-        landGradientPixels = new float[falloffPixels.Length];
-        oceanGradientPixels = new float[falloffPixels.Length];
+      if (debugMode == DebugMode.AnnualPrecipitation) {
+        debug2dPixels = precipitationGenerator.GenerateGrid2d(chunk, noiseScale, terrainSeed);
+      }
 
-        for (int i = 0; i < landGradientPixels.Length; i++) {
-          float falloff = falloffPixels[i];
-          float landGradientSteepness = landGradientSteepnessPixels[i];
+      // Debug the masks for biomes
+      if (debugMode == DebugMode.BiomeMasks) {
+        // Find in the array the biome to debug
+        Biome debugBiome = null;
+        if (debugBiomeIndex >= 0 && debugBiomeIndex < biomes.Length) {
+          debugBiome = biomes[debugBiomeIndex];
+        }
 
-          // Get the land gradient from the falloff
-          float landGradient;
-          if (falloff <= seaLevel) {
-            landGradient = 0f;
-          } else {
-            // landGradient = Mathf.SmoothStep(0f, 1f, (falloff - seaLevel) / landGradientSteepness);
-            landGradient = Mathf.Clamp01((falloff - seaLevel) / landGradientSteepness);
+        if (debugBiome == null) {
+          // If the provided biome index is not valid, then we'll just sum up the masks of all biomes
+          foreach (var (biome, mask) in selectedBiomes) {
+            for (int i = 0; i < mask.Length; i++) {
+              debug2dPixels[i] = Mathf.Clamp01(debug2dPixels[i] + mask[i]);
+            }
           }
-          landGradientPixels[i] = landGradient;
-
-          // Get the ocean gradient from the falloff
-          float oceanGradient;
-          if (falloff > seaLevel) {
-            oceanGradient = 0f;
-          } else {
-            // oceanGradient = Mathf.SmoothStep(0f, 1f, ((seaLevel - falloff) / (landGradientSteepness)));
-            oceanGradient = Mathf.Clamp01((seaLevel - falloff) / (landGradientSteepness));
-          }
-          oceanGradientPixels[i] = oceanGradient;
+        } else if (debugBiome && selectedBiomes.ContainsKey(debugBiome)) {
+          // The biome was found so we'll use its mask
+          debug2dPixels = selectedBiomes[debugBiome];
+        } else {
+          // The biome is not present, we'll use an empty mask
+          debug2dPixels = new float[grid.size.x * grid.size.z];
         }
       }
 
-      // Generate the noises for plateous
-      float relativeMaximunPlateauHeight = (1f / chunk.scale.y) * absoluteMaximunPlateauHeight;
-      TerrainNoiseGenerator plateauMaskGenerator = plateauMask.GetGenerator();
-      float[] plateauMaskPixels = plateauMaskGenerator.GenerateGrid2d(chunk, noiseScale, terrainSeed);
-      TerrainNoiseGenerator plateauGroundGenerator = plateauGround.GetGenerator();
-      float[] plateauGroundPixels = plateauGroundGenerator.GenerateGrid2d(chunk, noiseScale, terrainSeed);
-      TerrainNoiseGenerator plateauShapeGenerator = plateauShape.GetGenerator();
-      float[] plateauShapePixels = plateauShapeGenerator.GenerateGrid2d(chunk, noiseScale, terrainSeed);
+      if (useBiomes) {
+        // The the voxel grids for each biome
+        Dictionary<Biome, VoxelGrid> grids = new();
 
-      for (int z = 0; z < grid.size.z; z++) {
-        for (int y = 0; y < grid.size.y; y++) {
-          for (int x = 0; x < grid.size.x; x++) {
-            // Get 1D index from the coords
-            int index = grid.GetIndexFromCoords(x, y, z);
+        // We create these arrays so we don't need to use a foreach to iterate over
+        // the biomes
+        int biomeCount = selectedBiomes.Count;
+        float[][] masksArray = new float[biomeCount][];
+        VoxelGrid[] gridsArray = new VoxelGrid[biomeCount];
 
-            // Get the position of the point
-            Vector3 pointPosition = grid.GetPointPosition(x, y, z);
+        int biomeArrayIndex = 0;
+        foreach (var (biome, mask) in selectedBiomes) {
+          // Initialize the grid
+          VoxelGrid biomeGrid = new VoxelGrid(grid.scale, grid.resolution, grid.threshold);
+          biomeGrid.CopyPointsFrom(grid);
+          grids[biome] = biomeGrid;
 
-            VoxelPoint point = new VoxelPoint {
-              position = pointPosition
-            };
+          // Add the biome to the array
+          masksArray[biomeArrayIndex] = mask;
+          gridsArray[biomeArrayIndex] = biomeGrid;
 
-            // Coords for 2d maps
-            int index2D = z * grid.size.x + x;
+          // Generate the data
+          biome.Generate(this, chunk, biomeGrid, mask);
+          biomeArrayIndex++;
+        }
 
-            // Start sampling
-            float output = 0;
-            float heightGradient = point.position.y / chunk.scale.y;
+        // Blend all the biomes into the final grid
+        for (int pointIndex = 0; pointIndex < grid.totalPointCount; pointIndex++) {
+          ref VoxelPoint finalPoint = ref grid.points[pointIndex];
 
-            if (debugMode == DebugMode.Noise) {
-              point.value = baseTerrainPixels[index] * -1f;
-              grid.points[index] = point;
+          // Coords for 2d maps
+          Vector3Int coords = grid.GetCoordsFromIndex(pointIndex);
+          int pointIndex2D = coords.z * grid.size.x + coords.x;
+
+          // Values needed to calculate the average data for this point
+          float weightSum = 0f;
+          float maximunWeight = float.MinValue;
+          int prominentBiomeIndex = 0;
+
+          // Sum all the weights and find the index of the biome with the highest weight
+          for (int biomeIndex = 0; biomeIndex < biomeCount; biomeIndex++) {
+            float weight = masksArray[biomeIndex][pointIndex2D];
+            weightSum += weight;
+
+            if (weight > maximunWeight) {
+              maximunWeight = weight;
+              prominentBiomeIndex = biomeIndex;
+            }
+          }
+
+          // We'll multiply each weight by this value so that the sum of weights equal one
+          float inverseWeightSum = 1f / weightSum;
+
+          // Final values for the point
+          float value = 0f;
+          Color color = default;
+          float roughness = 0f;
+          uint material = gridsArray[prominentBiomeIndex].points[pointIndex].material;
+
+          // Iterate the pixel on the biomes to get averages
+          for (int biomeIndex = 0; biomeIndex < biomeCount; biomeIndex++) {
+            float weight = masksArray[biomeIndex][pointIndex2D] * inverseWeightSum;
+
+            if (weight <= 0f) {
               continue;
             }
 
-            // Land output
-            float terrainHeight = TextureUtils.Normalize(baseTerrainPixels[index]);
-
-            if (usePlateaus) {
-              // Overall shape of Plateaus
-              float plateauMaskNoise = TextureUtils.Normalize(plateauMaskPixels[index2D]);
-              float plateauShapeNoise =
-                TextureUtils.Normalize(plateauShapePixels[index2D]) * plateauMaskNoise;
-
-              // The height of the terrain on top of plateaus
-              float plateauGroundNoise = TextureUtils.Normalize(plateauGroundPixels[index2D]);
-              float plateauHeight = Mathf.LerpUnclamped(
-                terrainHeight,
-                plateauGroundNoise,
-                relativeMaximunPlateauHeight
-              );
-
-              // 2nd Mask
-              float threshold = 0.02f;
-              float plateau2ndMask = plateauMaskNoise - terrainHeight;
-              plateau2ndMask = Mathf.SmoothStep(0f, 1f, plateau2ndMask / threshold);
-              plateauShapeNoise *= plateau2ndMask;
-
-              // Use plateauHeight only if it's taller than terrainHeight
-              terrainHeight = Mathf.LerpUnclamped(terrainHeight, plateauHeight, plateauShapeNoise);
-            }
-
-            if (useFalloff) {
-              float landGradient = landGradientPixels[index2D];
-              float oceanGradient = oceanGradientPixels[index2D];
-
-              // Use the land gradient to combine the base terrain noise with the falloff map
-              // float heightBelowSeaLevel = heightGradient - finalFalloff;
-              // float heightAboveSeaLevel = heightGradient - seaLevel - (terrainHeight * (1f - seaLevel));
-              // output = Mathf.Lerp(heightBelowSeaLevel, heightAboveSeaLevel, landGradient);
-
-              // Determine the density in the ocean and on land
-              float densitySeaLevel = heightGradient - seaLevel;
-              float oceanDensity = heightGradient - terrainHeight * seaLevel * 0.5f;
-              float landDensity = heightGradient - seaLevel - (terrainHeight * (1f - seaLevel));
-
-              // Use the land and ocean gradients to combine land density and ocean density
-              if (oceanGradient > 0f) {
-                output = Mathf.LerpUnclamped(densitySeaLevel, oceanDensity, oceanGradient);
-              } else {
-                output = Mathf.LerpUnclamped(densitySeaLevel, landDensity, landGradient);
-              }
-
-              if (debugMode == DebugMode.Falloff) {
-                debug2dPixels[index2D] = 1f - output;
-              } else if (debugMode == DebugMode.LandGradient) {
-                debug2dPixels[index2D] = landGradient;
-              } else if (debugMode == DebugMode.OceanGradient) {
-                debug2dPixels[index2D] = oceanGradient;
-              } else if (debugMode == DebugMode.OceanAndLandGradient) {
-                debug2dPixels[index2D] = Mathf.Max(oceanGradient, landGradient);
-              } else if (debugMode == DebugMode.LandGradientSteepness) {
-                debug2dPixels[index2D] = landGradientSteepnessPixels[index2D];
-              }
-            } else {
-              output = heightGradient - terrainHeight;
-            }
-
-            // Set the density and save the point
-            point.value = output;
-            grid.points[index] = point;
+            ref VoxelPoint biomePoint = ref gridsArray[biomeIndex].points[pointIndex];
+            value += biomePoint.value * weight;
+            color += biomePoint.color * weight;
+            roughness += biomePoint.roughness * weight;
           }
+
+          // Set the final values
+          finalPoint.value = value;
+          finalPoint.color = color;
+          finalPoint.roughness = roughness;
+          finalPoint.material = material;
         }
+
+        // for (int index = 0; index < grid.totalPointCount; index++) {
+        //   ref VoxelPoint point = ref grid.points[index];
+
+        //   // Start sampling
+        //   float output = 0;
+        //   float heightGradient = point.position.y / chunk.scale.y;
+        //   output = heightGradient - float.Epsilon;
+
+        //   // Set the density
+        //   point.value = output;
+        //   point.color = Color.black;
+        //   point.roughness = 0f;
+        //   point.material = grassId;
+        // };
+
+        // Dispose the grids created for the biomes
+        foreach (var item in grids) {
+          item.Value.Dispose();
+        }
+      } else {
+        // Create a mask fill with 1f
+        float[] mask = new float[pixelCount2d];
+        for (int i = 0; i < mask.Length; i++) {
+          mask[i] = 1f;
+        }
+
+        // Generate the default biome on the grid
+        defaultBiome.Generate(this, chunk, grid, mask);
       }
 
-      // Initialize colors
-      Color black = Color.black;
-      for (int z = 0; z < grid.size.z; z++) {
-        for (int y = 0; y < grid.size.y; y++) {
-          for (int x = 0; x < grid.size.x; x++) {
-            int index = grid.GetIndexFromCoords(x, y, z);
-            int index2D = z * grid.size.x + x;
+      if (debugMode != DebugMode.None) {
+        if (debugMode == DebugMode.Noise) {
+          INoiseGenerator baseTerrainGenerator = baseNoise.GetGenerator();
+          float[] baseTerrainPixels = baseTerrainGenerator.GenerateGrid3d(chunk, noiseScale, terrainSeed);
+
+          for (int index = 0; index < grid.totalPointCount; index++) {
             ref VoxelPoint point = ref grid.points[index];
-
-            // Approximate normals
-            Vector3 normal = grid.GetPointNormalApproximation(x, y, z);
-
-            if (debugMode == DebugMode.Value) {
-              point.color = Color.Lerp(Color.black, Color.white, point.value * 100f);
-            } else if (debugMode == DebugMode.Normals) {
-              point.color = new Color(normal.x, normal.y, normal.z);
-            } else if (debugMode == DebugMode.Slope) {
-              point.color = Color.Lerp(Color.black, Color.white, normal.y);
-            } else if (debugMode == DebugMode.Falloff
-              || debugMode == DebugMode.LandGradient
-              || debugMode == DebugMode.OceanGradient
-              || debugMode == DebugMode.OceanAndLandGradient
-              || debugMode == DebugMode.LandGradientSteepness
-            ) {
-              point.color = Color.white * debug2dPixels[index2D] * debugHeightmapMultiplier;
-            } else if (debugMode == DebugMode.PlateauMask) {
-              point.color = Color.Lerp(Color.black, Color.white, plateauMaskPixels[index2D]);
-            } else if (debugMode == DebugMode.PlateauShape) {
-              point.color = Color.Lerp(Color.black, Color.white, plateauShapePixels[index2D]);
-            } else if (debugMode == DebugMode.PlateauShapeAndMask) {
-              float plateauMaskNoise = TextureUtils.Normalize(plateauMaskPixels[index2D]);
-              float plateauShapeNoise =
-                TextureUtils.Normalize(plateauShapePixels[index2D]) * plateauMaskNoise;
-
-              point.color = Color.Lerp(Color.black, Color.white, plateauShapeNoise);
-            } else if (debugMode == DebugMode.PlateauGround) {
-              point.color = Color.Lerp(Color.black, Color.white, plateauGroundPixels[index2D]);
-            } else if (debugMode == DebugMode.Noise) {
-              point.color = Color.white * 0.5f;
-            } else {
-              float normalizedHeight = point.position.y / chunk.scale.y;
-
-              if (normal.y <= 0.85f) {
-                // Rock
-                point.color = rockColor;
-                point.roughness = 0.35f;
-                point.material = rockId;
-              } else if (normalizedHeight >= snowHeight) {
-                // Snow
-                point.color = snowColor;
-                point.roughness = 0.15f;
-                point.material = snowId;
-              } else if (normalizedHeight <= seaLevel) {
-                // Underwater Beach Sand
-                float t = Mathf.InverseLerp(0f, sandHeight, normalizedHeight);
-                point.color = Color.Lerp(darkSandColor, wetSandColor, t);
-                point.roughness = 0.15f;
-                point.material = sandId;
-              } else if (normalizedHeight <= sandHeight) {
-                // Beach Sand
-                point.color = sandColor;
-                point.roughness = 0.25f;
-                point.material = sandId;
-              } else {
-                // Grass
-                float t = Mathf.InverseLerp(sandHeight, snowHeight, normalizedHeight);
-                point.color = Color.Lerp(grassColor, darkGrassColor, t);
-                point.roughness = 0.15f;
-                point.material = grassId;
-              }
-            }
+            point.value = baseTerrainPixels[index] * -1f;
           }
         }
+
+        // Initialize colors
+        for (int index = 0; index < grid.totalPointCount; index++) {
+          ref VoxelPoint point = ref grid.points[index];
+
+          Vector3Int coords = grid.GetCoordsFromIndex(index);
+          int index2D = coords.z * grid.size.x + coords.x;
+
+          Vector3 normal = grid.GetPointNormalApproximation(coords.x, coords.y, coords.z);
+
+          switch (debugMode) {
+            case DebugMode.Normals:
+              point.color = new Color(normal.x, normal.y, normal.z) * debugPixelsMultiplier;
+              break;
+            case DebugMode.Slope:
+              point.color = Color.white * normal.y * debugPixelsMultiplier;
+              break;
+            case DebugMode.Noise:
+              point.color = Color.white * debugPixelsMultiplier;
+              break;
+            case DebugMode.BiomeMasks:
+              point.color = Color.white * debug2dPixels[index2D] * debugPixelsMultiplier;
+              break;
+            case DebugMode.AverageTemperature:
+              float temperature = temperatureGenerator.Normalize(debug2dPixels[index2D]);
+              point.color = Color.white * temperature * debugPixelsMultiplier;
+              break;
+            case DebugMode.AnnualPrecipitation:
+              float precipitation = precipitationGenerator.Normalize(debug2dPixels[index2D]);
+              point.color = Color.white * precipitation * debugPixelsMultiplier;
+              break;
+            default:
+              break;
+          }
+        };
       }
     };
   }

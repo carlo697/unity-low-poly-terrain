@@ -6,7 +6,7 @@ public class NoisePreview : MonoBehaviour {
 
   [Header("Noise")]
   public int resolution = 256;
-  public FractalNoiseGenerator noise;
+  public FractalNoise noise;
 
   [Header("Noise Output")]
   public bool useThreshold;

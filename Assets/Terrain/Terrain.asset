@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c0a105f68bd6b140913a4ff8df44e9d, type: 3}
   m_Name: Terrain
   m_EditorClassIdentifier: 
-  mapSize: {x: 8000, y: 8000}
+  mapSize: {x: 16000, y: 16000}
   curve:
     serializedVersion: 2
     m_Curve:
@@ -121,7 +121,7 @@ MonoBehaviour:
   snowHeight: 0.8208333
   sandHeight: 0.3260416
   terrainSeed: 0
-  noiseScale: 1500
+  noiseScale: 1000
   baseNoise:
     seed: 0
     scale: 0.8
@@ -199,7 +199,7 @@ MonoBehaviour:
   updateChunksInEditor: 1
   useFalloff: 1
   falloffMask:
-    mapSize: {x: 8000, y: 8000}
+    mapSize: {x: 16000, y: 16000}
     seed: 2
     scale: 5.5
     gain: 0.5
@@ -209,23 +209,41 @@ MonoBehaviour:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
-        time: 0.6
+        time: 0
         value: 0
-        inSlope: 1.625
-        outSlope: 1.625
-        tangentMode: 34
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 1
-        value: 0.65
-        inSlope: 1.625
-        outSlope: 1.625
-        tangentMode: 34
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
         weightedMode: 0
         inWeight: 0.33333334
         outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.8264907
+        value: 0.09652183
+        inSlope: 0.11678514
+        outSlope: 0.40743515
+        tangentMode: 5
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.9476044
+        value: 0.45754388
+        inSlope: 5.9831614
+        outSlope: 5.9831614
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.038131025
+        outWeight: 0.38946962
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 8.61293
+        outSlope: 8.61293
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.39421475
+        outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -336,6 +354,142 @@ MonoBehaviour:
     useDomainWarp: 0
     domainWarpAmplitude: 1
     domainWarpFrequency: 2
+  defaultBiome: {fileID: 11400000, guid: 69c4aa4d9a3bd364dac552cb86230c67, type: 2}
+  useBiomes: 1
+  biomes:
+    array:
+    - {fileID: 11400000, guid: ffc6b4f7c76fbfd4aa6e2a5943a8c9c8, type: 2}
+    - {fileID: 11400000, guid: 69c4aa4d9a3bd364dac552cb86230c67, type: 2}
+    - {fileID: 11400000, guid: 044f22e91244c844caeff06226de3595, type: 2}
+    - {fileID: 11400000, guid: 5d98ca1d7c2646248a4bf0a9833a03c0, type: 2}
+    - {fileID: 11400000, guid: 9534a0b2fd921e3449d008f5c9c519e6, type: 2}
+    - {fileID: 11400000, guid: 09e559b0efdd54545be416f482f9a8d6, type: 2}
+  biomesNoiseScale: 0.75
+  biomesVoronoiRandomness: 0.5
+  biomeWarp:
+    seed: 4
+    scale: 4
+    amplitude: 1.5
+    noiseType: 4
+    gain: 0.5
+    weightedStrength: 0
+    lacunarity: 2
+    octaves: 6
+    fractalType: 0
+    useCurve: 0
+    curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: -1
+        value: -1
+        inSlope: 0
+        outSlope: 1
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 1
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    useDomainWarp: 0
+    domainWarpAmplitude: 1
+    domainWarpFrequency: 0.5
+  averageTemperature:
+    mapSize: {x: 16000, y: 16000}
+    range:
+      min: -15
+      max: 30
+    polarTemperatureDifference: 45
+    noise:
+      seed: 5
+      scale: 8
+      amplitude: 1
+      noiseType: 4
+      gain: 0.5
+      weightedStrength: 0
+      lacunarity: 2
+      octaves: 3
+      fractalType: 0
+      useCurve: 1
+      curve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: -1
+          value: 20
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 136
+          weightedMode: 0
+          inWeight: 0.33333334
+          outWeight: 0.33333334
+        - serializedVersion: 3
+          time: 1
+          value: 30
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 136
+          weightedMode: 0
+          inWeight: 0.33333334
+          outWeight: 0.33333334
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      useDomainWarp: 0
+      domainWarpAmplitude: 0.1
+      domainWarpFrequency: 2
+  annualPrecipitation:
+    range:
+      min: 0
+      max: 450
+    noise:
+      seed: 6
+      scale: 8
+      amplitude: 1
+      noiseType: 4
+      gain: 0.5
+      weightedStrength: 0
+      lacunarity: 2
+      octaves: 3
+      fractalType: 0
+      useCurve: 1
+      curve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: -1
+          value: 0
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 136
+          weightedMode: 0
+          inWeight: 0.33333334
+          outWeight: 0.33333334
+        - serializedVersion: 3
+          time: 1
+          value: 450
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 136
+          weightedMode: 0
+          inWeight: 0.33333334
+          outWeight: 0.33333334
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      useDomainWarp: 0
+      domainWarpAmplitude: 0.1
+      domainWarpFrequency: 2
   usePlateaus: 1
   absoluteMaximunPlateauHeight: 48
   plateauMask:
@@ -523,5 +677,6 @@ MonoBehaviour:
   grassSpawners:
   - {fileID: 11400000, guid: f09574a29497eb44697a702d50e82f8c, type: 2}
   - {fileID: 11400000, guid: f1d226c1e2cc50a48bc7d4fe08e87a88, type: 2}
-  debugHeightmapMultiplier: 1
+  debugPixelsMultiplier: 1
+  debugBiomeIndex: -1
   debugMode: 0

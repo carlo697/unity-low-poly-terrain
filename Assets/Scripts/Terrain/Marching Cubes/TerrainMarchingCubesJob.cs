@@ -23,38 +23,35 @@ public struct TerrainMarchingCubesJob : IJob {
 
     var samplerFunc = (TerrainSamplerFunc)samplerHandle.Target;
 
-    // Create an instance of the grid
-    VoxelGrid grid = new VoxelGrid(
-      scale,
-      resolution,
-      threshold
-    );
+    // Create an instance of the grid and use it
+    using (VoxelGrid grid = new VoxelGrid(scale, resolution, threshold)) {
+      grid.InitializePositions();
+      samplerFunc.Invoke(grid);
 
-    samplerFunc.Invoke(grid);
+      timer.Stop();
+      if (debug) {
+        Debug.Log($"Grid: {timer.ElapsedMilliseconds} ms, resolution: {grid.resolution}");
+      }
+      timer.Restart();
 
-    timer.Stop();
-    if (debug) {
-      Debug.Log($"Grid: {timer.ElapsedMilliseconds} ms, resolution: {grid.resolution}");
-    }
-    timer.Restart();
+      // Apply marching cubes to the grid to generate vertices, uvs, colors, etc
+      MarchingCubes.MarchCubes(
+        grid,
+        threshold,
+        ref vertices,
+        ref triangles,
+        ref uvs,
+        ref colors
+      );
 
-    // Apply marching cubes to the grid to generate vertices, uvs, colors, etc
-    MarchingCubes.MarchCubes(
-      grid,
-      threshold,
-      ref vertices,
-      ref triangles,
-      ref uvs,
-      ref colors
-    );
+      timer.Stop();
+      if (debug) {
+        Debug.Log($"Marching: {timer.ElapsedMilliseconds} ms, resolution: {grid.resolution}");
+      }
 
-    timer.Stop();
-    if (debug) {
-      Debug.Log($"Marching: {timer.ElapsedMilliseconds} ms, resolution: {grid.resolution}");
-    }
-
-    for (int i = 0; i < grid.points.Length; i++) {
-      this.points.Add(grid.points[i]);
+      for (int i = 0; i < grid.points.Length; i++) {
+        this.points.Add(grid.points[i]);
+      }
     }
   }
 }

@@ -1,8 +1,9 @@
 using UnityEngine;
 using System;
+using System.Buffers;
 using System.Runtime.CompilerServices;
 
-public class VoxelGrid {
+public class VoxelGrid : IDisposable {
   public Vector3 scale;
   public Vector3Int resolution;
   public float threshold;
@@ -29,11 +30,7 @@ public class VoxelGrid {
 
   private Vector3 m_resolutionScaleRatio;
 
-  public VoxelGrid(
-    Vector3 scale,
-    Vector3Int resolution,
-    float threshold = 0f
-  ) {
+  public VoxelGrid(Vector3 scale, Vector3Int resolution, float threshold = 0f) {
     this.scale = scale;
     this.resolution = resolution;
     this.threshold = threshold;
@@ -43,7 +40,7 @@ public class VoxelGrid {
     m_totalPointCount = m_size.x * m_size.y * m_size.z;
 
     // Create the grid array
-    m_points = new VoxelPoint[m_totalPointCount];
+    m_points = ArrayPool<VoxelPoint>.Shared.Rent(m_totalPointCount);
 
     // This value can be useful when the size of the chunk is different from the resolution 
     m_resolutionScaleRatio = new Vector3(
@@ -51,6 +48,21 @@ public class VoxelGrid {
       resolution.y / scale.y,
       resolution.z / scale.z
     );
+  }
+
+  public void InitializePositions() {
+    for (int index = 0; index < m_totalPointCount; index++) {
+      ref VoxelPoint point = ref m_points[index];
+      point.position = GetPointPosition(index);
+    }
+  }
+
+  public void CopyPointsFrom(VoxelGrid grid) {
+    Array.Copy(grid.points, m_points, m_totalPointCount);
+  }
+
+  public void Dispose() {
+    ArrayPool<VoxelPoint>.Shared.Return(m_points);
   }
 
   [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -68,6 +80,17 @@ public class VoxelGrid {
   public ref VoxelPoint GetPointRef(int x, int y, int z) {
     int index = GetIndexFromCoords(x, y, z);
     return ref m_points[index];
+  }
+
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]
+  public Vector3 GetPointPosition(int index) {
+    Vector3Int coords = GetCoordsFromIndex(index);
+
+    return new Vector3(
+      ((float)coords.x / ((float)resolution.x)) * scale.x,
+      ((float)coords.y / ((float)resolution.y)) * scale.y,
+      ((float)coords.z / ((float)resolution.z)) * scale.z
+    );
   }
 
   [MethodImpl(MethodImplOptions.AggressiveInlining)]

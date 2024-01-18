@@ -170,6 +170,19 @@ public class TerrainChunk : MonoBehaviour {
     m_bounds = new Bounds(m_position + m_scale / 2f, m_scale);
   }
 
+  [ContextMenu("Print Cached Fields")]
+  public void PrintCachedFields() {
+    UpdateCachedFields();
+    Debug.LogFormat("Grid size: {0}", m_gridSize);
+    Debug.LogFormat("Position: {0}", m_position);
+    Debug.LogFormat("Noise position: {0}", m_noisePosition);
+    Debug.LogFormat("Bounds: {0}", m_bounds);
+  }
+
+  private void OnDrawGizmosSelected() {
+    Gizmos.DrawWireCube(m_bounds.center, m_bounds.size);
+  }
+
   [ContextMenu("InstantRegenerate")]
   public void ScheduleRegeneration() {
     UpdateCachedFields();

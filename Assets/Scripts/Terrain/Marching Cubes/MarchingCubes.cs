@@ -56,12 +56,12 @@ public static class MarchingCubes {
               Vector3Int coordsA = coords + MarchingCubesConsts.edgeVerticesIndexes[edgeIndex, 0];
               int indexA = grid.GetIndexFromCoords(coordsA);
               float sampleA = grid.points[indexA].value;
-              Vector3 positionA = grid.points[indexA].position;
+              Vector3 positionA = grid.GetPointPosition(coordsA.x, coordsA.y, coordsA.z);
 
               Vector3Int coordsB = coords + MarchingCubesConsts.edgeVerticesIndexes[edgeIndex, 1];
               int indexB = grid.GetIndexFromCoords(coordsB);
               float sampleB = grid.points[indexB].value;
-              Vector3 positionB = grid.points[indexB].position;
+              Vector3 positionB = grid.GetPointPosition(coordsB.x, coordsB.y, coordsB.z);
 
               // Apply a random position to get a rougher mesh
               if (coordsA.x > 0 && coordsA.x < grid.size.x - 1

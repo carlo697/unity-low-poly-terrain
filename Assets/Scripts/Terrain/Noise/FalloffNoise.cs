@@ -2,7 +2,7 @@ using UnityEngine;
 using System;
 
 [Serializable]
-public class FalloffNoiseGenerator {
+public class FalloffNoise {
   public Vector2 mapSize = Vector3.one * 16000f;
   public int seed = 2;
   public float scale = 5.5f;
@@ -44,9 +44,9 @@ public class FalloffNoiseGenerator {
         float localY = ((float)_y / chunk.resolution.z) * chunk.scale.z;
 
         // Clamped coordinates for creating the falloff map
-        float posX = ((chunk.position.x + localX) / mapSize.x) * 0.5f;
+        float posX = ((chunk.position.x + localX) / (mapSize.x * 0.25f)) * 0.5f;
         posX = Mathf.Clamp01(Math.Abs(posX));
-        float posY = ((chunk.position.z + localY) / mapSize.y) * 0.5f;
+        float posY = ((chunk.position.z + localY) / (mapSize.y * 0.25f)) * 0.5f;
         posY = Mathf.Clamp01(Math.Abs(posY));
 
         // Create the falloff map

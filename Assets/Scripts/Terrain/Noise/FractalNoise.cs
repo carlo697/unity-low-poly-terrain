@@ -3,18 +3,13 @@ using System;
 using System.Runtime.CompilerServices;
 
 [Serializable]
-public class FractalNoiseGenerator : BasicNoiseSettings {
-  [Header("Domain Warp")]
-  public bool useDomainWarp = false;
-  public float domainWarpAmplitude = 1f;
-  public float domainWarpFrequency = 0.5f;
-
-  public class Generator : TerrainNoiseGenerator {
-    private FractalNoiseGenerator m_settings;
+public class FractalNoise : BasicNoiseSettings {
+  public class Generator : INoiseGenerator {
+    private FractalNoise m_settings;
     private FastNoise m_noise;
     private AnimationCurve m_curve;
 
-    public Generator(FractalNoiseGenerator settings) {
+    public Generator(FractalNoise settings) {
       m_settings = settings;
 
       m_noise = new FastNoise(settings.fractalType.ToString());

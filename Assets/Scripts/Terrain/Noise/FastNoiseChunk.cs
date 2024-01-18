@@ -3,9 +3,18 @@ using UnityEngine;
 
 public struct FastNoiseChunk {
   public Vector3Int resolution;
+  public Vector2Int resolution2d { get { return new Vector2Int(resolution.x, resolution.z); } }
+
   public Vector3 position;
+  public Vector2 position2d { get { return new Vector2(position.x, position.z); } }
+
   public Vector3 scale;
+  public Vector2 scale2d { get { return new Vector2(scale.x, scale.z); } }
+
   public float noiseScale;
+
+  public int pointCount2d { get { return resolution.x * resolution.z; } }
+  public int pointCount3d { get { return resolution.x * resolution.y * resolution.z; } }
 
   public FastNoiseChunk(
     Vector3Int resolution,
@@ -17,6 +26,18 @@ public struct FastNoiseChunk {
     this.position = position;
     this.scale = scale;
     this.noiseScale = noiseScale;
+  }
+
+  public FastNoiseChunk(
+    Vector2Int resolution,
+    Vector2 position,
+    Vector2 size,
+    float scale = 1f
+  ) {
+    this.resolution = new Vector3Int(resolution.x, 0, resolution.y);
+    this.position = new Vector3(position.x, 0, position.y);
+    this.scale = new Vector3(size.x, 0, size.y);
+    this.noiseScale = scale;
   }
 
   public FastNoiseChunk(TerrainChunk chunk) {
@@ -72,10 +93,10 @@ public struct FastNoiseChunk {
     // Sample the pixels
     float[] pixels;
     if (is3D) {
-      pixels = new float[resolution.x * resolution.y * resolution.z];
+      pixels = new float[pointCount3d];
       scaleNode.GenUniformGrid3D(pixels, 0, 0, 0, resolution.x, resolution.y, resolution.z, 1f, seed);
     } else {
-      pixels = new float[resolution.x * resolution.z];
+      pixels = new float[pointCount2d];
       scaleNode.GenUniformGrid2D(pixels, 0, 0, resolution.x, resolution.z, 1f, seed);
     }
 

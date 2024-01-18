@@ -2,17 +2,17 @@ using System;
 using System.Runtime.CompilerServices;
 
 [Serializable]
-public class CellularNoiseGenerator {
+public class CellularNoise {
   public int seed = 0;
   public float scale = 1f;
   public CellularNoiseType noiseType = CellularNoiseType.CellularValue;
   public float jitterModifier = 1f;
 
-  public class Generator : TerrainNoiseGenerator {
-    private CellularNoiseGenerator m_settings;
+  public class Generator : INoiseGenerator {
+    private CellularNoise m_settings;
     private FastNoise m_noise;
 
-    public Generator(CellularNoiseGenerator settings) {
+    public Generator(CellularNoise settings) {
       m_settings = settings;
       m_noise = new FastNoise(settings.noiseType.ToString());
       m_noise.Set("Jitter Modifier", settings.jitterModifier);

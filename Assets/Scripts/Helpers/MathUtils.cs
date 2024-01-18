@@ -10,4 +10,8 @@ public static class MathUtils {
     x = x * (1.5f - xhalf * x * x);
     return x;
   }
+
+  public static float LinearInterpolation(float x, float xMin, float xMax, float yMin, float yMax) {
+    return ((x - xMin) * (yMax - yMin) / (xMax - xMin)) + yMin;
+  }
 }

@@ -16,4 +16,9 @@ public class BasicNoiseSettings {
   [Header("Curve")]
   public bool useCurve = false;
   public AnimationCurve curve = AnimationCurve.Linear(-1f, -1f, 1f, 1f);
+
+  [Header("Domain Warp")]
+  public bool useDomainWarp = false;
+  public float domainWarpAmplitude = 1f;
+  public float domainWarpFrequency = 0.5f;
 }
