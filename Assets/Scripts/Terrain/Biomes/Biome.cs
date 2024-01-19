@@ -39,7 +39,7 @@ public abstract class Biome : ScriptableObject {
     float[] landGradientPixels = null;
     float[] oceanGradientPixels = null;
     if (shape.useFalloff) {
-      falloffPixels = shape.falloffMask.GenerateNoise(chunk, shape.noiseScale, shape.terrainSeed);
+      falloffPixels = shape.landMask.GetGenerator().GenerateGrid2d(chunk, shape.noiseScale, shape.terrainSeed);
       landGradientSteepnessPixels =
         shape.landGradientSteepness.GetGenerator().GenerateGrid2d(chunk, shape.noiseScale, shape.terrainSeed);
 

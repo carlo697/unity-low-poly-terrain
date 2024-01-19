@@ -198,13 +198,9 @@ MonoBehaviour:
     domainWarpFrequency: 2
   updateChunksInEditor: 1
   useFalloff: 1
-  falloffMask:
+  landMask:
     mapSize: {x: 16000, y: 16000}
-    seed: 2
-    scale: 5.5
-    gain: 0.5
-    lacunarity: 2
-    octaves: 8
+    useNoise: 1
     falloffGradientCurve:
       serializedVersion: 2
       m_Curve:
@@ -247,48 +243,62 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    falloffOutputCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0
-        inSlope: 0.31843343
-        outSlope: 0.31843343
-        tangentMode: 34
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 0.33841327
-        value: 0.1077621
-        inSlope: 0.6
-        outSlope: 0.6
-        tangentMode: 136
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 0.5
-        value: 0.3
-        inSlope: 1.2948444
-        outSlope: 1.2948444
-        tangentMode: 34
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 1
-        value: 1
-        inSlope: 1.4
-        outSlope: 1.4
-        tangentMode: 34
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
+    noise:
+      seed: 2
+      scale: 5.5
+      amplitude: 1
+      noiseType: 2
+      gain: 0.5
+      weightedStrength: 0
+      lacunarity: 2
+      octaves: 8
+      fractalType: 0
+      useCurve: 1
+      curve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: -1
+          value: 0
+          inSlope: 0.1592167
+          outSlope: 0.1592167
+          tangentMode: 34
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0.33333334
+        - serializedVersion: 3
+          time: -0.3231734
+          value: 0.1077621
+          inSlope: 0.3
+          outSlope: 0.3
+          tangentMode: 136
+          weightedMode: 0
+          inWeight: 0.33333334
+          outWeight: 0.33333334
+        - serializedVersion: 3
+          time: 0
+          value: 0.3
+          inSlope: 0.6474222
+          outSlope: 0.6474222
+          tangentMode: 34
+          weightedMode: 0
+          inWeight: 0.33333334
+          outWeight: 0.33333334
+        - serializedVersion: 3
+          time: 1
+          value: 1
+          inSlope: 0.7
+          outSlope: 0.7
+          tangentMode: 34
+          weightedMode: 0
+          inWeight: 0.33333334
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      useDomainWarp: 0
+      domainWarpAmplitude: 1
+      domainWarpFrequency: 0.5
   landGradientSteepness:
     seed: 3
     scale: 1

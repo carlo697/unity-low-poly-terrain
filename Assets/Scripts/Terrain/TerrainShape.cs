@@ -40,11 +40,7 @@ public class TerrainShape : ScriptableObject {
 
   [Header("Falloff Settings")]
   public bool useFalloff = true;
-  public FalloffNoise falloffMask = new FalloffNoise {
-    seed = 2,
-    scale = 5.5f,
-    octaves = 8
-  };
+  public FalloffNoise landMask = new FalloffNoise();
   public FractalNoise landGradientSteepness = new FractalNoise {
     seed = 3,
     scale = 1f,
