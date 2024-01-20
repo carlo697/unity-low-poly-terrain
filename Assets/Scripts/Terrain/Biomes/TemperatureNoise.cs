@@ -53,23 +53,23 @@ public class TemperatureNoise {
       return MathUtils.LinearInterpolation(value, 0f, 1f, m_settings.range.min, m_settings.range.max);
     }
 
-    public float Generate3d(float x, float y, float z, int seed) {
+    public float Generate3d(float x, float y, float z, float scale, int seed) {
       throw new NotImplementedException();
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public float Generate2d(float x, float y, int seed) {
-      float value = m_generator.Generate2d(x, y, seed);
+    public float Generate2d(float x, float y, float scale, int seed) {
+      float value = m_generator.Generate2d(x, y, scale, seed);
       value = GetFinalValue(value, y);
       return value;
     }
 
-    public float[] GenerateGrid3d(FastNoiseChunk chunk, float scale, int terrainSeed) {
+    public float[] GenerateGrid3d(FastNoiseChunk chunk, float scale, int seed) {
       throw new NotImplementedException();
     }
 
-    public float[] GenerateGrid2d(FastNoiseChunk chunk, float scale, int terrainSeed) {
-      float[] values = m_generator.GenerateGrid2d(chunk, scale, terrainSeed);
+    public float[] GenerateGrid2d(FastNoiseChunk chunk, float scale, int seed) {
+      float[] values = m_generator.GenerateGrid2d(chunk, scale, seed);
 
       int pointCount = chunk.pointCount2d;
       for (int index = 0; index < pointCount; index++) {

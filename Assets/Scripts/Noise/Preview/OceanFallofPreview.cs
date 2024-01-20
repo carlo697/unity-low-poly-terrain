@@ -39,6 +39,7 @@ public class OceanFallofPreview : NoisePreview {
           normalizedX + offset.x,
           normalizedY + offset.y,
           offset.z,
+          1f,
           0
         );
         noise = (noise + 1f) / 2f;

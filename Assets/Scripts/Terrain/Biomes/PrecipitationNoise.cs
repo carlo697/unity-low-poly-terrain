@@ -39,13 +39,13 @@ public class PrecipitationNoise {
       return MathUtils.LinearInterpolation(value, 0f, 1f, m_settings.range.min, m_settings.range.max);
     }
 
-    public float Generate3d(float x, float y, float z, int seed) {
+    public float Generate3d(float x, float y, float z, float scale, int seed) {
       throw new NotImplementedException();
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public float Generate2d(float x, float y, int seed) {
-      float value = m_generator.Generate2d(x, y, seed);
+    public float Generate2d(float x, float y, float scale, int seed) {
+      float value = m_generator.Generate2d(x, y, scale, seed);
       value = GetFinalValue(value);
       return value;
     }

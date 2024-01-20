@@ -47,6 +47,7 @@ public class NoisePreview : MonoBehaviour {
           (float)x + offset.x,
           (float)y + offset.y,
           offset.z,
+          1f,
           0
         );
 

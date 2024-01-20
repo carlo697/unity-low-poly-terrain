@@ -83,11 +83,27 @@ public static class BiomeSelector {
 
           // Information needed to assign a biome
           float2 worldCellPosition = (voronoiPixel.cell) / noiseFrequency;
-          float temperature = temperatureGenerator.Generate2d(worldCellPosition.x, worldCellPosition.y, terrainSeed);
-          float precipitation = precipitationGenerator.Generate2d(worldCellPosition.x, worldCellPosition.y, terrainSeed);
+          float temperature = temperatureGenerator.Generate2d(
+            worldCellPosition.x,
+            worldCellPosition.y,
+            voronoiNoiseScale,
+            terrainSeed
+          );
+          float precipitation = precipitationGenerator.Generate2d(
+            worldCellPosition.x,
+            worldCellPosition.y,
+            voronoiNoiseScale,
+            terrainSeed
+          );
 
           // Assign a biome
-          Biome targetBiome = SelectBiomeAt(worldCellPosition, biomes, voronoiPixel.id, temperature, precipitation);
+          Biome targetBiome = SelectBiomeAt(
+            worldCellPosition,
+            biomes,
+            voronoiPixel.id,
+            temperature,
+            precipitation
+          );
 
           float[] targetMask;
           if (!masks.TryGetValue(targetBiome, out targetMask)) {

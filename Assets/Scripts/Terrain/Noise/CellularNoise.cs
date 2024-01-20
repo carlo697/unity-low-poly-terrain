@@ -19,7 +19,7 @@ public class CellularNoise {
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public float Generate3d(float x, float y, float z, int seed) {
+    public float Generate3d(float x, float y, float z, float scale, int seed) {
       // Generate noise from a 2d point
       float value = m_noise.GenSingle3D(
         x / m_settings.scale,
@@ -32,13 +32,11 @@ public class CellularNoise {
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public float Generate2d(float x, float y, int seed) {
+    public float Generate2d(float x, float y, float scale, int seed) {
+      float frequency = 1f / (scale * m_settings.scale);
+
       // Generate noise from a 2d point
-      float value = m_noise.GenSingle2D(
-        x / m_settings.scale,
-        y / m_settings.scale,
-        m_settings.seed + seed
-      );
+      float value = m_noise.GenSingle2D(x * frequency, y * frequency, m_settings.seed + seed);
 
       return value;
     }
