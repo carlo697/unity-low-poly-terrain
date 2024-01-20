@@ -20,4 +20,4 @@ MonoBehaviour:
   precipitationRange:
     min: 100
     max: 450
-  testHeight: 0.5
+  testHeight: 1

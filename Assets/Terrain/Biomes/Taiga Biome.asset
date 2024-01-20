@@ -18,6 +18,6 @@ MonoBehaviour:
     min: -12
     max: 0
   precipitationRange:
-    min: 0
+    min: 100
     max: 450
   testHeight: 1

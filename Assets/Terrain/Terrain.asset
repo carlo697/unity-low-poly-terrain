@@ -124,7 +124,7 @@ MonoBehaviour:
   noiseScale: 1000
   baseNoise:
     seed: 0
-    scale: 0.8
+    scale: 1
     amplitude: 1
     noiseType: 4
     gain: 0.5
@@ -374,7 +374,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 5d98ca1d7c2646248a4bf0a9833a03c0, type: 2}
     - {fileID: 11400000, guid: 9534a0b2fd921e3449d008f5c9c519e6, type: 2}
     - {fileID: 11400000, guid: 09e559b0efdd54545be416f482f9a8d6, type: 2}
-  biomesNoiseScale: 0.75
+  biomesNoiseScale: 1.125
   biomesVoronoiRandomness: 0.5
   biomeWarp:
     seed: 4
@@ -422,13 +422,13 @@ MonoBehaviour:
     polarTemperatureDifference: 45
     noise:
       seed: 5
-      scale: 8
+      scale: 4
       amplitude: 1
       noiseType: 4
       gain: 0.5
       weightedStrength: 0
       lacunarity: 2
-      octaves: 3
+      octaves: 1
       fractalType: 0
       useCurve: 1
       curve:
@@ -438,17 +438,17 @@ MonoBehaviour:
           time: -1
           value: 20
           inSlope: 0
-          outSlope: 0
-          tangentMode: 136
+          outSlope: 5
+          tangentMode: 69
           weightedMode: 0
           inWeight: 0.33333334
           outWeight: 0.33333334
         - serializedVersion: 3
           time: 1
           value: 30
-          inSlope: 0
+          inSlope: 5
           outSlope: 0
-          tangentMode: 136
+          tangentMode: 69
           weightedMode: 0
           inWeight: 0.33333334
           outWeight: 0.33333334
@@ -464,13 +464,13 @@ MonoBehaviour:
       max: 450
     noise:
       seed: 6
-      scale: 8
+      scale: 4
       amplitude: 1
       noiseType: 4
       gain: 0.5
       weightedStrength: 0
       lacunarity: 2
-      octaves: 3
+      octaves: 1
       fractalType: 0
       useCurve: 1
       curve:
@@ -480,17 +480,17 @@ MonoBehaviour:
           time: -1
           value: 0
           inSlope: 0
-          outSlope: 0
-          tangentMode: 136
+          outSlope: 225
+          tangentMode: 69
           weightedMode: 0
           inWeight: 0.33333334
           outWeight: 0.33333334
         - serializedVersion: 3
           time: 1
           value: 450
-          inSlope: 0
+          inSlope: 225
           outSlope: 0
-          tangentMode: 136
+          tangentMode: 69
           weightedMode: 0
           inWeight: 0.33333334
           outWeight: 0.33333334
@@ -504,7 +504,7 @@ MonoBehaviour:
   absoluteMaximunPlateauHeight: 48
   plateauMask:
     seed: 20
-    scale: 1
+    scale: 1.5
     amplitude: 1
     noiseType: 4
     gain: 0.5
@@ -560,7 +560,7 @@ MonoBehaviour:
     domainWarpFrequency: 0.5
   plateauShape:
     seed: 22
-    scale: 0.15
+    scale: 0.225
     amplitude: 1
     noiseType: 4
     gain: 0.5
@@ -643,7 +643,7 @@ MonoBehaviour:
     domainWarpFrequency: 0.5
   plateauGround:
     seed: 24
-    scale: 2.5
+    scale: 3.75
     amplitude: 1
     noiseType: 4
     gain: 0.5

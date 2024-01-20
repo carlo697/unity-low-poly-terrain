@@ -15,7 +15,7 @@ MonoBehaviour:
   name: DesertBiome
   debugColor: {r: 0.8235295, g: 0.7607844, b: 0.64705884, a: 1}
   temperatureRange:
-    min: -10
+    min: -12
     max: 30
   precipitationRange:
     min: 0
