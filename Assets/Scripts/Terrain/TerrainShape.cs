@@ -111,7 +111,8 @@ public class TerrainShape : ScriptableObject {
     BiomeMasks,
     Custom2d,
     AverageTemperature,
-    AnnualPrecipitation
+    AnnualPrecipitation,
+    TemperatureAndPrecipitation
   }
 
   public TerrainSamplerFunc GetSampler(FastNoiseChunk chunk) {
@@ -145,16 +146,23 @@ public class TerrainShape : ScriptableObject {
 
       // Array to store the debug pixels
       float[] debug2dPixels = null;
+      Color[] debug2dColors = null;
       if (debugMode == DebugMode.Custom2d || debugMode == DebugMode.BiomeMasks) {
         debug2dPixels = new float[pixelCount2d];
-      }
-
-      if (debugMode == DebugMode.AverageTemperature) {
+      } else if (debugMode == DebugMode.AverageTemperature) {
         debug2dPixels = temperatureGenerator.GenerateGrid2d(chunk, noiseScale, terrainSeed);
-      }
-
-      if (debugMode == DebugMode.AnnualPrecipitation) {
+      } else if (debugMode == DebugMode.AnnualPrecipitation) {
         debug2dPixels = precipitationGenerator.GenerateGrid2d(chunk, noiseScale, terrainSeed);
+      } else if (debugMode == DebugMode.TemperatureAndPrecipitation) {
+        debug2dColors = new Color[pixelCount2d];
+        float[] precipitationPixels = precipitationGenerator.GenerateGrid2d(chunk, noiseScale, terrainSeed);
+        float[] temperaturePixels = temperatureGenerator.GenerateGrid2d(chunk, noiseScale, terrainSeed);
+
+        for (int i = 0; i < pixelCount2d; i++) {
+          float temperature = temperatureGenerator.Normalize(temperaturePixels[i]);
+          float precipitation = precipitationGenerator.Normalize(precipitationPixels[i]);
+          debug2dColors[i] = new Color(temperature, precipitation, 0f);
+        }
       }
 
       // Debug the masks for biomes
@@ -331,6 +339,9 @@ public class TerrainShape : ScriptableObject {
             case DebugMode.AnnualPrecipitation:
               float precipitation = precipitationGenerator.Normalize(debug2dPixels[index2D]);
               point.color = Color.white * precipitation * debugPixelsMultiplier;
+              break;
+            case DebugMode.TemperatureAndPrecipitation:
+              point.color = debug2dColors[index2D] * debugPixelsMultiplier;
               break;
             default:
               break;
