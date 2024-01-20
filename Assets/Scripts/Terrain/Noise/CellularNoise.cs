@@ -42,17 +42,18 @@ public class CellularNoise {
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public float[] GenerateGrid3d(FastNoiseChunk tile, float scale, int terrainSeed) {
-      return GenerateGrid(true, tile, scale, terrainSeed);
+    public float[] GenerateGrid3d(float[] output, FastNoiseChunk tile, float scale, int terrainSeed) {
+      return GenerateGrid(output, true, tile, scale, terrainSeed);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public float[] GenerateGrid2d(FastNoiseChunk tile, float scale, int terrainSeed) {
-      return GenerateGrid(false, tile, scale, terrainSeed);
+    public float[] GenerateGrid2d(float[] output, FastNoiseChunk tile, float scale, int terrainSeed) {
+      return GenerateGrid(output, false, tile, scale, terrainSeed);
     }
 
-    private float[] GenerateGrid(bool is3d, FastNoiseChunk tile, float scale, int terrainSeed) {
+    private float[] GenerateGrid(float[] output, bool is3d, FastNoiseChunk tile, float scale, int terrainSeed) {
       float[] pixels = tile.GenerateGrid(
+        output,
         is3d,
         m_noise,
         terrainSeed + m_settings.seed,

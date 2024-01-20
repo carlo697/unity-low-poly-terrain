@@ -63,12 +63,12 @@ public class FalloffNoise {
       return value;
     }
 
-    public float[] GenerateGrid3d(FastNoiseChunk chunk, float scale, int terrainSeed) {
+    public float[] GenerateGrid3d(float[] output, FastNoiseChunk chunk, float scale, int terrainSeed) {
       throw new NotImplementedException();
     }
 
-    public float[] GenerateGrid2d(FastNoiseChunk chunk, float scale, int terrainSeed) {
-      float[] values = m_noiseGenerator.GenerateGrid2d(chunk, scale, terrainSeed);
+    public float[] GenerateGrid2d(float[] output, FastNoiseChunk chunk, float scale, int terrainSeed) {
+      float[] values = m_noiseGenerator.GenerateGrid2d(output, chunk, scale, terrainSeed);
 
       for (int y = 0; y < chunk.resolution.z; y++) {
         for (int x = 0; x < chunk.resolution.x; x++) {

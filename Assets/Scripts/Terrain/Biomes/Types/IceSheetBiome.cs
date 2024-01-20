@@ -1,11 +1,17 @@
 using UnityEngine;
+using System.Buffers;
 
 [CreateAssetMenu(menuName = "Terrain/Biome/Ice Sheet")]
 public class IceSheetBiome : Biome {
   public override void Generate(TerrainShape shape, FastNoiseChunk chunk, VoxelGrid grid, float[] mask) {
     // Generate the base terrain noise
-    INoiseGenerator baseTerrainGenerator = shape.baseNoise.GetGenerator();
-    float[] baseTerrainPixels = baseTerrainGenerator.GenerateGrid3d(chunk, shape.noiseScale, shape.terrainSeed);
+    float[] baseTerrainPixels = ArrayPool<float>.Shared.Rent(chunk.pointCount3d);
+    shape.baseNoise.GetGenerator().GenerateGrid3d(
+      baseTerrainPixels,
+      chunk,
+      shape.noiseScale,
+      shape.terrainSeed
+    );
 
     for (int index = 0; index < grid.totalPointCount; index++) {
       Vector3Int coords = grid.GetCoordsFromIndex(index);
@@ -44,5 +50,7 @@ public class IceSheetBiome : Biome {
       point.roughness = 0.15f;
       point.material = shape.snowId;
     }
+
+    ArrayPool<float>.Shared.Return(baseTerrainPixels);
   }
 }

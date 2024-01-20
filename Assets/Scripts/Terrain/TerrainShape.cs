@@ -1,4 +1,6 @@
 using UnityEngine;
+using System;
+using System.Buffers;
 using System.Collections.Generic;
 
 [CreateAssetMenu(menuName = "Terrain/Shape", order = 0)]
@@ -117,7 +119,7 @@ public class TerrainShape : ScriptableObject {
 
   public TerrainSamplerFunc GetSampler(FastNoiseChunk chunk) {
     return (VoxelGrid grid) => {
-      int pixelCount2d = chunk.resolution.x * chunk.resolution.z;
+      int pixelCount2d = chunk.pointCount2d;
 
       Biome[] biomes = this.biomes;
 
@@ -145,24 +147,26 @@ public class TerrainShape : ScriptableObject {
       }
 
       // Array to store the debug pixels
-      float[] debug2dPixels = null;
-      Color[] debug2dColors = null;
-      if (debugMode == DebugMode.Custom2d || debugMode == DebugMode.BiomeMasks) {
-        debug2dPixels = new float[pixelCount2d];
-      } else if (debugMode == DebugMode.AverageTemperature) {
-        debug2dPixels = temperatureGenerator.GenerateGrid2d(chunk, noiseScale, terrainSeed);
+      float[] debug2dPixels = ArrayPool<float>.Shared.Rent(pixelCount2d);
+      Color[] debug2dColors = ArrayPool<Color>.Shared.Rent(pixelCount2d);
+      if (debugMode == DebugMode.AverageTemperature) {
+        temperatureGenerator.GenerateGrid2d(debug2dPixels, chunk, noiseScale, terrainSeed);
       } else if (debugMode == DebugMode.AnnualPrecipitation) {
-        debug2dPixels = precipitationGenerator.GenerateGrid2d(chunk, noiseScale, terrainSeed);
+        precipitationGenerator.GenerateGrid2d(debug2dPixels, chunk, noiseScale, terrainSeed);
       } else if (debugMode == DebugMode.TemperatureAndPrecipitation) {
-        debug2dColors = new Color[pixelCount2d];
-        float[] precipitationPixels = precipitationGenerator.GenerateGrid2d(chunk, noiseScale, terrainSeed);
-        float[] temperaturePixels = temperatureGenerator.GenerateGrid2d(chunk, noiseScale, terrainSeed);
+        float[] precipitationPixels = ArrayPool<float>.Shared.Rent(pixelCount2d);
+        precipitationGenerator.GenerateGrid2d(precipitationPixels, chunk, noiseScale, terrainSeed);
+        float[] temperaturePixels = ArrayPool<float>.Shared.Rent(pixelCount2d);
+        temperatureGenerator.GenerateGrid2d(temperaturePixels, chunk, noiseScale, terrainSeed);
 
         for (int i = 0; i < pixelCount2d; i++) {
           float temperature = temperatureGenerator.Normalize(temperaturePixels[i]);
           float precipitation = precipitationGenerator.Normalize(precipitationPixels[i]);
           debug2dColors[i] = new Color(temperature, precipitation, 0f);
         }
+
+        ArrayPool<float>.Shared.Return(precipitationPixels);
+        ArrayPool<float>.Shared.Return(temperaturePixels);
       }
 
       // Debug the masks for biomes
@@ -174,6 +178,8 @@ public class TerrainShape : ScriptableObject {
         }
 
         if (debugBiome == null) {
+          Array.Clear(debug2dPixels, 0, pixelCount2d);
+
           // If the provided biome index is not valid, then we'll just sum up the masks of all biomes
           foreach (var (biome, mask) in selectedBiomes) {
             for (int i = 0; i < mask.Length; i++) {
@@ -182,10 +188,11 @@ public class TerrainShape : ScriptableObject {
           }
         } else if (debugBiome && selectedBiomes.ContainsKey(debugBiome)) {
           // The biome was found so we'll use its mask
-          debug2dPixels = selectedBiomes[debugBiome];
+          float[] mask = selectedBiomes[debugBiome];
+          Array.Copy(mask, debug2dPixels, pixelCount2d);
         } else {
           // The biome is not present, we'll use an empty mask
-          debug2dPixels = new float[grid.size.x * grid.size.z];
+          Array.Clear(debug2dPixels, 0, pixelCount2d);
         }
       }
 
@@ -301,13 +308,15 @@ public class TerrainShape : ScriptableObject {
 
       if (debugMode != DebugMode.None) {
         if (debugMode == DebugMode.Noise) {
-          INoiseGenerator baseTerrainGenerator = baseNoise.GetGenerator();
-          float[] baseTerrainPixels = baseTerrainGenerator.GenerateGrid3d(chunk, noiseScale, terrainSeed);
+          float[] baseTerrainPixels = ArrayPool<float>.Shared.Rent(chunk.pointCount3d);
+          baseNoise.GetGenerator().GenerateGrid3d(baseTerrainPixels, chunk, noiseScale, terrainSeed);
 
           for (int index = 0; index < grid.totalPointCount; index++) {
             ref VoxelPoint point = ref grid.points[index];
             point.value = baseTerrainPixels[index] * -1f;
           }
+
+          ArrayPool<float>.Shared.Return(baseTerrainPixels);
         }
 
         // Initialize colors
@@ -348,6 +357,9 @@ public class TerrainShape : ScriptableObject {
           }
         };
       }
+
+      ArrayPool<float>.Shared.Return(debug2dPixels);
+      ArrayPool<Color>.Shared.Return(debug2dColors);
     };
   }
 

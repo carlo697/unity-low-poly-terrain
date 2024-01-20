@@ -50,7 +50,8 @@ public static class BiomeSelector {
     var data = ArrayPool<Voronoi.EdgeDistance>.Shared.Rent(9);
     Dictionary<Biome, float[]> masks = new Dictionary<Biome, float[]>();
 
-    float[] warpPixels = voronoiWarpGenerator.GenerateGrid2d(chunk, baseNoiseScale, terrainSeed);
+    float[] warpPixels = ArrayPool<float>.Shared.Rent(chunk.pointCount2d);
+    voronoiWarpGenerator.GenerateGrid2d(warpPixels, chunk, baseNoiseScale, terrainSeed);
 
     for (int y = 0; y < size2d.x; y++) {
       for (int x = 0; x < size2d.y; x++) {
@@ -118,6 +119,7 @@ public static class BiomeSelector {
     }
 
     ArrayPool<Voronoi.EdgeDistance>.Shared.Return(data);
+    ArrayPool<float>.Shared.Return(warpPixels);
 
     return masks;
   }

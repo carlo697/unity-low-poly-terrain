@@ -48,6 +48,7 @@ public struct FastNoiseChunk {
   }
 
   public float[] GenerateGrid(
+    float[] output,
     bool is3D,
     FastNoise noise,
     int seed,
@@ -91,15 +92,12 @@ public struct FastNoiseChunk {
     }
 
     // Sample the pixels
-    float[] pixels;
     if (is3D) {
-      pixels = new float[pointCount3d];
-      scaleNode.GenUniformGrid3D(pixels, 0, 0, 0, resolution.x, resolution.y, resolution.z, 1f, seed);
+      scaleNode.GenUniformGrid3D(output, 0, 0, 0, resolution.x, resolution.y, resolution.z, 1f, seed);
     } else {
-      pixels = new float[pointCount2d];
-      scaleNode.GenUniformGrid2D(pixels, 0, 0, resolution.x, resolution.z, 1f, seed);
+      scaleNode.GenUniformGrid2D(output, 0, 0, resolution.x, resolution.z, 1f, seed);
     }
 
-    return pixels;
+    return output;
   }
 }

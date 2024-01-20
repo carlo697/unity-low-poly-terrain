@@ -64,12 +64,12 @@ public class TemperatureNoise {
       return value;
     }
 
-    public float[] GenerateGrid3d(FastNoiseChunk chunk, float scale, int seed) {
+    public float[] GenerateGrid3d(float[] output, FastNoiseChunk chunk, float scale, int seed) {
       throw new NotImplementedException();
     }
 
-    public float[] GenerateGrid2d(FastNoiseChunk chunk, float scale, int seed) {
-      float[] values = m_generator.GenerateGrid2d(chunk, scale, seed);
+    public float[] GenerateGrid2d(float[] output, FastNoiseChunk chunk, float scale, int seed) {
+      float[] values = m_generator.GenerateGrid2d(output, chunk, scale, seed);
 
       int pointCount = chunk.pointCount2d;
       for (int index = 0; index < pointCount; index++) {

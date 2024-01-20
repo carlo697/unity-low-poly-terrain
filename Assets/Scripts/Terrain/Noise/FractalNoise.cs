@@ -74,17 +74,18 @@ public class FractalNoise : BasicNoiseSettings {
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public float[] GenerateGrid3d(FastNoiseChunk chunk, float scale, int terrainSeed) {
-      return GenerateGrid(true, chunk, scale, terrainSeed);
+    public float[] GenerateGrid3d(float[] output, FastNoiseChunk chunk, float scale, int terrainSeed) {
+      return GenerateGrid(output, true, chunk, scale, terrainSeed);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public float[] GenerateGrid2d(FastNoiseChunk chunk, float scale, int terrainSeed) {
-      return GenerateGrid(false, chunk, scale, terrainSeed);
+    public float[] GenerateGrid2d(float[] output, FastNoiseChunk chunk, float scale, int terrainSeed) {
+      return GenerateGrid(output, false, chunk, scale, terrainSeed);
     }
 
-    private float[] GenerateGrid(bool is3d, FastNoiseChunk chunk, float scale, int terrainSeed) {
+    private float[] GenerateGrid(float[] output, bool is3d, FastNoiseChunk chunk, float scale, int terrainSeed) {
       float[] pixels = chunk.GenerateGrid(
+        output,
         is3d,
         m_noise,
         terrainSeed + m_settings.seed,

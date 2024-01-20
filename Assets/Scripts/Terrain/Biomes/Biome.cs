@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Buffers;
 
 public abstract class Biome : ScriptableObject {
   public new string name = "Biome";
@@ -29,24 +30,34 @@ public abstract class Biome : ScriptableObject {
     bool colors,
     float[] mask
   ) {
+    int pointCount2d = chunk.pointCount2d;
+    int pointCount3d = chunk.pointCount3d;
+
     // Generate the base terrain noise
     INoiseGenerator baseTerrainGenerator = shape.baseNoise.GetGenerator();
-    float[] baseTerrainPixels = baseTerrainGenerator.GenerateGrid3d(chunk, shape.noiseScale, shape.terrainSeed);
+    float[] baseTerrainPixels = ArrayPool<float>.Shared.Rent(pointCount3d);
+    baseTerrainGenerator.GenerateGrid3d(baseTerrainPixels, chunk, shape.noiseScale, shape.terrainSeed);
 
     // Generate the falloff map and the gradient maps
-    float[] falloffPixels = null;
-    float[] landGradientSteepnessPixels = null;
-    float[] landGradientPixels = null;
-    float[] oceanGradientPixels = null;
+    float[] falloffPixels = ArrayPool<float>.Shared.Rent(pointCount2d);
+    float[] landGradientSteepnessPixels = ArrayPool<float>.Shared.Rent(pointCount2d);
+    float[] landGradientPixels = ArrayPool<float>.Shared.Rent(pointCount2d);
+    float[] oceanGradientPixels = ArrayPool<float>.Shared.Rent(pointCount2d);
     if (shape.useFalloff) {
-      falloffPixels = shape.landMask.GetGenerator().GenerateGrid2d(chunk, shape.noiseScale, shape.terrainSeed);
-      landGradientSteepnessPixels =
-        shape.landGradientSteepness.GetGenerator().GenerateGrid2d(chunk, shape.noiseScale, shape.terrainSeed);
+      shape.landMask.GetGenerator().GenerateGrid2d(
+        falloffPixels,
+        chunk,
+        shape.noiseScale,
+        shape.terrainSeed
+      );
+      shape.landGradientSteepness.GetGenerator().GenerateGrid2d(
+        landGradientSteepnessPixels,
+        chunk,
+        shape.noiseScale,
+        shape.terrainSeed
+      );
 
-      landGradientPixels = new float[falloffPixels.Length];
-      oceanGradientPixels = new float[falloffPixels.Length];
-
-      for (int i = 0; i < landGradientPixels.Length; i++) {
+      for (int i = 0; i < pointCount2d; i++) {
         float falloff = falloffPixels[i];
         float landGradientSteepness = landGradientSteepnessPixels[i];
 
@@ -75,11 +86,16 @@ public abstract class Biome : ScriptableObject {
     // Generate the noises for plateous
     float relativeMaximunPlateauHeight = (1f / chunk.scale.y) * shape.absoluteMaximunPlateauHeight;
     INoiseGenerator plateauMaskGenerator = shape.plateauMask.GetGenerator();
-    float[] plateauMaskPixels = plateauMaskGenerator.GenerateGrid2d(chunk, shape.noiseScale, shape.terrainSeed);
+    float[] plateauMaskPixels = ArrayPool<float>.Shared.Rent(chunk.pointCount2d);
+    plateauMaskGenerator.GenerateGrid2d(plateauMaskPixels, chunk, shape.noiseScale, shape.terrainSeed);
+
     INoiseGenerator plateauGroundGenerator = shape.plateauGround.GetGenerator();
-    float[] plateauGroundPixels = plateauGroundGenerator.GenerateGrid2d(chunk, shape.noiseScale, shape.terrainSeed);
+    float[] plateauGroundPixels = ArrayPool<float>.Shared.Rent(chunk.pointCount2d);
+    plateauGroundGenerator.GenerateGrid2d(plateauGroundPixels, chunk, shape.noiseScale, shape.terrainSeed);
+
     INoiseGenerator plateauShapeGenerator = shape.plateauShape.GetGenerator();
-    float[] plateauShapePixels = plateauShapeGenerator.GenerateGrid2d(chunk, shape.noiseScale, shape.terrainSeed);
+    float[] plateauShapePixels = ArrayPool<float>.Shared.Rent(chunk.pointCount2d);
+    plateauShapeGenerator.GenerateGrid2d(plateauShapePixels, chunk, shape.noiseScale, shape.terrainSeed);
 
     for (int index = 0; index < grid.totalPointCount; index++) {
       Vector3Int coords = grid.GetCoordsFromIndex(index);
@@ -152,6 +168,15 @@ public abstract class Biome : ScriptableObject {
       // Set the density and save the point
       point.value = output;
     };
+
+    ArrayPool<float>.Shared.Return(baseTerrainPixels);
+    ArrayPool<float>.Shared.Return(falloffPixels);
+    ArrayPool<float>.Shared.Return(landGradientSteepnessPixels);
+    ArrayPool<float>.Shared.Return(landGradientPixels);
+    ArrayPool<float>.Shared.Return(oceanGradientPixels);
+    ArrayPool<float>.Shared.Return(plateauMaskPixels);
+    ArrayPool<float>.Shared.Return(plateauGroundPixels);
+    ArrayPool<float>.Shared.Return(plateauShapePixels);
 
     if (!colors) {
       return;
