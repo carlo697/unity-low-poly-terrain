@@ -54,6 +54,11 @@ public class TerrainChunkManager : MonoBehaviour {
   public event System.Action<TerrainChunk> ChunkDeleted;
 
   private void Start() {
+    // If we don't access FastNoise from the main thread FIRST, for some reason it
+    // crashes sometimes when accessed first on other threads (like in Jobs).
+    // So here we instantiate the FastNoise class as a workaround.
+    FastNoise fastNoise = new FastNoise("OpenSimplex2S");
+
     StartCoroutine(UpdateVisibleChunksCoroutine());
     StartCoroutine(GenerationCoroutine());
   }
