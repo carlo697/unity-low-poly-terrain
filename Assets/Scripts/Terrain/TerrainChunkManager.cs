@@ -43,6 +43,8 @@ public class TerrainChunkManager : MonoBehaviour {
   private List<Bounds> m_visibleChunkBounds = new();
   private HashSet<Bounds> m_visibleChunkBoundsHashSet = new();
 
+  private List<TerrainChunk> m_insideChunks = new();
+
   private Vector3 m_lastCameraPosition;
 
   private List<float> m_levelDistances = new();
@@ -288,12 +290,12 @@ public class TerrainChunkManager : MonoBehaviour {
 
       // Find out if all the new chunks inside this chunk are already generated
       bool areAllReady = true;
-      List<TerrainChunk> insideChunks = new();
+      m_insideChunks.Clear();
       for (int j = 0; j < m_spawnedChunks.Count; j++) {
         TerrainChunk chunkB = m_spawnedChunks[j];
 
         if (chunkB.bounds.IsInside(chunkToDelete.bounds)) {
-          insideChunks.Add(chunkB);
+          m_insideChunks.Add(chunkB);
 
           if (!chunkB.hasEverBeenGenerated) {
             areAllReady = false;
@@ -308,9 +310,9 @@ public class TerrainChunkManager : MonoBehaviour {
         m_spawnedChunksToDelete.RemoveAt(i);
 
         // Events
-        if (insideChunks.Count > 0) {
+        if (m_insideChunks.Count > 0) {
           // The chunk was replaced by other chunks
-          ChunkReplaced?.Invoke(chunkToDelete, insideChunks);
+          ChunkReplaced?.Invoke(chunkToDelete, new List<TerrainChunk>(m_insideChunks));
         } else {
           // The chunk was completely deleted and it's empty space now
           ChunkDeleted?.Invoke(chunkToDelete);
