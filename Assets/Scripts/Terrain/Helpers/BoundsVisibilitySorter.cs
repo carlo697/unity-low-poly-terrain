@@ -2,12 +2,19 @@ using UnityEngine;
 using UnityEngine.Pool;
 using System.Collections.Generic;
 
+public enum VisibilitySortMode {
+  Farthest,
+  Nearest,
+  NearestAndInsideFrustum
+}
+
 public static class BoundsVisibilitySorter {
   private static BoundsVisibilityComparer comparer = new BoundsVisibilityComparer();
 
-  public static void Sort(List<Bounds> list, Camera camera) {
+  public static void Sort(List<Bounds> list, Camera camera, VisibilitySortMode mode) {
     Vector3 cameraPosition = camera.transform.position;
     Plane[] cameraPlanes = GeometryUtility.CalculateFrustumPlanes(camera);
+    comparer.mode = mode;
 
     // Request a temporary list of BoundsVisibility to fill it and sort it
     using (var obj = ListPool<BoundsVisibility>.Get(out var tempList)) {
@@ -50,11 +57,20 @@ public struct BoundsVisibility {
 }
 
 public class BoundsVisibilityComparer : Comparer<BoundsVisibility> {
-  public override int Compare(BoundsVisibility a, BoundsVisibility b) {
-    if (a.isInsideFrustum != b.isInsideFrustum) {
-      return b.isInsideFrustum.CompareTo(a.isInsideFrustum);
-    }
+  public VisibilitySortMode mode;
 
-    return a.sqrDistanceToCamera.CompareTo(b.sqrDistanceToCamera);
+  public override int Compare(BoundsVisibility a, BoundsVisibility b) {
+    switch (mode) {
+      case VisibilitySortMode.NearestAndInsideFrustum:
+        if (a.isInsideFrustum != b.isInsideFrustum) {
+          return b.isInsideFrustum.CompareTo(a.isInsideFrustum);
+        }
+
+        return a.sqrDistanceToCamera.CompareTo(b.sqrDistanceToCamera);
+      case VisibilitySortMode.Nearest:
+        return a.sqrDistanceToCamera.CompareTo(b.sqrDistanceToCamera);
+      default:
+        return b.sqrDistanceToCamera.CompareTo(a.sqrDistanceToCamera);
+    }
   }
 }

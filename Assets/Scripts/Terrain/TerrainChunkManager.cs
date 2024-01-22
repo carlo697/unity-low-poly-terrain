@@ -22,6 +22,7 @@ public class TerrainChunkManager : MonoBehaviour {
   public float detailDistanceMultiplier = 2.5f;
   public int detailDistanceDecreaseAtLevel = 1;
   public float detailDistanceConstantDecrease = 0f;
+  public VisibilitySortMode generationPriorityMode = VisibilitySortMode.NearestAndInsideFrustum;
 
   [Header("Generation Periods")]
   public float updatePeriod = 0.1f;
@@ -166,7 +167,7 @@ public class TerrainChunkManager : MonoBehaviour {
 
     // Sort the array by measuring the distance from the chunk to the camera
     m_lastCameraPosition = cameraPosition;
-    BoundsVisibilitySorter.Sort(m_visibleChunkBounds, usedCamera);
+    BoundsVisibilitySorter.Sort(m_visibleChunkBounds, usedCamera, generationPriorityMode);
 
     // Set camera fog
     RenderSettings.fogStartDistance = 100f;
