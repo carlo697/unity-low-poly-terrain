@@ -1,16 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class SpawnedWaterChunk {
-  public Bounds bounds;
-  public GameObject gameObject;
-
-  public SpawnedWaterChunk(Bounds bounds, GameObject gameObject) {
-    this.bounds = bounds;
-    this.gameObject = gameObject;
-  }
-}
-
 public class WaterChunkManager : MonoBehaviour {
   public float viewDistance = 100f;
   public DistanceShape distanceShape;
@@ -19,14 +9,13 @@ public class WaterChunkManager : MonoBehaviour {
   public Material waterMaterial;
   public Transform waterParent;
 
-  private List<QuadtreeChunk> m_quadtreeChunks = new List<QuadtreeChunk>();
-  private List<SpawnedWaterChunk> m_SpawnedWaterChunks = new List<SpawnedWaterChunk>();
-  private List<SpawnedWaterChunk> m_SpawnedWaterChunksToDelete = new List<SpawnedWaterChunk>();
-  private List<Bounds> m_visibleChunkPositions = new List<Bounds>();
-  private Dictionary<Bounds, SpawnedWaterChunk> m_chunkDictionary =
-    new Dictionary<Bounds, SpawnedWaterChunk>();
-  private HashSet<Bounds> m_visibleChunkPositionsHashSet =
-    new HashSet<Bounds>();
+  private List<QuadtreeChunk> m_quadtreeChunks = new();
+  private List<WaterChunk> m_spawnedChunks = new();
+  private List<WaterChunk> m_spawnedChunksToDelete = new();
+  private Dictionary<Bounds, WaterChunk> m_spawnedChunksDictionary = new();
+
+  private List<Bounds> m_visibleChunkPositions = new();
+  private HashSet<Bounds> m_visibleChunkBoundsHashSet = new();
 
   public float generatePeriod = 0.3f;
   private float m_generateTimer = 0.0f;
@@ -52,16 +41,16 @@ public class WaterChunkManager : MonoBehaviour {
     waterObj.transform.SetParent(waterParent);
 
     // Apply water component
-    TerrainChunkWater water = waterObj.AddComponent<TerrainChunkWater>();
-    water.seaLevel = m_terrainShape.seaLevel;
-    water.resolution = new Vector2Int(chunkResolution, chunkResolution);
-    water.size = new Vector2(bounds.size.x, bounds.size.z);
-    water.GetComponent<MeshRenderer>().sharedMaterial = waterMaterial;
+    WaterChunk chunk = waterObj.AddComponent<WaterChunk>();
+    chunk.bounds = bounds;
+    chunk.seaLevel = m_terrainShape.seaLevel;
+    chunk.resolution = new Vector2Int(chunkResolution, chunkResolution);
+    chunk.size = new Vector2(bounds.size.x, bounds.size.z);
+    chunk.GetComponent<MeshRenderer>().sharedMaterial = waterMaterial;
 
     // Add to the list
-    SpawnedWaterChunk data = new SpawnedWaterChunk(bounds, waterObj);
-    m_SpawnedWaterChunks.Add(data);
-    m_chunkDictionary.Add(bounds, data);
+    m_spawnedChunks.Add(chunk);
+    m_spawnedChunksDictionary.Add(bounds, chunk);
   }
 
   private void UpdateVisibleChunkPositions(Camera camera, bool drawGizmos = false) {
@@ -94,7 +83,7 @@ public class WaterChunkManager : MonoBehaviour {
     );
 
     m_visibleChunkPositions.Clear();
-    m_visibleChunkPositionsHashSet.Clear();
+    m_visibleChunkBoundsHashSet.Clear();
     for (int i = 0; i < m_visibleQuadtreeChunks.Count; i++) {
       QuadtreeChunk chunk = m_visibleQuadtreeChunks[i];
 
@@ -104,32 +93,32 @@ public class WaterChunkManager : MonoBehaviour {
         new Vector3(chunk.bounds.size.x, chunkSize.y, chunk.bounds.size.z)
       );
       m_visibleChunkPositions.Add(bounds);
-      m_visibleChunkPositionsHashSet.Add(bounds);
+      m_visibleChunkBoundsHashSet.Add(bounds);
     }
   }
 
   private void UpdateFollowingVisibleChunks() {
     // Check if the chunks are already there
-    foreach (Bounds bounds in m_visibleChunkPositions) {
-      bool foundChunk = m_chunkDictionary.ContainsKey(bounds);
+    for (int i = 0; i < m_visibleChunkPositions.Count; i++) {
+      Bounds bounds = m_visibleChunkPositions[i];
 
-      if (!foundChunk) {
+      if (!m_spawnedChunksDictionary.ContainsKey(bounds)) {
         CreateChunk(bounds);
       }
     }
 
     // Delete chunks that are out of view
-    for (int i = m_SpawnedWaterChunks.Count - 1; i >= 0; i--) {
-      SpawnedWaterChunk chunk = m_SpawnedWaterChunks[i];
+    for (int i = m_spawnedChunks.Count - 1; i >= 0; i--) {
+      WaterChunk chunk = m_spawnedChunks[i];
       Bounds chunkBounds = chunk.bounds;
       // Find a chunk with the same position
-      bool foundPosition = m_visibleChunkPositionsHashSet.Contains(
+      bool foundPosition = m_visibleChunkBoundsHashSet.Contains(
         chunkBounds
       );
 
       if (!foundPosition) {
-        m_SpawnedWaterChunks.Remove(chunk);
-        m_chunkDictionary.Remove(chunk.bounds);
+        m_spawnedChunks.Remove(chunk);
+        m_spawnedChunksDictionary.Remove(chunk.bounds);
         Destroy(chunk.gameObject);
       }
     }
@@ -137,11 +126,11 @@ public class WaterChunkManager : MonoBehaviour {
 
   private void DeleteChunks() {
     // Delete chunks that are out of view
-    for (int i = m_SpawnedWaterChunksToDelete.Count - 1; i >= 0; i--) {
-      SpawnedWaterChunk chunkToDelete = m_SpawnedWaterChunksToDelete[i];
+    for (int i = m_spawnedChunksToDelete.Count - 1; i >= 0; i--) {
+      WaterChunk chunkToDelete = m_spawnedChunksToDelete[i];
 
       Destroy(chunkToDelete.gameObject);
-      m_SpawnedWaterChunksToDelete.RemoveAt(i);
+      m_spawnedChunksToDelete.RemoveAt(i);
     }
   }
 

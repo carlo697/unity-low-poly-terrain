@@ -4,7 +4,8 @@ using Unity.Collections;
 using Unity.Jobs;
 
 [RequireComponent(typeof(MeshFilter)), RequireComponent(typeof(MeshRenderer))]
-public class TerrainChunkWater : MonoBehaviour {
+public class WaterChunk : MonoBehaviour {
+  public Bounds bounds;
   public Vector2Int resolution = new Vector2Int(32, 32);
   public Vector2 size = new Vector2(32f, 32f);
   public float seaLevel;
@@ -26,7 +27,7 @@ public class TerrainChunkWater : MonoBehaviour {
     m_normals = new NativeList<Vector3>(Allocator.TempJob);
 
     // Create job
-    TerrainChunkWaterJob job = new TerrainChunkWaterJob(
+    WaterChunkJob job = new WaterChunkJob(
       resolution,
       size,
       m_vertices,

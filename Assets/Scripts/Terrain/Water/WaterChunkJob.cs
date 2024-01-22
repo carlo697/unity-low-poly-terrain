@@ -1,16 +1,15 @@
 using UnityEngine;
 using Unity.Jobs;
 using Unity.Collections;
-using System.Runtime.InteropServices;
 
-public struct TerrainChunkWaterJob : IJob {
+public struct WaterChunkJob : IJob {
   private Vector2Int resolution;
   private Vector2 size;
   private NativeList<Vector3> vertices;
   private NativeList<int> triangles;
   private NativeList<Vector3> normals;
 
-  public TerrainChunkWaterJob(
+  public WaterChunkJob(
     Vector2Int resolution,
     Vector2 size,
     NativeList<Vector3> vertices,
