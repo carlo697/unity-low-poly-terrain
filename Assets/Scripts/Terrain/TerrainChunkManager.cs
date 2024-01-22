@@ -22,7 +22,6 @@ public class TerrainChunkManager : MonoBehaviour {
   public float detailDistanceMultiplier = 2.5f;
   public int detailDistanceDecreaseAtLevel = 1;
   public float detailDistanceConstantDecrease = 0f;
-  public VisibilitySortMode generationPriorityMode = VisibilitySortMode.NearestAndInsideFrustum;
 
   [Header("Generation Periods")]
   public float updatePeriod = 0.1f;
@@ -167,7 +166,10 @@ public class TerrainChunkManager : MonoBehaviour {
 
     // Sort the array by measuring the distance from the chunk to the camera
     m_lastCameraPosition = cameraPosition;
-    BoundsVisibilitySorter.Sort(m_visibleChunkBounds, usedCamera, generationPriorityMode);
+    VisibilitySortMode mode = m_spawnedChunksToDelete.Count > 50
+      ? VisibilitySortMode.Farthest
+      : VisibilitySortMode.NearestAndInsideFrustum;
+    BoundsVisibilitySorter.Sort(m_visibleChunkBounds, usedCamera, mode);
 
     // Set camera fog
     RenderSettings.fogStartDistance = 100f;
@@ -226,7 +228,7 @@ public class TerrainChunkManager : MonoBehaviour {
 
     if (logGenerationsInProgress) {
       Debug.Log(
-        $"Total generations in progress: {totalInProgress}, totalSpawned: {totalSpawned}"
+        $"Total generations in progress: {totalInProgress}, total spawned: {totalSpawned}, to delete: {m_spawnedChunksToDelete.Count}"
       );
     }
 

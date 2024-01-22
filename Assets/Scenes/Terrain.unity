@@ -16792,7 +16792,6 @@ MonoBehaviour:
   detailDistanceMultiplier: 2.5
   detailDistanceDecreaseAtLevel: 1
   detailDistanceConstantDecrease: 0
-  generationPriorityMode: 2
   updatePeriod: 0.2
   generatePeriod: 0.02
   maxConsecutiveChunks: 8
