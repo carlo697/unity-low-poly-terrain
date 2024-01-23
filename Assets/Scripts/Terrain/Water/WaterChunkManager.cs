@@ -56,7 +56,7 @@ public class WaterChunkManager : MonoBehaviour {
   private void UpdateVisibleChunkPositions(Camera camera, bool drawGizmos = false) {
     Vector3 cameraPosition = camera.transform.position;
 
-    m_levelDistances = QuadtreeChunk.CalculateLevelDistances(
+    QuadtreeChunk.CalculateLevelDistances(
       m_levelDistances,
       levelsOfDetail,
       chunkSize.x,
@@ -64,18 +64,18 @@ public class WaterChunkManager : MonoBehaviour {
       2.5f
     );
 
-    m_quadtreeChunks = QuadtreeChunk.CreateQuadtree(
+    QuadtreeChunk.CreateQuadtrees(
+      m_quadtreeChunks,
       cameraPosition,
       chunkSize,
       Vector3.zero,
       m_levelDistances,
       viewDistance,
       distanceShape,
-      m_quadtreeChunks,
       drawGizmos
     );
 
-    m_visibleQuadtreeChunks = QuadtreeChunk.RetrieveVisibleChunks(
+    QuadtreeChunk.RetrieveVisibleChunks(
       m_visibleQuadtreeChunks,
       m_quadtreeChunks,
       cameraPosition,

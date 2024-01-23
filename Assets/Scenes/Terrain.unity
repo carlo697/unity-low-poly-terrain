@@ -16790,8 +16790,6 @@ MonoBehaviour:
   levelsOfDetail: 8
   detailDistanceBase: 2
   detailDistanceMultiplier: 2.5
-  detailDistanceDecreaseAtLevel: 1
-  detailDistanceConstantDecrease: 0
   updatePeriod: 0.2
   generatePeriod: 0.02
   maxConsecutiveChunks: 8

@@ -20,8 +20,6 @@ public class TerrainChunkManager : MonoBehaviour {
   public int levelsOfDetail = 8;
   public float detailDistanceBase = 2f;
   public float detailDistanceMultiplier = 2.5f;
-  public int detailDistanceDecreaseAtLevel = 1;
-  public float detailDistanceConstantDecrease = 0f;
 
   [Header("Generation Periods")]
   public float updatePeriod = 0.1f;
@@ -128,28 +126,26 @@ public class TerrainChunkManager : MonoBehaviour {
     Vector3 cameraPosition = usedCamera.transform.position;
     Vector3 quadChunkOffset = new Vector3(0f, -seaWorldLevel + chunkScale.y / 2f, 0f);
 
-    m_levelDistances = QuadtreeChunk.CalculateLevelDistances(
+    QuadtreeChunk.CalculateLevelDistances(
       m_levelDistances,
       levelsOfDetail,
       chunkScale.x,
       detailDistanceBase,
-      detailDistanceMultiplier,
-      detailDistanceDecreaseAtLevel,
-      detailDistanceConstantDecrease
+      detailDistanceMultiplier
     );
 
-    m_quadtreeChunks = QuadtreeChunk.CreateQuadtree(
+    QuadtreeChunk.CreateQuadtrees(
+      m_quadtreeChunks,
       cameraPosition,
       chunkScale,
       quadChunkOffset,
       m_levelDistances,
       viewDistance,
       distanceShape,
-      m_quadtreeChunks,
       drawGizmos
     );
 
-    m_visibleQuadtreeChunks = QuadtreeChunk.RetrieveVisibleChunks(
+    QuadtreeChunk.RetrieveVisibleChunks(
       m_visibleQuadtreeChunks,
       m_quadtreeChunks,
       cameraPosition,
