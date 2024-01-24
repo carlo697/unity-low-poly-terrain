@@ -11,7 +11,6 @@ public class WaterChunkManager : MonoBehaviour {
 
   private List<QuadtreeChunk> m_quadtreeChunks = new();
   private List<WaterChunk> m_spawnedChunks = new();
-  private List<WaterChunk> m_spawnedChunksToDelete = new();
   private Dictionary<Bounds, WaterChunk> m_spawnedChunksDictionary = new();
 
   private List<Bounds> m_visibleChunkBounds = new();
@@ -113,16 +112,6 @@ public class WaterChunkManager : MonoBehaviour {
     }
   }
 
-  private void DeleteChunks() {
-    // Delete chunks that are out of view
-    for (int i = m_spawnedChunksToDelete.Count - 1; i >= 0; i--) {
-      WaterChunk chunkToDelete = m_spawnedChunksToDelete[i];
-
-      Destroy(chunkToDelete.gameObject);
-      m_spawnedChunksToDelete.RemoveAt(i);
-    }
-  }
-
   private void Update() {
     Camera camera = Camera.main;
     if (camera) {
@@ -132,7 +121,6 @@ public class WaterChunkManager : MonoBehaviour {
 
         UpdateVisibleChunkPositions(camera);
         UpdateFollowingVisibleChunks();
-        DeleteChunks();
       }
     }
   }
