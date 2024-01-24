@@ -14,7 +14,7 @@ public class WaterChunkManager : MonoBehaviour {
   private List<WaterChunk> m_spawnedChunksToDelete = new();
   private Dictionary<Bounds, WaterChunk> m_spawnedChunksDictionary = new();
 
-  private List<Bounds> m_visibleChunkPositions = new();
+  private List<Bounds> m_visibleChunkBounds = new();
   private HashSet<Bounds> m_visibleChunkBoundsHashSet = new();
 
   public float generatePeriod = 0.3f;
@@ -26,7 +26,7 @@ public class WaterChunkManager : MonoBehaviour {
 
   public int levelsOfDetail = 8;
   private List<float> m_levelDistances = new();
-  private List<QuadtreeChunk> m_visibleQuadtreeChunks = new();
+  private List<QuadtreeChunkNode> m_visibleQuadtreeChunks = new();
 
   private void CreateChunk(Bounds bounds) {
     // Create water object
@@ -76,31 +76,23 @@ public class WaterChunkManager : MonoBehaviour {
     );
 
     QuadtreeChunk.RetrieveVisibleChunks(
-      m_visibleQuadtreeChunks,
+      m_visibleChunkBounds,
       m_quadtreeChunks,
       cameraPosition,
       viewDistance
     );
 
-    m_visibleChunkPositions.Clear();
     m_visibleChunkBoundsHashSet.Clear();
-    for (int i = 0; i < m_visibleQuadtreeChunks.Count; i++) {
-      QuadtreeChunk chunk = m_visibleQuadtreeChunks[i];
-
-      // Save the chunk
-      Bounds bounds = new Bounds(
-        chunk.bounds.center,
-        new Vector3(chunk.bounds.size.x, chunkSize.y, chunk.bounds.size.z)
-      );
-      m_visibleChunkPositions.Add(bounds);
+    for (int i = 0; i < m_visibleChunkBounds.Count; i++) {
+      Bounds bounds = m_visibleChunkBounds[i];
       m_visibleChunkBoundsHashSet.Add(bounds);
     }
   }
 
   private void UpdateFollowingVisibleChunks() {
     // Check if the chunks are already there
-    for (int i = 0; i < m_visibleChunkPositions.Count; i++) {
-      Bounds bounds = m_visibleChunkPositions[i];
+    for (int i = 0; i < m_visibleChunkBounds.Count; i++) {
+      Bounds bounds = m_visibleChunkBounds[i];
 
       if (!m_spawnedChunksDictionary.ContainsKey(bounds)) {
         CreateChunk(bounds);
@@ -110,11 +102,8 @@ public class WaterChunkManager : MonoBehaviour {
     // Delete chunks that are out of view
     for (int i = m_spawnedChunks.Count - 1; i >= 0; i--) {
       WaterChunk chunk = m_spawnedChunks[i];
-      Bounds chunkBounds = chunk.bounds;
       // Find a chunk with the same position
-      bool foundPosition = m_visibleChunkBoundsHashSet.Contains(
-        chunkBounds
-      );
+      bool foundPosition = m_visibleChunkBoundsHashSet.Contains(chunk.bounds);
 
       if (!foundPosition) {
         m_spawnedChunks.Remove(chunk);
@@ -155,8 +144,8 @@ public class WaterChunkManager : MonoBehaviour {
       UpdateVisibleChunkPositions(Camera.main, true);
 
       Gizmos.color = Color.white;
-      for (int i = 0; i < m_visibleChunkPositions.Count; i++) {
-        Bounds bounds = m_visibleChunkPositions[i];
+      for (int i = 0; i < m_visibleChunkBounds.Count; i++) {
+        Bounds bounds = m_visibleChunkBounds[i];
         Gizmos.DrawWireCube(bounds.center, bounds.size);
       }
     }

@@ -46,7 +46,6 @@ public class TerrainChunkManager : MonoBehaviour {
   private Vector3 m_lastCameraPosition;
 
   private List<float> m_levelDistances = new();
-  private List<QuadtreeChunk> m_visibleQuadtreeChunks = new();
 
   public event System.Action<TerrainChunk> ChunkGenerated;
   public event System.Action<TerrainChunk> ChunkSpawned;
@@ -146,20 +145,16 @@ public class TerrainChunkManager : MonoBehaviour {
     );
 
     QuadtreeChunk.RetrieveVisibleChunks(
-      m_visibleQuadtreeChunks,
+      m_visibleChunkBounds,
       m_quadtreeChunks,
       cameraPosition,
       viewDistance
     );
 
-    m_visibleChunkBounds.Clear();
     m_visibleChunkBoundsHashSet.Clear();
-    for (int i = 0; i < m_visibleQuadtreeChunks.Count; i++) {
-      QuadtreeChunk chunk = m_visibleQuadtreeChunks[i];
-
-      // Save the chunk
-      m_visibleChunkBounds.Add(chunk.bounds);
-      m_visibleChunkBoundsHashSet.Add(chunk.bounds);
+    for (int i = 0; i < m_visibleChunkBounds.Count; i++) {
+      Bounds bounds = m_visibleChunkBounds[i];
+      m_visibleChunkBoundsHashSet.Add(bounds);
     }
 
     // Sort the array by measuring the distance from the chunk to the camera
@@ -333,9 +328,9 @@ public class TerrainChunkManager : MonoBehaviour {
   }
 
   public TerrainChunk GetChunkAt(Vector3 position) {
-    QuadtreeChunk chunk = QuadtreeChunk.GetChunkAt(m_quadtreeChunks, position);
+    (bool found, QuadtreeChunkNode chunk) = QuadtreeChunk.GetChunkAt(m_quadtreeChunks, position);
 
-    if (chunk != null) {
+    if (found) {
       return m_spawnedChunksDictionary.GetValueOrDefault(chunk.bounds);
     }
 
