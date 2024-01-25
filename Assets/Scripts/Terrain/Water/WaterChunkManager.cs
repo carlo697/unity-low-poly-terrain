@@ -2,12 +2,12 @@ using UnityEngine;
 using System.Collections.Generic;
 
 public class WaterChunkManager : MonoBehaviour {
-  public float viewDistance = 100f;
-  public DistanceShape distanceShape;
+  [SerializeField] private TerrainShape m_terrainShape;
+
+  [Header("Chunks")]
   public Vector3 chunkSize = new Vector3(32f, 2f, 32f);
   public int chunkResolution = 32;
   public Material waterMaterial;
-  public Transform waterParent;
 
   private List<QuadtreeChunk> m_quadtreeChunks = new();
   private List<WaterChunk> m_spawnedChunks = new();
@@ -19,11 +19,17 @@ public class WaterChunkManager : MonoBehaviour {
   public float generatePeriod = 0.3f;
   private float m_generateTimer = 0.0f;
 
+  [Header("Chunk Distribution")]
+  public Transform waterParent;
+  public float viewDistance = 5000f;
+  public DistanceShape distanceShape = DistanceShape.Circle;
+  public int levelsOfDetail = 8;
+  public float detailDistanceBase = 2f;
+  public float detailDistanceMultiplier = 2.5f;
+
+  [Header("Debug")]
   public bool drawGizmos = true;
 
-  [SerializeField] private TerrainShape m_terrainShape;
-
-  public int levelsOfDetail = 8;
   private List<float> m_levelDistances = new();
   private List<QuadtreeChunkNode> m_visibleQuadtreeChunks = new();
 
@@ -59,8 +65,8 @@ public class WaterChunkManager : MonoBehaviour {
       m_levelDistances,
       levelsOfDetail,
       chunkSize.x,
-      2f,
-      2.5f
+      detailDistanceBase,
+      detailDistanceMultiplier
     );
 
     QuadtreeChunk.CreateQuadtrees(

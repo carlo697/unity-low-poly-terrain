@@ -16810,17 +16810,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0a17130c37658243909475912a0a4b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  viewDistance: 5000
-  distanceShape: 0
+  m_terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
   chunkSize: {x: 16, y: 1, z: 16}
   chunkResolution: 16
   waterMaterial: {fileID: -876546973899608171, guid: 7de9b1892d63b524ab8e07311d8f14aa,
     type: 3}
-  waterParent: {fileID: 368958979}
   generatePeriod: 0.3
-  drawGizmos: 0
-  m_terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
+  waterParent: {fileID: 368958979}
+  viewDistance: 5000
+  distanceShape: 0
   levelsOfDetail: 16
+  detailDistanceBase: 2
+  detailDistanceMultiplier: 2
+  drawGizmos: 0
 --- !u!114 &1205162106
 MonoBehaviour:
   m_ObjectHideFlags: 0
