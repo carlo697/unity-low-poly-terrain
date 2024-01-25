@@ -54,7 +54,7 @@ public class TerrainShape : ScriptableObject {
   [Header("Biome Settings")]
   public Biome defaultBiome;
   public bool useBiomes = true;
-  public BiomeArray biomes;
+  public bool useTemperatureAndPrecipitation = true;
   public float biomesNoiseScale = 0.75f;
   public float biomesVoronoiRandomness = 0.5f;
   public FractalNoise biomeWarp = new FractalNoise {
@@ -67,6 +67,7 @@ public class TerrainShape : ScriptableObject {
   };
   public TemperatureNoise averageTemperature;
   public PrecipitationNoise annualPrecipitation;
+  public BiomeArray biomes;
 
   [Header("Plateaus")]
   public bool usePlateaus = true;
@@ -141,6 +142,7 @@ public class TerrainShape : ScriptableObject {
           noiseScale * biomesNoiseScale,
           biomesVoronoiRandomness,
           biomeWarp.GetGenerator(),
+          useTemperatureAndPrecipitation,
           temperatureGenerator,
           precipitationGenerator
         );

@@ -366,14 +366,7 @@ MonoBehaviour:
     domainWarpFrequency: 2
   defaultBiome: {fileID: 11400000, guid: 69c4aa4d9a3bd364dac552cb86230c67, type: 2}
   useBiomes: 1
-  biomes:
-    array:
-    - {fileID: 11400000, guid: ffc6b4f7c76fbfd4aa6e2a5943a8c9c8, type: 2}
-    - {fileID: 11400000, guid: 69c4aa4d9a3bd364dac552cb86230c67, type: 2}
-    - {fileID: 11400000, guid: 044f22e91244c844caeff06226de3595, type: 2}
-    - {fileID: 11400000, guid: 5d98ca1d7c2646248a4bf0a9833a03c0, type: 2}
-    - {fileID: 11400000, guid: 9534a0b2fd921e3449d008f5c9c519e6, type: 2}
-    - {fileID: 11400000, guid: 09e559b0efdd54545be416f482f9a8d6, type: 2}
+  useTemperatureAndPrecipitation: 1
   biomesNoiseScale: 1.125
   biomesVoronoiRandomness: 0.5
   biomeWarp:
@@ -500,6 +493,14 @@ MonoBehaviour:
       useDomainWarp: 0
       domainWarpAmplitude: 0.1
       domainWarpFrequency: 2
+  biomes:
+    array:
+    - {fileID: 11400000, guid: ffc6b4f7c76fbfd4aa6e2a5943a8c9c8, type: 2}
+    - {fileID: 11400000, guid: 69c4aa4d9a3bd364dac552cb86230c67, type: 2}
+    - {fileID: 11400000, guid: 044f22e91244c844caeff06226de3595, type: 2}
+    - {fileID: 11400000, guid: 5d98ca1d7c2646248a4bf0a9833a03c0, type: 2}
+    - {fileID: 11400000, guid: 9534a0b2fd921e3449d008f5c9c519e6, type: 2}
+    - {fileID: 11400000, guid: 09e559b0efdd54545be416f482f9a8d6, type: 2}
   usePlateaus: 1
   absoluteMaximunPlateauHeight: 48
   plateauMask:

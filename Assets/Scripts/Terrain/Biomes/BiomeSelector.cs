@@ -31,6 +31,14 @@ public static class BiomeSelector {
     return selectedBiome;
   }
 
+  private static Biome SelectBiomeAt(Biome[] biomes, float value) {
+    int randomInteger = Mathf.RoundToInt(value * 1_000_000);
+    int biomeIndex = randomInteger % biomes.Length;
+    Biome selectedBiome = biomes[biomeIndex];
+
+    return selectedBiome;
+  }
+
   public static Dictionary<Biome, float[]> DetermineBiomes(
     FastNoiseChunk chunk,
     int terrainSeed,
@@ -39,6 +47,7 @@ public static class BiomeSelector {
     float voronoiNoiseScale,
     float voronoiRandomness,
     INoiseGenerator voronoiWarpGenerator,
+    bool useTemperatureAndPrecipitation,
     INoiseGenerator temperatureGenerator,
     INoiseGenerator precipitationGenerator
   ) {
@@ -82,29 +91,34 @@ public static class BiomeSelector {
           // Smooth the result
           distanceToEdge = Mathf.SmoothStep(0f, 1f, distanceToEdge);
 
-          // Information needed to assign a biome
-          float2 worldCellPosition = (voronoiPixel.cell) / noiseFrequency;
-          float temperature = temperatureGenerator.Generate2d(
-            worldCellPosition.x,
-            worldCellPosition.y,
-            voronoiNoiseScale,
-            terrainSeed
-          );
-          float precipitation = precipitationGenerator.Generate2d(
-            worldCellPosition.x,
-            worldCellPosition.y,
-            voronoiNoiseScale,
-            terrainSeed
-          );
+          Biome targetBiome;
+          if (useTemperatureAndPrecipitation) {
+            // Information needed to assign a biome
+            float2 worldCellPosition = voronoiPixel.cell / noiseFrequency;
+            float temperature = temperatureGenerator.Generate2d(
+              worldCellPosition.x,
+              worldCellPosition.y,
+              voronoiNoiseScale,
+              terrainSeed
+            );
+            float precipitation = precipitationGenerator.Generate2d(
+              worldCellPosition.x,
+              worldCellPosition.y,
+              voronoiNoiseScale,
+              terrainSeed
+            );
 
-          // Assign a biome
-          Biome targetBiome = SelectBiomeAt(
-            worldCellPosition,
-            biomes,
-            voronoiPixel.id,
-            temperature,
-            precipitation
-          );
+            // Assign a biome
+            targetBiome = SelectBiomeAt(
+              worldCellPosition,
+              biomes,
+              voronoiPixel.id,
+              temperature,
+              precipitation
+            );
+          } else {
+            targetBiome = SelectBiomeAt(biomes, voronoiPixel.id);
+          }
 
           float[] targetMask;
           if (!masks.TryGetValue(targetBiome, out targetMask)) {
