@@ -151,10 +151,23 @@ public class DetailSpawnerAsset : DetailSpawner {
       // Select a mesh/prefab
       int meshIndex = instanceRng.Next(detail.meshes.Length);
 
-      // Generate a bounds
+      // Get the bounds of the mesh
       Bounds baseBounds = detail.meshes[meshIndex].levelOfDetails[0].submeshes[0].mesh.bounds;
-      baseBounds = baseBounds.ApplyTransform(matrix);
-      SphereBounds sphereBounds = new SphereBounds(baseBounds);
+
+      // Get the maximun axis in the scale vector
+      float radiusScale = scale.x;
+      if (scale.y > radiusScale) {
+        radiusScale = scale.y;
+      }
+      if (scale.z > radiusScale) {
+        radiusScale = scale.z;
+      }
+
+      // Create the final sphere bounds
+      SphereBounds sphereBounds = new SphereBounds(
+        matrix.MultiplyPoint(baseBounds.center),
+        Vector3.Distance(baseBounds.center, baseBounds.min) * radiusScale
+      );
 
       // Add a temporal instance to the list
       instances.Add(new DetailInstance {

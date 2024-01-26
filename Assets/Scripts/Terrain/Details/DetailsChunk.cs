@@ -159,7 +159,7 @@ public class DetailsChunk : MonoBehaviour {
 
     if (logGenerationInfo && m_instances.Count > 50) {
       Debug.Log(
-        $"{timer.ElapsedMilliseconds} ms ({timer.ElapsedTicks} ticks) to generate {m_instances.Count} details"
+        $"{timer.Elapsed.TotalMilliseconds} ms to generate {m_instances.Count} details"
       );
     }
   }
