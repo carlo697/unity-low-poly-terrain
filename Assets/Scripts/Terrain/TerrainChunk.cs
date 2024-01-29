@@ -58,6 +58,7 @@ public class TerrainChunk : MonoBehaviour {
 
   public int levelOfDetail {
     get {
+      // Calculate a level of detail integer between 1 and the maximun level
       int levelOfDetail = 1;
       if (terrainManager) {
         levelOfDetail = 1 + (int)Mathf.Log(

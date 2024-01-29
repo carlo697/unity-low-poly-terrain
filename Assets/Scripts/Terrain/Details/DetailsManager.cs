@@ -275,12 +275,8 @@ public class DetailsManager : MonoBehaviour {
     TerrainChunk terrainChunk = m_terrainManager.GetChunkAt(chunkCenter);
 
     if (terrainChunk) {
-      // Calculate a level of detail integer between 1 and the maximun level
-      int integer = 1 + (int)Mathf.Log(
-        terrainChunk.scale.x / m_terrainManager.chunkScale.x,
-        2
-      );
-      // Calculate the a normalized level of detail (between 0 and 1)
+      int integer = terrainChunk.levelOfDetail;
+      // Calculate a level of detail between 0 and 1
       float normalized = levelOfDetailCurve.Evaluate(1f / integer);
       return (integer, normalized);
     }
