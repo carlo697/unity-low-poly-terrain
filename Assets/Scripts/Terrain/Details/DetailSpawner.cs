@@ -7,6 +7,7 @@ public abstract class DetailSpawner : ScriptableObject {
   public abstract void Spawn(
     List<DetailInstance> instances,
     ulong seed,
+    TerrainChunk terrainChunk,
     Bounds bounds,
     int integerLevelOfDetail,
     float normalizedLevelOfDetail

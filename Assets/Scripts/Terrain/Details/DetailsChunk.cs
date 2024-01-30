@@ -86,6 +86,16 @@ public class DetailsChunk : MonoBehaviour {
 
     yield return null;
 
+    // Check the chunk
+    TerrainChunk terrainChunk = manager.manager.GetChunkAt(bounds.center);
+    if (!terrainChunk
+      || terrainChunk.status != TerrainChunkStatus.Generated
+      || manager.manager.IsChunkIntersected(terrainChunk)
+    ) {
+      m_status = DetailsChunkStatus.Spawned;
+      yield break;
+    }
+
     // Record time taken to generate and spawn the details
     System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
     timer.Start();
@@ -103,7 +113,7 @@ public class DetailsChunk : MonoBehaviour {
     // Iterate spawners to add the instances
     for (int i = 0; i < terrainShape.detailSpawners.Length; i++) {
       DetailSpawner spawner = terrainShape.detailSpawners[i];
-      spawner.Spawn(m_instances, seed, bounds, integerLevelOfDetail, normalizedLevelOfDetail);
+      spawner.Spawn(m_instances, seed, terrainChunk, bounds, integerLevelOfDetail, normalizedLevelOfDetail);
     }
 
     // if (bounds.center.x == -304f && bounds.center.z == -112f) {

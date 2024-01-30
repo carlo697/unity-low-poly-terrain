@@ -110,6 +110,7 @@ public class TerrainChunk : MonoBehaviour {
   private NativeList<Vector3> m_jobUVs;
   private NativeList<Color> m_jobColors;
   private NativeList<VoxelPoint> m_jobPoints;
+  private NativeList<uint> m_jobTriangleMaterials;
   private JobHandle? m_terrainJobHandle;
   #endregion
 
@@ -122,6 +123,8 @@ public class TerrainChunk : MonoBehaviour {
   // private Vector3[] m_meshUVs;
   // public Color[] meshColors { get { return meshColors; } }
   // private Color[] m_meshColors;
+  public uint[] triangleMaterials { get { return m_triangleMaterials; } }
+  private uint[] m_triangleMaterials;
   // #endregion
 
   #region Physics Job
@@ -219,6 +222,7 @@ public class TerrainChunk : MonoBehaviour {
     m_jobTriangles = new NativeList<int>(Allocator.Persistent);
     m_jobUVs = new NativeList<Vector3>(Allocator.Persistent);
     m_jobColors = new NativeList<Color>(Allocator.Persistent);
+    m_jobTriangleMaterials = new NativeList<uint>(Allocator.Persistent);
     int pointCount = (resolution.x + 1) * (resolution.y + 1) * (resolution.z + 1);
     m_jobPoints = new NativeList<VoxelPoint>(pointCount, Allocator.Persistent);
 
@@ -228,6 +232,7 @@ public class TerrainChunk : MonoBehaviour {
       triangles = m_jobTriangles,
       uvs = m_jobUVs,
       colors = m_jobColors,
+      triangleMaterials = m_jobTriangleMaterials,
       points = m_jobPoints,
       samplerHandle = samplerHandle,
       scale = scale,
@@ -270,6 +275,7 @@ public class TerrainChunk : MonoBehaviour {
     m_jobUVs.Dispose();
     m_jobColors.Dispose();
     m_jobPoints.Dispose();
+    m_jobTriangleMaterials.Dispose();
     samplerHandle.Free();
     m_terrainJobHandle = null;
   }
@@ -309,6 +315,7 @@ public class TerrainChunk : MonoBehaviour {
           // m_meshTriangles = m_jobTriangles.ToArray();
           // m_meshUVs = m_jobUVs.ToArray();
           // m_meshColors = m_jobColors.ToArray();
+          m_triangleMaterials = m_jobTriangleMaterials.ToArray();
 
           // Create a mesh
           m_mesh = MarchingCubes.CreateMesh(

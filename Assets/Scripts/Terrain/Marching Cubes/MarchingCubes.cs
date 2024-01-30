@@ -26,8 +26,11 @@ public static class MarchingCubes {
     ref NativeList<Vector3> vertices,
     ref NativeList<int> triangles,
     ref NativeList<Vector3> uvs,
-    ref NativeList<Color> colors
+    ref NativeList<Color> colors,
+    ref NativeList<uint> triangleMaterials
   ) {
+    Vector3[] currentVertices = new Vector3[3];
+
     for (int z = 0; z < grid.size.z - 1; z++) {
       for (int y = 0; y < grid.size.y - 1; y++) {
         for (int x = 0; x < grid.size.x - 1; x++) {
@@ -85,31 +88,45 @@ public static class MarchingCubes {
               float interpolant = (threshold - sampleA) / (sampleB - sampleA);
               Vector3 interpolatedPosition = Vector3.Lerp(positionA, positionB, interpolant);
 
-              vertices.Add(interpolatedPosition);
+              currentVertices[vertex] = interpolatedPosition;
 
               // Add vertex color
               float colorInterpolant = ((interpolant - 0.5f) * 4f) + 0.5f;
               colors.Add(Color.Lerp(grid.points[indexA].color, grid.points[indexB].color, colorInterpolant));
-
-              // Add UVs
-              if (colorInterpolant < 0.5f) {
-                uvs.Add(new Vector3(
-                  MaterialBitConverter.MaterialIdToFloat(grid.points[indexA].material), 0f, 0f
-                ));
-              } else {
-                uvs.Add(new Vector3(
-                  MaterialBitConverter.MaterialIdToFloat(grid.points[indexB].material), 0f, 0f
-                ));
-              }
             }
 
             if (skip) {
               break;
             }
 
+            vertices.Add(currentVertices[0]);
+            vertices.Add(currentVertices[1]);
+            vertices.Add(currentVertices[2]);
+
             triangles.Add(nextVertexIndex);
             triangles.Add(nextVertexIndex + 1);
             triangles.Add(nextVertexIndex + 2);
+
+            // Get the center of the triangle
+            Vector3 middlePoint = (currentVertices[0] + currentVertices[1] + currentVertices[2]) / 3f;
+
+            // Get the index of the closest point to the triangle center
+            int indexSample = grid.GetNearestIndexAt(middlePoint);
+
+            // Add vertex color
+            // Color color = grid.points[indexSample].color;
+            // colors.Add(color);
+            // colors.Add(color);
+            // colors.Add(color);
+
+            // Add UVs
+            Vector3 uv = Vector3.zero;
+            uvs.Add(uv);
+            uvs.Add(uv);
+            uvs.Add(uv);
+
+            // Add material
+            triangleMaterials.Add(grid.points[indexSample].material);
           }
         }
       }

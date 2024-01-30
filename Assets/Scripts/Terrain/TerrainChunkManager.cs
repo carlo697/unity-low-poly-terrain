@@ -336,4 +336,19 @@ public class TerrainChunkManager : MonoBehaviour {
 
     return null;
   }
+
+  public bool IsChunkIntersected(TerrainChunk chunk) {
+    bool isIntersected = false;
+
+    for (int j = 0; j < m_spawnedChunksToDelete.Count; j++) {
+      TerrainChunk chunkBeingReplaced = m_spawnedChunksToDelete[j];
+
+      if (chunkBeingReplaced.bounds.IsInside(chunk.bounds)) {
+        isIntersected = true;
+        break;
+      }
+    }
+
+    return isIntersected;
+  }
 }

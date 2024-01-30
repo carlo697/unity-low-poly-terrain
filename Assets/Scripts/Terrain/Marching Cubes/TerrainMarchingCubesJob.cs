@@ -11,6 +11,7 @@ public struct TerrainMarchingCubesJob : IJob {
   public NativeList<Vector3> uvs;
   public NativeList<Color> colors;
   public NativeList<VoxelPoint> points;
+  public NativeList<uint> triangleMaterials;
   public GCHandle samplerHandle;
   public Vector3 scale;
   public Vector3Int resolution;
@@ -41,7 +42,8 @@ public struct TerrainMarchingCubesJob : IJob {
         ref vertices,
         ref triangles,
         ref uvs,
-        ref colors
+        ref colors,
+        ref triangleMaterials
       );
 
       timer.Stop();

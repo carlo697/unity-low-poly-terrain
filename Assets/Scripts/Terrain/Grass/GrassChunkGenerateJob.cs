@@ -10,6 +10,7 @@ public struct GrassChunkGenerateJob : IJob {
   public NativeList<GrassInstance> instances;
   [ReadOnly] public GCHandle spawners;
   [ReadOnly] public Mesh.MeshDataArray meshDataArray;
+  [ReadOnly] public NativeArray<uint> triangleMaterials;
   public bool logTime;
 
   public void Execute() {
@@ -39,6 +40,7 @@ public struct GrassChunkGenerateJob : IJob {
     }
 
     // Iterate the triangles of the mesh
+    int triangleIndex = 0;
     for (int i = 0; i < triangles.Length; i += 3) {
       Vector3 a = vertices[i];
       Vector3 b = vertices[i + 1];
@@ -53,7 +55,7 @@ public struct GrassChunkGenerateJob : IJob {
       float area = unnormalizedNormal.magnitude / 2f;
 
       // Get material of the triangle
-      uint materialId = MaterialBitConverter.FloatToMaterialId(uvs[i].x);
+      uint materialId = triangleMaterials[triangleIndex];
 
       // Determine what spawners to use in this triangle
       for (int spawnerIdx = 0; spawnerIdx < spawners.Length; spawnerIdx++) {
@@ -71,6 +73,8 @@ public struct GrassChunkGenerateJob : IJob {
           materialId
         );
       }
+
+      triangleIndex++;
     }
 
     // Free memory

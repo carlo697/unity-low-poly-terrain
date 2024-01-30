@@ -103,6 +103,31 @@ public class VoxelGrid : IDisposable {
   }
 
   [MethodImpl(MethodImplOptions.AggressiveInlining)]
+  public Vector3 NormalizeLocalPosition(Vector3 position) {
+    return new Vector3(
+      position.x / scale.x,
+      position.y / scale.y,
+      position.z / scale.z
+    );
+  }
+
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]
+  public int GetNearestIndexAt(Vector3 position) {
+    Vector3Int coordsSample = GetNearestCoordsAt(position);
+    return GetIndexFromCoords(coordsSample);
+  }
+
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]
+  public Vector3Int GetNearestCoordsAt(Vector3 position) {
+    Vector3 normalizedMiddlePoint = NormalizeLocalPosition(position);
+    return new Vector3Int(
+      Mathf.RoundToInt(normalizedMiddlePoint.x * resolution.x),
+      Mathf.RoundToInt(normalizedMiddlePoint.y * resolution.y),
+      Mathf.RoundToInt(normalizedMiddlePoint.z * resolution.z)
+    );
+  }
+
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]
   public Vector3Int GetCoordsFromIndex(int index) {
     int z = index % m_size.x;
     int y = (index / m_size.x) % m_size.y;

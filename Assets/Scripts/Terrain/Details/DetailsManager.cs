@@ -118,7 +118,7 @@ public class DetailsManager : MonoBehaviour {
     // Find the details chunks inside the generated terrain chunk
     for (int i = 0; i < m_spawnedChunks.Count; i++) {
       DetailsChunk chunk = m_spawnedChunks[i];
-      if (chunk.bounds.IsInside(bounds)) {
+      if (bounds.Contains(chunk.bounds.center)) {
         (int integer, float normalized) = GetLevelOfDetail(cameraPosition, chunk.bounds.center);
         chunk.RequestUpdate(integer, normalized);
       }
@@ -263,12 +263,16 @@ public class DetailsManager : MonoBehaviour {
     chunk.terrainShape = terrainShape;
     chunk.logGenerationInfo = logGenerationInfo;
 
-    // Request update
-    (int integer, float normalized) = GetLevelOfDetail(
+    // Get level of detail
+    (int integerLod, float normalizedLod) = GetLevelOfDetail(
       m_terrainManager.usedCamera.transform.position,
       chunk.bounds.center
     );
-    chunk.RequestUpdate(integer, normalized);
+
+    // Request update
+    if (integerLod > 0) {
+      chunk.RequestUpdate(integerLod, normalizedLod);
+    }
   }
 
   public (int, float) GetLevelOfDetail(Vector3 cameraPosition, Vector3 chunkCenter) {

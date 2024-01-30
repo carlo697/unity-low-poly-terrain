@@ -38,6 +38,7 @@ public class DetailSpawnerAsset : DetailSpawner {
   public override void Spawn(
     List<DetailInstance> instances,
     ulong seed,
+    TerrainChunk terrainChunk,
     Bounds bounds,
     int integerLevelOfDetail,
     float normalizedLevelOfDetail
@@ -102,7 +103,7 @@ public class DetailSpawnerAsset : DetailSpawner {
       }
 
       // Get the material on the hit point
-      uint materialId = MaterialBitConverter.FloatToMaterialId(hit.textureCoord.x);
+      uint materialId = terrainChunk.triangleMaterials[hit.triangleIndex];
       bool wasMaterialFound = false;
       for (int materialIndex = 0; materialIndex < materials.Length; materialIndex++) {
         if (materials[materialIndex] == materialId) {

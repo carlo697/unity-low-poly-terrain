@@ -39,6 +39,7 @@ public class GrassChunk : MonoBehaviour {
   private NativeList<GrassInstance> m_nativeInstances;
   private GCHandle m_spawnersHandle;
   private Mesh.MeshDataArray m_meshDataArray;
+  private NativeArray<uint> m_triangleMaterials;
 
   private JobHandle? m_instancingJobHandle;
   private GCHandle m_grassesHandle;
@@ -176,6 +177,7 @@ public class GrassChunk : MonoBehaviour {
 
     m_spawnersHandle = GCHandle.Alloc(terrainShape.grassSpawners);
     m_meshDataArray = Mesh.AcquireReadOnlyMeshData(m_terrainChunk.mesh);
+    m_triangleMaterials = new NativeArray<uint>(m_terrainChunk.triangleMaterials, Allocator.TempJob);
 
     GrassChunkGenerateJob job = new GrassChunkGenerateJob {
       chunkPosition = m_terrainChunk.position,
@@ -184,6 +186,7 @@ public class GrassChunk : MonoBehaviour {
       instances = m_nativeInstances,
       spawners = m_spawnersHandle,
       meshDataArray = m_meshDataArray,
+      triangleMaterials = m_triangleMaterials,
       logTime = logGenerationInfo
     };
 
@@ -193,6 +196,7 @@ public class GrassChunk : MonoBehaviour {
   private void DisposeGenerationJob() {
     m_spawnersHandle.Free();
     m_meshDataArray.Dispose();
+    m_triangleMaterials.Dispose();
     m_generationJobHandle = null;
   }
 
