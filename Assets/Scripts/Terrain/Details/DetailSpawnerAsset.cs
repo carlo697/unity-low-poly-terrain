@@ -67,12 +67,17 @@ public class DetailSpawnerAsset : DetailSpawner {
     Vector3 start = bounds.center - bounds.extents;
 
     for (int i = 0; i < totalPopulation; i++) {
+      Vector3 normalizedPosition = new Vector3(
+        (float)positionRng.NextDouble(),
+        1f,
+        (float)positionRng.NextDouble()
+      );
       // To maintain a stable sequence of random position, we need to always generate
       // these variables even if the chunk won't have all the details
       Vector3 position = new Vector3(
-        start.x + (float)positionRng.NextDouble() * bounds.size.x,
-        start.y + bounds.size.y,
-        start.z + (float)positionRng.NextDouble() * bounds.size.z
+        start.x + normalizedPosition.x * bounds.size.x,
+        start.y + normalizedPosition.y * bounds.size.y,
+        start.z + normalizedPosition.z * bounds.size.z
       );
       ulong instanceSeed = lodRng.Sample();
 
@@ -99,6 +104,29 @@ public class DetailSpawnerAsset : DetailSpawner {
         layerMask,
         QueryTriggerInteraction.Ignore
       )) {
+        continue;
+      }
+
+      TerrainChunk _otherChunk = hit.collider.GetComponent<TerrainChunk>();
+      if (_otherChunk.gameObject != terrainChunk.gameObject) {
+        Debug.LogWarning("Inconsistent chunk while placing details");
+        Debug.Log(normalizedPosition.ToStringGeneral());
+        Debug.Log(position.ToStringGeneral());
+
+        Debug.Log(terrainChunk);
+        Debug.Log(_otherChunk);
+
+        Debug.Log(terrainChunk.transform.position.ToStringGeneral());
+        Debug.Log(_otherChunk.transform.position.ToStringGeneral());
+
+        Debug.Log(terrainChunk.transform.localScale.ToStringGeneral());
+        Debug.Log(_otherChunk.transform.localScale.ToStringGeneral());
+
+        Debug.Log(terrainChunk.gameObject);
+        Debug.Log(_otherChunk.gameObject);
+
+        Debug.Log(bounds);
+
         continue;
       }
 
