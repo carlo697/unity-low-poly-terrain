@@ -64,6 +64,7 @@ MonoBehaviour:
   minAngle: 45
   maxAngle: 90
   materials: 01000000
+  biomes: 0100000006000000
   useNoise: 1
   noiseSettings:
     seed: 0
@@ -109,3 +110,6 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
+    useDomainWarp: 0
+    domainWarpAmplitude: 1
+    domainWarpFrequency: 0.5

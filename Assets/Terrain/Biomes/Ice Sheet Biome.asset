@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79d90ec918576b94c8c991e55682987b, type: 3}
   m_Name: Ice Sheet Biome
   m_EditorClassIdentifier: 
-  name: Ice Sheet Biome
+  id: 3
+  name: IceSheetBiome
   debugColor: {r: 1, g: 1, b: 1, a: 1}
   temperatureRange:
     min: -15

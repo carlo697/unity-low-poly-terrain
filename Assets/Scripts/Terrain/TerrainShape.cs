@@ -119,7 +119,7 @@ public class TerrainShape : ScriptableObject {
   }
 
   public TerrainSamplerFunc GetSampler(FastNoiseChunk chunk) {
-    return (VoxelGrid grid) => {
+    return (VoxelGrid grid, TerrainMarchingCubesJob.ManagedData data) => {
       int pixelCount2d = chunk.pointCount2d;
 
       Biome[] biomes = this.biomes;
@@ -146,7 +146,17 @@ public class TerrainShape : ScriptableObject {
           temperatureGenerator,
           precipitationGenerator
         );
+      } else {
+        selectedBiomes = new Dictionary<Biome, float[]>();
+
+        // Create a mask and fill with 1f
+        float[] mask = new float[pixelCount2d];
+        Array.Fill(mask, 1f);
+        selectedBiomes.Add(defaultBiome, mask);
       }
+
+      // Store data about the biomes in the managed data
+      data.biomeMasks = selectedBiomes;
 
       // Array to store the debug pixels
       float[] debug2dPixels = ArrayPool<float>.Shared.Rent(pixelCount2d);
@@ -198,7 +208,7 @@ public class TerrainShape : ScriptableObject {
         }
       }
 
-      if (useBiomes) {
+      if (useBiomes || debugMode == DebugMode.BiomeMasks) {
         // The the voxel grids for each biome
         Dictionary<Biome, VoxelGrid> grids = new();
 
@@ -298,14 +308,8 @@ public class TerrainShape : ScriptableObject {
           item.Value.Dispose();
         }
       } else {
-        // Create a mask fill with 1f
-        float[] mask = new float[pixelCount2d];
-        for (int i = 0; i < mask.Length; i++) {
-          mask[i] = 1f;
-        }
-
         // Generate the default biome on the grid
-        defaultBiome.Generate(this, chunk, grid, mask);
+        defaultBiome.Generate(this, chunk, grid, selectedBiomes[defaultBiome]);
       }
 
       if (debugMode != DebugMode.None) {

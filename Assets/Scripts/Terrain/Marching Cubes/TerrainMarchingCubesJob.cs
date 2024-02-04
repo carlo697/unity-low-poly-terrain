@@ -1,11 +1,20 @@
 using UnityEngine;
 using Unity.Jobs;
 using Unity.Collections;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-public delegate void TerrainSamplerFunc(VoxelGrid grid);
+public delegate void TerrainSamplerFunc(
+  VoxelGrid grid,
+  TerrainMarchingCubesJob.ManagedData managedData
+);
 
 public struct TerrainMarchingCubesJob : IJob {
+  public class ManagedData {
+    public TerrainSamplerFunc samplerFunc;
+    public Dictionary<Biome, float[]> biomeMasks;
+  }
+
   public NativeList<Vector3> vertices;
   public NativeList<int> triangles;
   public NativeList<Vector3> uvs;
@@ -17,17 +26,18 @@ public struct TerrainMarchingCubesJob : IJob {
   public Vector3Int resolution;
   public float threshold;
   public bool debug;
+  public GCHandle managedDataHandle;
 
   public void Execute() {
     var timer = new System.Diagnostics.Stopwatch();
     timer.Start();
 
-    var samplerFunc = (TerrainSamplerFunc)samplerHandle.Target;
+    var managedData = (ManagedData)managedDataHandle.Target;
 
     // Create an instance of the grid and use it
     using (VoxelGrid grid = new VoxelGrid(scale, resolution, threshold)) {
       grid.InitializePositions();
-      samplerFunc.Invoke(grid);
+      managedData.samplerFunc.Invoke(grid, managedData);
 
       timer.Stop();
       if (debug) {

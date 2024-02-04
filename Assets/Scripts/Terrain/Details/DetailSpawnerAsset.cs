@@ -1,6 +1,6 @@
 
 using UnityEngine;
-using System;
+using System.Buffers;
 using System.Collections.Generic;
 
 [CreateAssetMenu(menuName = "Terrain/Detail Spawner", order = 2)]
@@ -29,7 +29,9 @@ public class DetailSpawnerAsset : DetailSpawner {
   public float maxAngle = 90f;
 
   [Header("Material")]
-  public uint[] materials = new uint[] { 0 };
+  public uint[] materials = new uint[] { 1 };
+  public int[] biomes = new int[0];
+  public bool useBiomes { get { return biomes.Length > 0; } }
 
   [Header("Noise")]
   public bool useNoise;
@@ -43,14 +45,54 @@ public class DetailSpawnerAsset : DetailSpawner {
     int integerLevelOfDetail,
     float normalizedLevelOfDetail
   ) {
+    // Skip if the level of detail is over the limit for this detail
     if (integerLevelOfDetail > maximumLevelOfDetail) {
       return;
+    }
+
+    // Check if the chunk contains a biome for this detail
+    if (useBiomes) {
+      bool hasBiome = false;
+
+      // Iterate the biomes to see if any of them is present in the chunk
+      for (int biomeIndex = 0; biomeIndex < biomes.Length; biomeIndex++) {
+        int biomeId = biomes[biomeIndex];
+
+        if (terrainChunk.biomeIds.Contains(biomeId)) {
+          hasBiome = true;
+          break;
+        }
+      }
+
+      if (!hasBiome) {
+        return;
+      }
+    }
+
+    // Build an array of the biomes present in this chunk that are compatible
+    // with this detail
+    int[] presentBiomeIds = null;
+    int presentBiomesCount = 0;
+    if (useBiomes) {
+      presentBiomeIds = ArrayPool<int>.Shared.Rent(biomes.Length);
+
+      // Iterate the compatible biomes
+      for (int biomeIndex = 0; biomeIndex < biomes.Length; biomeIndex++) {
+        int biomeId = biomes[biomeIndex];
+
+        // Check if the biome is in the chunk to save it
+        if (terrainChunk.biomeIds.Contains(biomeId)) {
+          presentBiomeIds[presentBiomesCount] = biomeId;
+          presentBiomesCount++;
+        }
+      }
     }
 
     // Random number generators
     XorshiftStar positionRng = new XorshiftStar(seed + this.seed);
     XorshiftStar lodRng = new XorshiftStar(seed + this.seed + 1);
     XorshiftStar noiseRng = new XorshiftStar(seed + this.seed + 3);
+    XorshiftStar biomeMaskRng = new XorshiftStar(seed + this.seed + 4);
 
     // Noise generator
     DetailSpawnerNoise.Generator noise = useNoise ? noiseSettings.GetGenerator() : null;
@@ -67,13 +109,13 @@ public class DetailSpawnerAsset : DetailSpawner {
     Vector3 start = bounds.center - bounds.extents;
 
     for (int i = 0; i < totalPopulation; i++) {
+      // To maintain a stable sequence of random position, we need to always generate
+      // these variables even if the chunk won't have all the details
       Vector3 normalizedPosition = new Vector3(
         (float)positionRng.NextDouble(),
         1f,
         (float)positionRng.NextDouble()
       );
-      // To maintain a stable sequence of random position, we need to always generate
-      // these variables even if the chunk won't have all the details
       Vector3 position = new Vector3(
         start.x + normalizedPosition.x * bounds.size.x,
         start.y + normalizedPosition.y * bounds.size.y,
@@ -81,7 +123,30 @@ public class DetailSpawnerAsset : DetailSpawner {
       );
       ulong instanceSeed = lodRng.Sample();
 
-      // Generate noise
+      // Check biomes at the position to decide if we skip it
+      if (useBiomes) {
+        // Calculate the sum of masks at the position
+        float maskSum = 0;
+        for (int biomeIndex = 0; biomeIndex < presentBiomesCount; biomeIndex++) {
+          int biomeId = presentBiomeIds[biomeIndex];
+
+          float maskValue = terrainChunk.GetValue2dAtNormalized2d(
+            terrainChunk.biomeMasksById[biomeId],
+            normalizedPosition.x,
+            normalizedPosition.z
+          );
+
+          maskSum += maskValue;
+        }
+
+        // Skip if necessary
+        maskSum = Mathf.Clamp01(maskSum);
+        if (maskSum == 0f || biomeMaskRng.NextFloat() > maskSum) {
+          continue;
+        }
+      }
+
+      // Generate noise to decide if we skip the position
       if (useNoise) {
         float value = noise.Generate(
           position.x,
@@ -100,7 +165,7 @@ public class DetailSpawnerAsset : DetailSpawner {
         position,
         Vector3.down,
         out hit,
-        1024f,
+        bounds.size.y,
         layerMask,
         QueryTriggerInteraction.Ignore
       )) {
@@ -208,6 +273,10 @@ public class DetailSpawnerAsset : DetailSpawner {
         matrix = matrix,
         sphereBounds = sphereBounds
       });
+    }
+
+    if (presentBiomeIds != null) {
+      ArrayPool<int>.Shared.Return(presentBiomeIds);
     }
   }
 

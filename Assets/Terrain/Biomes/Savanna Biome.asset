@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccae4258709ab4f4691e5d3e6995f93c, type: 3}
   m_Name: Savanna Biome
   m_EditorClassIdentifier: 
-  name: Biome
+  id: 5
+  name: SavannaBiome
   debugColor: {r: 0.7294118, g: 0.7411765, b: 0.45098042, a: 1}
   temperatureRange:
     min: 15

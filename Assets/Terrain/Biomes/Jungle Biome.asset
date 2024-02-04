@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66d6ba276ec6aa74c9935fd9e1275341, type: 3}
   m_Name: Jungle Biome
   m_EditorClassIdentifier: 
+  id: 4
   name: JungleBiome
   debugColor: {r: 0.2490655, g: 0.5471698, b: 0.17808829, a: 1}
   temperatureRange:

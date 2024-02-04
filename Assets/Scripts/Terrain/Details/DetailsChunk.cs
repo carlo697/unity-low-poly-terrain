@@ -167,7 +167,7 @@ public class DetailsChunk : MonoBehaviour {
 
     timer.Stop();
 
-    if (logGenerationInfo && m_instances.Count > 50) {
+    if (logGenerationInfo) {
       Debug.Log(
         $"{timer.Elapsed.TotalMilliseconds} ms to generate {m_instances.Count} details"
       );

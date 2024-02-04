@@ -1,6 +1,8 @@
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 using Unity.Collections;
 using Unity.Jobs;
 
@@ -104,14 +106,14 @@ public class TerrainChunk : MonoBehaviour {
   #endregion
 
   #region Terrain Job
-  private GCHandle samplerHandle;
+  private JobHandle? m_terrainJobHandle;
   private NativeList<Vector3> m_jobVertices;
   private NativeList<int> m_jobTriangles;
   private NativeList<Vector3> m_jobUVs;
   private NativeList<Color> m_jobColors;
   private NativeList<VoxelPoint> m_jobPoints;
   private NativeList<uint> m_jobTriangleMaterials;
-  private JobHandle? m_terrainJobHandle;
+  private GCHandle m_jobManagedDataHandle;
   #endregion
 
   // #region Raw Mesh Data
@@ -126,6 +128,15 @@ public class TerrainChunk : MonoBehaviour {
   public uint[] triangleMaterials { get { return m_triangleMaterials; } }
   private uint[] m_triangleMaterials;
   // #endregion
+
+  public Dictionary<Biome, float[]> biomeMasks { get { return m_biomeMasks; } }
+  private Dictionary<Biome, float[]> m_biomeMasks = null;
+
+  public Dictionary<int, float[]> biomeMasksById { get { return m_biomeMasksById; } }
+  private Dictionary<int, float[]> m_biomeMasksById = null;
+
+  public HashSet<int> biomeIds { get { return m_biomeIds; } }
+  private HashSet<int> m_biomeIds = null;
 
   #region Physics Job
   private NativeReference<int> m_meshId;
@@ -214,8 +225,13 @@ public class TerrainChunk : MonoBehaviour {
       throw new Exception("No sampler found");
     }
 
+    // Create the managed data for the job
+    TerrainMarchingCubesJob.ManagedData managedData = new() {
+      samplerFunc = samplerFunc,
+    };
+
     // Store a reference to the sampler function
-    samplerHandle = GCHandle.Alloc(samplerFunc);
+    m_jobManagedDataHandle = GCHandle.Alloc(managedData);
 
     // Create the lists for the job
     m_jobVertices = new NativeList<Vector3>(Allocator.Persistent);
@@ -234,11 +250,11 @@ public class TerrainChunk : MonoBehaviour {
       colors = m_jobColors,
       triangleMaterials = m_jobTriangleMaterials,
       points = m_jobPoints,
-      samplerHandle = samplerHandle,
       scale = scale,
       resolution = resolution,
       threshold = threshold,
-      debug = debug
+      debug = debug,
+      managedDataHandle = m_jobManagedDataHandle
     };
     m_terrainJobHandle = job.Schedule();
   }
@@ -270,14 +286,14 @@ public class TerrainChunk : MonoBehaviour {
   }
 
   private void DisposeTerrainJob() {
+    m_terrainJobHandle = null;
     m_jobVertices.Dispose();
     m_jobTriangles.Dispose();
     m_jobUVs.Dispose();
     m_jobColors.Dispose();
     m_jobPoints.Dispose();
     m_jobTriangleMaterials.Dispose();
-    samplerHandle.Free();
-    m_terrainJobHandle = null;
+    m_jobManagedDataHandle.Free();
   }
 
   private void CancelTerrainJob() {
@@ -316,6 +332,20 @@ public class TerrainChunk : MonoBehaviour {
           // m_meshUVs = m_jobUVs.ToArray();
           // m_meshColors = m_jobColors.ToArray();
           m_triangleMaterials = m_jobTriangleMaterials.ToArray();
+
+          // Get info from the managed data
+          var managedData = (TerrainMarchingCubesJob.ManagedData)m_jobManagedDataHandle.Target;
+          m_biomeMasks = managedData.biomeMasks;
+
+          m_biomeMasksById = new();
+          foreach (var (biome, mask) in m_biomeMasks) {
+            m_biomeMasksById.Add(biome.id, mask);
+          }
+
+          m_biomeIds = new HashSet<int>(m_biomeMasks.Count);
+          foreach (var (biome, mask) in m_biomeMasks) {
+            m_biomeIds.Add(biome.id);
+          }
 
           // Create a mesh
           m_mesh = MarchingCubes.CreateMesh(
@@ -408,6 +438,17 @@ public class TerrainChunk : MonoBehaviour {
       m_updateFlag = false;
       m_status = TerrainChunkStatus.Generating;
     }
+  }
+
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]
+  public T GetValue2dAtNormalized2d<T>(T[] values, float x, float y) {
+    int index = TextureUtils.GetIndexFrom2d(
+      Mathf.FloorToInt(x * gridSize.x),
+      Mathf.FloorToInt(y * gridSize.z),
+      resolution.x
+    );
+
+    return values[index];
   }
 
   private void OnDrawGizmos() {

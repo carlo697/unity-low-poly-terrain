@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d043ddfab38d1f5419209da6b1cfb2b3, type: 3}
   m_Name: Forest Biome
   m_EditorClassIdentifier: 
+  id: 1
   name: ForestBiome
   debugColor: {r: 0.3803922, g: 0.6431373, b: 0.41176474, a: 1}
   temperatureRange:

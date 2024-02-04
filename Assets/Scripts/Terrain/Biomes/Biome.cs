@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Buffers;
 
 public abstract class Biome : ScriptableObject {
+  public int id;
   public new string name = "Biome";
   public Color debugColor = Color.yellow;
   public Range temperatureRange = new Range(-15f, 30f);

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abbd89ce89354e8449eb595ea2b64089, type: 3}
   m_Name: Taiga Biome
   m_EditorClassIdentifier: 
+  id: 6
   name: TaigaBiome
   debugColor: {r: 0.26232645, g: 0.4245283, b: 0.2902923, a: 1}
   temperatureRange:

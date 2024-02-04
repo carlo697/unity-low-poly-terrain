@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa825c99b7c5fa948bb9f334449fac05, type: 3}
   m_Name: Desert Biome
   m_EditorClassIdentifier: 
+  id: 2
   name: DesertBiome
   debugColor: {r: 0.8235295, g: 0.7607844, b: 0.64705884, a: 1}
   temperatureRange:
