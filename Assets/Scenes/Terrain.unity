@@ -16866,6 +16866,7 @@ MonoBehaviour:
   maxDistance: 100
   logGenerationInfo: 0
   logInstancingInfo: 0
+  logCountOfRenderedInstances: 0
   skipRendering: 0
 --- !u!1 &1211205055
 GameObject:

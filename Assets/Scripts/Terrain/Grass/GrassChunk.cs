@@ -32,6 +32,7 @@ public class GrassChunk : MonoBehaviour {
   private Camera m_camera;
   private Vector3 m_cameraPosition;
 
+  public Dictionary<DetailSubmesh[], GrassInstancingBatch> groups { get { return m_groups; } }
   private Dictionary<DetailSubmesh[], GrassInstancingBatch> m_groups = new();
   private Dictionary<DetailSubmesh[], GrassInstancingBatch> m_groupsCopy = new();
 

@@ -10,6 +10,7 @@ public class GrassManager : MonoBehaviour {
   [Header("Debug")]
   public bool logGenerationInfo;
   public bool logInstancingInfo;
+  public bool logCountOfRenderedInstances;
   public bool skipRendering;
 
   public Dictionary<int, Grass> grassesById { get { return m_grassesById; } }
@@ -20,6 +21,23 @@ public class GrassManager : MonoBehaviour {
     m_terrainManager.ChunkSpawned += ChunkSpawnedEventHandler;
 
     InitializeGrassesDatabase();
+  }
+
+  private void Update() {
+    if (logCountOfRenderedInstances) {
+      int total = 0;
+
+      GrassChunk[] chunks = FindObjectsOfType<GrassChunk>();
+      foreach (var chunk in chunks) {
+        if (chunk.isUsingGrass && chunk.isWithinMaxDistance && chunk.groups != null) {
+          foreach (var (submesh, batch) in chunk.groups) {
+            total += batch.matrices.Count;
+          }
+        }
+      }
+
+      Debug.Log($"Count of rendered grass instances: {total}");
+    }
   }
 
   private void OnDestroy() {
