@@ -362,7 +362,7 @@ public class TerrainChunk : MonoBehaviour {
 
           timer.Stop();
           if (debug) {
-            Debug.Log($"Total to apply mesh: {timer.ElapsedMilliseconds} ms");
+            Debug.Log($"Total to apply mesh: {timer.Elapsed.TotalMilliseconds} ms");
           }
 
           // If the object has a collider, start baking the mesh, otherwise,

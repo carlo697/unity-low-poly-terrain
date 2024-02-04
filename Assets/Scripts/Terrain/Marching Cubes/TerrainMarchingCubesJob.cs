@@ -41,7 +41,7 @@ public struct TerrainMarchingCubesJob : IJob {
 
       timer.Stop();
       if (debug) {
-        Debug.Log($"Grid: {timer.ElapsedMilliseconds} ms, resolution: {grid.resolution}");
+        Debug.Log($"Grid: {timer.Elapsed.TotalMilliseconds} ms, resolution: {grid.resolution}");
       }
       timer.Restart();
 
@@ -58,7 +58,7 @@ public struct TerrainMarchingCubesJob : IJob {
 
       timer.Stop();
       if (debug) {
-        Debug.Log($"Marching: {timer.ElapsedMilliseconds} ms, resolution: {grid.resolution}");
+        Debug.Log($"Marching: {timer.Elapsed.TotalMilliseconds} ms, resolution: {grid.resolution}");
       }
 
       for (int i = 0; i < grid.points.Length; i++) {

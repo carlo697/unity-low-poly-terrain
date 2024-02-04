@@ -442,11 +442,11 @@ public class DetailsManager : MonoBehaviour {
     // Log the times to the console
     if (logGpuInstancingInfo) {
       Debug.Log(
-        $"{buffersTimer.ElapsedMilliseconds} ms to create buffers in GPU by coping instances from CPU"
+        $"{buffersTimer.Elapsed.TotalMilliseconds} ms to create buffers in GPU by coping instances from CPU"
       );
 
       Debug.Log(
-        $"{timer.ElapsedMilliseconds} ms ({timer.ElapsedTicks} ticks) to prepare {totalInstanceCount} instances and {totalShadowInstanceCount} shadow instances instances (GPU instancing)"
+        $"{timer.Elapsed.TotalMilliseconds} ms to prepare {totalInstanceCount} instances and {totalShadowInstanceCount} shadow instances instances (GPU instancing)"
       );
     }
   }

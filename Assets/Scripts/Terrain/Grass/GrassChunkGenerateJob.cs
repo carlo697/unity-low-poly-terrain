@@ -84,7 +84,7 @@ public struct GrassChunkGenerateJob : IJob {
 
     if (logTime) {
       Debug.Log(
-        $"Grass: {timer.ElapsedMilliseconds} ms, Triangles: {indexCount / 3}, Instances: {instances.Length}"
+        $"Grass: {timer.Elapsed.TotalMilliseconds} ms, Triangles: {indexCount / 3}, Instances: {instances.Length}"
       );
     }
   }

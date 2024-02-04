@@ -75,7 +75,7 @@ public class NoisePreview : MonoBehaviour {
 
     watch.Stop();
     if (debugTime) {
-      Debug.Log($"Time: {watch.ElapsedMilliseconds} ms");
+      Debug.Log($"Time: {watch.Elapsed.TotalMilliseconds} ms");
     }
 
     AssignHeightmap(heightmap);

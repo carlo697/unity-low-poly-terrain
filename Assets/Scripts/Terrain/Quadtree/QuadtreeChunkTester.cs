@@ -57,7 +57,7 @@ public class QuadtreeChunkTester : MonoBehaviour {
     }
 
     timer.Stop();
-    Debug.Log($"Time to get the position {times} times: {timer.ElapsedMilliseconds}");
+    Debug.Log($"Time to get the position {times} times: {timer.Elapsed.TotalMilliseconds}");
 
     return (foundTestPosition, testNode);
   }
