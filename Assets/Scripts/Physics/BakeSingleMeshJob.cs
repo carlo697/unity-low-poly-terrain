@@ -3,13 +3,13 @@ using Unity.Jobs;
 using UnityEngine;
 
 public struct BakeSingleMeshJob : IJob {
-  private NativeReference<int> meshId;
+  private int meshId;
 
-  public BakeSingleMeshJob(NativeReference<int> meshIds) {
+  public BakeSingleMeshJob(int meshIds) {
     this.meshId = meshIds;
   }
 
   public void Execute() {
-    Physics.BakeMesh(meshId.Value, false);
+    Physics.BakeMesh(meshId, false);
   }
 }

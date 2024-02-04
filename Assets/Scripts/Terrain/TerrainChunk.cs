@@ -139,7 +139,6 @@ public class TerrainChunk : MonoBehaviour {
   private HashSet<int> m_biomeIds = null;
 
   #region Physics Job
-  private NativeReference<int> m_meshId;
   private JobHandle? m_physicsJobHandle;
   #endregion
 
@@ -302,7 +301,6 @@ public class TerrainChunk : MonoBehaviour {
   }
 
   private void DisposePhysicsJob() {
-    m_meshId.Dispose();
     m_physicsJobHandle = null;
   }
 
@@ -368,14 +366,9 @@ public class TerrainChunk : MonoBehaviour {
           // If the object has a collider, start baking the mesh, otherwise,
           // finish the generation process
           if (m_meshCollider) {
-            // Store the id of the mesh in a native reference
-            m_meshId = new NativeReference<int>(Allocator.TempJob);
-            m_meshId.Value = mesh.GetInstanceID();
-
             // Schedule the job
-            BakeSingleMeshJob job = new BakeSingleMeshJob(m_meshId);
+            BakeSingleMeshJob job = new BakeSingleMeshJob(mesh.GetInstanceID());
             m_physicsJobHandle = job.Schedule();
-
             m_generationState = GenerationState.Physics;
           } else {
             // Set status and call events
