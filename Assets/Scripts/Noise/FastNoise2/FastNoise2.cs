@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using UnityEngine;
 
 // Thanks to Jordan Peck
 // Source: https://github.com/Auburn/FastNoise2
@@ -230,11 +231,30 @@ public class FastNoise {
       public Type type;
       public int index;
       public Dictionary<string, int> enumNames;
+
+      public override string ToString() {
+        return $"Member of name \"{name}\" and type {type}, index {index}";
+      }
     }
 
     public int id;
     public string name;
     public Dictionary<string, Member> members;
+
+    public override string ToString() {
+      System.Text.StringBuilder builder = new System.Text.StringBuilder();
+
+      if (members.Count > 0) {
+        builder.Append($"Metadata of name \"{name}\", id {id} and {members.Count} members:\n");
+        foreach (var (name, member) in members) {
+          builder.Append($" - {member.ToString()}\n");
+        }
+      } else {
+        builder.Append($"Metadata of name \"{name}\", id {id} and no members.\n");
+      }
+
+      return builder.ToString();
+    }
   }
 
   static FastNoise() {
@@ -308,6 +328,8 @@ public class FastNoise {
 
       }
       nodeMetadata[id] = metadata;
+
+      // Debug.Log(metadata);
     }
   }
 
