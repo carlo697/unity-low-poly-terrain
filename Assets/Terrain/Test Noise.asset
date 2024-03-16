@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9db61526a402a2d4ba750795122b0c47, type: 3}
+  m_Name: Test Noise
+  m_EditorClassIdentifier: 
+  debug: 0
+  outputNode:
+    rid: 6015746244890853377
+  nodes:
+  - rid: 6015746244890853377
+  - rid: 6015746244890853381
+  - rid: 6015746244890853382
+  references:
+    version: 2
+    RefIds:
+    - rid: 6015746244890853377
+      type: {class: OutputNode, ns: FastNoise2Graph.Nodes, asm: FastNoise2Graph}
+      data:
+        guid: 01991d55-5e5c-4898-bc50-5ebfcd332f19
+        nodePosition: {x: 41, y: 5}
+        edges:
+        - parentPortIndex: 0
+          childNode:
+            rid: 6015746244890853382
+    - rid: 6015746244890853381
+      type: {class: OpenSimplex2SNode, ns: FastNoise2Graph.Nodes, asm: FastNoise2Graph}
+      data:
+        guid: 0b619dba-fd12-4fd4-930e-3da1490dcbbf
+        nodePosition: {x: -567, y: 5}
+        edges: []
+    - rid: 6015746244890853382
+      type: {class: FractalFBmNode, ns: FastNoise2Graph.Nodes, asm: FastNoise2Graph}
+      data:
+        guid: 74896f14-6bf0-4ce5-9c1d-00cea45ce439
+        nodePosition: {x: -315, y: 5}
+        edges:
+        - parentPortIndex: 0
+          childNode:
+            rid: 6015746244890853381
+        gain: 0.5
+        weightedStrength: 0
+        octaves: 9
+        lacunarity: 2
