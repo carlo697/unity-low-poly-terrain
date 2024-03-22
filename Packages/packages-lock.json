@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.carlo697.fastnoise2-graph-editor": {
+      "version": "https://github.com/carlo697/FastNoise2GraphEditor.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "0d8ce82e33d54283e204b596a1b657a2c7591e54"
+    },
     "com.cyanilux.shadergraph-customlighting": {
       "version": "https://github.com/Cyanilux/URP_ShaderGraphCustomLighting.git",
       "depth": 0,

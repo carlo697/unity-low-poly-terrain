@@ -100,4 +100,58 @@ public struct FastNoiseChunk {
 
     return output;
   }
+
+  public float[] GenerateGrid(
+    float[] output,
+    bool is3D,
+    FastNoise2Graph.FastNoise noise,
+    int seed,
+    float noiseScale = 1f
+  ) {
+    // Variables needed to sample the point in world space
+    float totalNoiseScale = this.noiseScale * noiseScale;
+    Vector3 noiseFrequency = new Vector3(
+      (32f / totalNoiseScale) * (1f / (resolution.x - 1)) * (scale.x / 32f),
+      (32f / totalNoiseScale) * (1f / (resolution.y - 1)) * (scale.y / 32f),
+      (32f / totalNoiseScale) * (1f / (resolution.z - 1)) * (scale.z / 32f)
+    );
+    Vector3 offset = new Vector3(
+      (position.x / scale.x) * noiseFrequency.x * (resolution.x - 1),
+      (position.y / scale.y) * noiseFrequency.y * (resolution.y - 1),
+      (position.z / scale.z) * noiseFrequency.z * (resolution.z - 1)
+    );
+
+    // Apply offset to noise
+    FastNoise2Graph.FastNoise offsetNode = new("DomainOffset");
+    offsetNode.Set("Source", noise);
+    if (is3D) {
+      offsetNode.Set("Offset X", offset.z);
+      offsetNode.Set("Offset Y", offset.y);
+      offsetNode.Set("Offset Z", offset.x);
+    } else {
+      offsetNode.Set("Offset X", offset.x);
+      offsetNode.Set("Offset Y", offset.z);
+    }
+
+    // Apply scale to noise
+    FastNoise2Graph.FastNoise scaleNode = new("DomainAxisScale");
+    scaleNode.Set("Source", offsetNode);
+    if (is3D) {
+      scaleNode.Set("Scale X", noiseFrequency.z);
+      scaleNode.Set("Scale Y", noiseFrequency.y);
+      scaleNode.Set("Scale Z", noiseFrequency.x);
+    } else {
+      scaleNode.Set("Scale X", noiseFrequency.x);
+      scaleNode.Set("Scale Y", noiseFrequency.z);
+    }
+
+    // Sample the pixels
+    if (is3D) {
+      scaleNode.GenUniformGrid3D(output, 0, 0, 0, resolution.x, resolution.y, resolution.z, 1f, seed);
+    } else {
+      scaleNode.GenUniformGrid2D(output, 0, 0, resolution.x, resolution.z, 1f, seed);
+    }
+
+    return output;
+  }
 }
