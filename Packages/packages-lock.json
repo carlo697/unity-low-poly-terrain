@@ -5,7 +5,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "0d8ce82e33d54283e204b596a1b657a2c7591e54"
+      "hash": "819e8954d2724152d6020b8fbc45a296a9084174"
     },
     "com.cyanilux.shadergraph-customlighting": {
       "version": "https://github.com/Cyanilux/URP_ShaderGraphCustomLighting.git",
