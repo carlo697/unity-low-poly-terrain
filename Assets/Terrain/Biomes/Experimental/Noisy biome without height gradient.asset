@@ -9,23 +9,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ccae4258709ab4f4691e5d3e6995f93c, type: 3}
-  m_Name: Biome to test noise trees
+  m_Script: {fileID: 11500000, guid: 8eeab4c0e80c0f7459ca0aa923dd4cac, type: 3}
+  m_Name: Noisy biome without height gradient
   m_EditorClassIdentifier: 
   id: 0
   name: Biome
-  debugColor: {r: 0.015686274, g: 0.1266968, b: 1, a: 1}
+  debugColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   temperatureRange:
     min: -15
     max: 30
   precipitationRange:
     min: 0
     max: 450
-  testHeight: 1
+  testHeight: 0.5
   noise:
     seed: 0
     scale: 1
-    tree: {fileID: 11400000, guid: 2cc3a1136c0536045a362347185d48af, type: 2}
+    tree: {fileID: 11400000, guid: 29ac217e84a3563479169690391f4356, type: 2}
     useCurve: 0
     curve:
       serializedVersion: 2

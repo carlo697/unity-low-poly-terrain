@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9db61526a402a2d4ba750795122b0c47, type: 3}
-  m_Name: Test Noise
+  m_Name: Variable Size
   m_EditorClassIdentifier: 
   outputNode:
     rid: 6015746375752876033
@@ -18,14 +18,11 @@ MonoBehaviour:
   - rid: 6015746375752876033
   - rid: 6015746375752876034
   - rid: 6015746377301622784
-  - rid: 6015746377301622785
   - rid: 6015746377301622787
   - rid: 6015746377301622788
-  - rid: 6015746377301622789
-  - rid: 6015746377301622790
-  - rid: 6015746377301622792
-  - rid: 6015746377301622793
-  - rid: 6015746377301622794
+  - rid: 6015746377301622799
+  - rid: 6015746377301622800
+  - rid: 6015746377301622803
   references:
     version: 2
     RefIds:
@@ -47,7 +44,7 @@ MonoBehaviour:
       type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
       data:
         guid: a3646262-7bc3-4132-9492-b45dfe60eade
-        nodePosition: {x: -1139, y: 455}
+        nodePosition: {x: -983.35004, y: 460.8502}
         edges: []
         metadataName: Simplex
         isCollapsed: 0
@@ -65,10 +62,10 @@ MonoBehaviour:
             rid: 6015746377301622788
         - parentPortName: B
           childNode:
-            rid: 6015746377301622789
+            rid: 6015746377301622799
         - parentPortName: A
           childNode:
-            rid: 6015746377301622794
+            rid: 6015746377301622803
         metadataName: Fade
         isCollapsed: 0
         intValues: []
@@ -76,32 +73,11 @@ MonoBehaviour:
         - name: Fade
           value: 0.5
         enumValues: []
-    - rid: 6015746377301622785
-      type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
-      data:
-        guid: d9537eb9-96e8-478a-964b-b536cc0d0c55
-        nodePosition: {x: -1340, y: -235}
-        edges: []
-        metadataName: CellularDistance
-        isCollapsed: 0
-        intValues:
-        - name: Distance Index 0
-          value: 0
-        - name: Distance Index 1
-          value: 1
-        floatValues:
-        - name: Jitter Modifier
-          value: 1
-        enumValues:
-        - name: Distance Function
-          value: Euclidean Squared
-        - name: Return Type
-          value: Index0
     - rid: 6015746377301622787
       type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
       data:
         guid: 5727f7b1-c596-4a34-859d-c7935ebb07fd
-        nodePosition: {x: -901.25903, y: 455}
+        nodePosition: {x: -754.35004, y: 460.8502}
         edges:
         - parentPortName: Source
           childNode:
@@ -117,7 +93,7 @@ MonoBehaviour:
       type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
       data:
         guid: 51e05f2b-b55e-4fb1-a668-4acd38b80011
-        nodePosition: {x: -660, y: 454.80875}
+        nodePosition: {x: -514.35004, y: 460.8502}
         edges:
         - parentPortName: Source
           childNode:
@@ -135,84 +111,54 @@ MonoBehaviour:
         - name: To Max
           value: 1
         enumValues: []
-    - rid: 6015746377301622789
+    - rid: 6015746377301622799
       type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
       data:
-        guid: 597eadd6-59dd-4d0e-b38e-ca709e514c04
-        nodePosition: {x: -659.9999, y: 153.99751}
+        guid: 3fd720ca-2869-4bd8-a903-ae19017f5656
+        nodePosition: {x: -1189.0004, y: 173.00003}
         edges: []
-        metadataName: OpenSimplex2
+        metadataName: OpenSimplex2S
         isCollapsed: 0
         intValues: []
         floatValues: []
         enumValues: []
-    - rid: 6015746377301622790
+    - rid: 6015746377301622800
       type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
       data:
-        guid: 51b7c077-5fbc-4dbe-aafe-8bf4c2ba21d4
-        nodePosition: {x: -760, y: -235}
-        edges:
-        - parentPortName: LHS
-          childNode:
-            rid: 6015746377301622785
-        metadataName: Add
-        isCollapsed: 0
-        intValues: []
-        floatValues:
-        - name: RHS
-          value: -0.39
-        enumValues: []
-    - rid: 6015746377301622792
-      type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
-      data:
-        guid: 81d41e89-b9e1-4d19-894e-9888aa3288f1
-        nodePosition: {x: -526, y: -235}
-        edges:
-        - parentPortName: LHS
-          childNode:
-            rid: 6015746377301622790
-        metadataName: Max
-        isCollapsed: 0
-        intValues: []
-        floatValues:
-        - name: RHS
-          value: -1
-        enumValues: []
-    - rid: 6015746377301622793
-      type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
-      data:
-        guid: a3af09d7-3118-4ac1-8c44-bf011e084a6c
-        nodePosition: {x: -283.99985, y: -235}
-        edges:
-        - parentPortName: LHS
-          childNode:
-            rid: 6015746377301622792
-        metadataName: Multiply
-        isCollapsed: 0
-        intValues: []
-        floatValues:
-        - name: RHS
-          value: 2.07
-        enumValues: []
-    - rid: 6015746377301622794
-      type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
-      data:
-        guid: 056a0b46-d01d-410b-a2b2-3d9eb91b6c18
-        nodePosition: {x: -1039, y: -154}
+        guid: ffa986d5-55a7-4503-be97-435e923b3178
+        nodePosition: {x: -989.0001, y: -305.4501}
         edges:
         - parentPortName: Source
           childNode:
-            rid: 6015746377301622785
-        metadataName: Remap
+            rid: 6015746377301622799
+        metadataName: FractalRidged
+        isCollapsed: 0
+        intValues:
+        - name: Octaves
+          value: 8
+        floatValues:
+        - name: Lacunarity
+          value: 2
+        - name: Gain
+          value: 0.5
+        - name: Weighted Strength
+          value: 0.2
+        enumValues: []
+    - rid: 6015746377301622803
+      type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
+      data:
+        guid: fa9bff3f-409c-4e7c-a3b8-d411c6a6517b
+        nodePosition: {x: -714.0001, y: -305.4501}
+        edges:
+        - parentPortName: Source
+          childNode:
+            rid: 6015746377301622800
+        metadataName: DomainWarpGradient
         isCollapsed: 0
         intValues: []
         floatValues:
-        - name: From Min
-          value: -0.14
-        - name: From Max
-          value: 0.84
-        - name: To Min
-          value: -1
-        - name: To Max
-          value: 1
+        - name: Warp Frequency
+          value: 2
+        - name: Warp Amplitude
+          value: 0.3
         enumValues: []

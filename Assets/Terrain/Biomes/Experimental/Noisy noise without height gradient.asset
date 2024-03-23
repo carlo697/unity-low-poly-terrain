@@ -1,0 +1,104 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9db61526a402a2d4ba750795122b0c47, type: 3}
+  m_Name: Noisy noise without height gradient
+  m_EditorClassIdentifier: 
+  outputNode:
+    rid: 6015746396659384321
+  nodes:
+  - rid: 6015746396659384321
+  - rid: 6015746396659384322
+  - rid: 6015746396659384324
+  - rid: 6015746396659384325
+  - rid: 6015746396659384326
+  references:
+    version: 2
+    RefIds:
+    - rid: 6015746396659384321
+      type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
+      data:
+        guid: 4c918d6d-b078-4bd6-9b30-a856aa38193b
+        nodePosition: {x: 300, y: -61}
+        edges:
+        - parentPortName: Output
+          childNode:
+            rid: 6015746396659384326
+        metadataName: Output
+        isCollapsed: 0
+        intValues: []
+        floatValues: []
+        enumValues: []
+    - rid: 6015746396659384322
+      type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
+      data:
+        guid: 36d51436-e601-4a72-8986-d48288c0dc9f
+        nodePosition: {x: -698, y: -61.5}
+        edges: []
+        metadataName: Perlin
+        isCollapsed: 0
+        intValues: []
+        floatValues: []
+        enumValues: []
+    - rid: 6015746396659384324
+      type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
+      data:
+        guid: 8491b28b-aab1-46e1-a770-58e7d1eeb4bb
+        nodePosition: {x: -459, y: -61}
+        edges:
+        - parentPortName: Source
+          childNode:
+            rid: 6015746396659384322
+        metadataName: FractalFBm
+        isCollapsed: 0
+        intValues:
+        - name: Octaves
+          value: 8
+        floatValues:
+        - name: Lacunarity
+          value: 2
+        - name: Gain
+          value: 0.5
+        - name: Weighted Strength
+          value: 0
+        enumValues: []
+    - rid: 6015746396659384325
+      type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
+      data:
+        guid: fe32eed6-f77b-473e-b5b3-75ad2c8455c8
+        nodePosition: {x: -144, y: -61}
+        edges:
+        - parentPortName: Source
+          childNode:
+            rid: 6015746396659384324
+        metadataName: DomainScale
+        isCollapsed: 0
+        intValues: []
+        floatValues:
+        - name: Scale
+          value: 8
+        enumValues: []
+    - rid: 6015746396659384326
+      type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
+      data:
+        guid: 58c86dbe-1d34-4fbf-9f43-e363198748bc
+        nodePosition: {x: 68, y: -61}
+        edges:
+        - parentPortName: Source
+          childNode:
+            rid: 6015746396659384325
+        metadataName: SeedOffset
+        isCollapsed: 0
+        intValues:
+        - name: Seed Offset
+          value: 19
+        floatValues: []
+        enumValues: []
