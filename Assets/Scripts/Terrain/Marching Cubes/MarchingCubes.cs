@@ -31,9 +31,9 @@ public static class MarchingCubes {
   ) {
     Vector3[] currentVertices = new Vector3[3];
 
-    for (int z = 0; z < grid.size.z - 1; z++) {
-      for (int y = 0; y < grid.size.y - 1; y++) {
-        for (int x = 0; x < grid.size.x - 1; x++) {
+    for (int z = 0; z < grid.resolution.z; z++) {
+      for (int y = 0; y < grid.resolution.y; y++) {
+        for (int x = 0; x < grid.resolution.x; x++) {
           Vector3Int coords = new Vector3Int(x, y, z);
 
           // Find the case index
@@ -67,17 +67,17 @@ public static class MarchingCubes {
               Vector3 positionB = grid.GetPointPosition(coordsB.x, coordsB.y, coordsB.z);
 
               // Apply a random position to get a rougher mesh
-              if (coordsA.x > 0 && coordsA.x < grid.size.x - 1
-                && coordsA.y > 0 && coordsA.y < grid.size.y - 1
-                && coordsA.z > 0 && coordsA.z < grid.size.z - 1
+              if (coordsA.x > 0 && coordsA.x < grid.resolution.x
+                && coordsA.y > 0 && coordsA.y < grid.resolution.y
+                && coordsA.z > 0 && coordsA.z < grid.resolution.z
               ) {
                 XorshiftStar rngA = new XorshiftStar((ulong)indexA);
                 Vector3 roughnessOffsetA = rngA.NextFlatVector3();
                 positionA += roughnessOffsetA * grid.points[indexA].roughness;
               }
-              if (coordsB.x > 0 && coordsB.x < grid.size.x - 1
-                && coordsB.y > 0 && coordsB.y < grid.size.y - 1
-                && coordsB.z > 0 && coordsB.z < grid.size.z - 1
+              if (coordsB.x > 0 && coordsB.x < grid.resolution.x
+                && coordsB.y > 0 && coordsB.y < grid.resolution.y
+                && coordsB.z > 0 && coordsB.z < grid.resolution.z
               ) {
                 XorshiftStar rngB = new XorshiftStar((ulong)indexB);
                 Vector3 roughnessOffsetB = rngB.NextFlatVector3();
