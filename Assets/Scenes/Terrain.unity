@@ -229,7 +229,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &19526779
 GameObject:
   m_ObjectHideFlags: 0
@@ -336,7 +336,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &24372710
 GameObject:
   m_ObjectHideFlags: 0
@@ -443,7 +443,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &29579103
 GameObject:
   m_ObjectHideFlags: 0
@@ -550,7 +550,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &37945688
 GameObject:
   m_ObjectHideFlags: 0
@@ -657,7 +657,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &42732473
 GameObject:
   m_ObjectHideFlags: 0
@@ -869,7 +869,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &63407415
 GameObject:
   m_ObjectHideFlags: 0
@@ -976,7 +976,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &69665381
 GameObject:
   m_ObjectHideFlags: 0
@@ -1083,7 +1083,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &73556005
 GameObject:
   m_ObjectHideFlags: 0
@@ -1190,7 +1190,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &82728350
 GameObject:
   m_ObjectHideFlags: 0
@@ -1297,7 +1297,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &82960522
 GameObject:
   m_ObjectHideFlags: 0
@@ -1404,7 +1404,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &84307642
 GameObject:
   m_ObjectHideFlags: 0
@@ -1511,7 +1511,114 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
+--- !u!1 &95081395
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 95081396}
+  - component: {fileID: 95081399}
+  - component: {fileID: 95081398}
+  - component: {fileID: 95081397}
+  m_Layer: 9
+  m_Name: Chunk (4)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &95081396
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 95081395}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -57.6, z: -64}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1321536707}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &95081397
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 95081395}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 52e67680063911d45af4a52211b84f8f, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &95081398
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 95081395}
+  m_Mesh: {fileID: 0}
+--- !u!114 &95081399
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 95081395}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b0b57b889e265d41a7cab6ec365d526, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  updateInEditor: 1
+  terrainManager: {fileID: 0}
+  m_resolution: {x: 4, y: 16, z: 4}
+  m_scale: {x: 32, y: 192, z: 32}
+  noiseSize: 1
+  noiseOffset: {x: -1102, y: 0, z: 0}
+  terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
+  debug: 0
+  threshold: 0
+  drawGizmos: 1
+  drawGizmosMode: 2
 --- !u!1 &98466943
 GameObject:
   m_ObjectHideFlags: 0
@@ -1618,7 +1725,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &108688408
 GameObject:
   m_ObjectHideFlags: 0
@@ -1725,7 +1832,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &116609633
 GameObject:
   m_ObjectHideFlags: 0
@@ -1950,7 +2057,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &123402230
 GameObject:
   m_ObjectHideFlags: 0
@@ -2223,7 +2330,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &131760417
 GameObject:
   m_ObjectHideFlags: 0
@@ -2330,7 +2437,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &134487950
 GameObject:
   m_ObjectHideFlags: 0
@@ -2437,7 +2544,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &139410540
 GameObject:
   m_ObjectHideFlags: 0
@@ -2544,7 +2651,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &139964459
 GameObject:
   m_ObjectHideFlags: 0
@@ -2651,7 +2758,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &140321616
 GameObject:
   m_ObjectHideFlags: 0
@@ -2758,7 +2865,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &143515474
 GameObject:
   m_ObjectHideFlags: 0
@@ -2897,7 +3004,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &166643755
 GameObject:
   m_ObjectHideFlags: 0
@@ -3004,7 +3111,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &175378789
 GameObject:
   m_ObjectHideFlags: 0
@@ -3111,7 +3218,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &186153940
 GameObject:
   m_ObjectHideFlags: 0
@@ -3218,7 +3325,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &205095837
 GameObject:
   m_ObjectHideFlags: 0
@@ -3325,7 +3432,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &209738210
 GameObject:
   m_ObjectHideFlags: 0
@@ -3432,7 +3539,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &212290670
 GameObject:
   m_ObjectHideFlags: 0
@@ -3539,7 +3646,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &220105754
 GameObject:
   m_ObjectHideFlags: 0
@@ -3646,7 +3753,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &242086972
 GameObject:
   m_ObjectHideFlags: 0
@@ -3753,7 +3860,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &245156128
 GameObject:
   m_ObjectHideFlags: 0
@@ -4140,7 +4247,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &262330915
 GameObject:
   m_ObjectHideFlags: 0
@@ -4270,7 +4377,7 @@ MonoBehaviour:
   debug: 1
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 5.36
+  drawGizmosMode: 0
 --- !u!1 &284193054
 GameObject:
   m_ObjectHideFlags: 0
@@ -4377,7 +4484,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &288811567
 GameObject:
   m_ObjectHideFlags: 0
@@ -4484,7 +4591,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &288968146
 GameObject:
   m_ObjectHideFlags: 0
@@ -4591,7 +4698,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &290634490
 GameObject:
   m_ObjectHideFlags: 0
@@ -4698,7 +4805,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &293356649
 GameObject:
   m_ObjectHideFlags: 0
@@ -4805,7 +4912,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &294209076
 GameObject:
   m_ObjectHideFlags: 0
@@ -5227,7 +5334,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &337099099
 GameObject:
   m_ObjectHideFlags: 0
@@ -5334,7 +5441,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &343047701
 GameObject:
   m_ObjectHideFlags: 0
@@ -5441,7 +5548,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &355503362
 GameObject:
   m_ObjectHideFlags: 0
@@ -5548,7 +5655,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &362426746
 GameObject:
   m_ObjectHideFlags: 0
@@ -5792,7 +5899,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &377541178
 GameObject:
   m_ObjectHideFlags: 0
@@ -5899,7 +6006,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &393787842
 GameObject:
   m_ObjectHideFlags: 0
@@ -6006,7 +6113,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &400883568
 GameObject:
   m_ObjectHideFlags: 0
@@ -6113,7 +6220,114 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
+--- !u!1 &404485337
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 404485338}
+  - component: {fileID: 404485341}
+  - component: {fileID: 404485340}
+  - component: {fileID: 404485339}
+  m_Layer: 9
+  m_Name: Chunk (3)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &404485338
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 404485337}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -57.6, z: -64}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1321536707}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &404485339
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 404485337}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 52e67680063911d45af4a52211b84f8f, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &404485340
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 404485337}
+  m_Mesh: {fileID: 0}
+--- !u!114 &404485341
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 404485337}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b0b57b889e265d41a7cab6ec365d526, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  updateInEditor: 1
+  terrainManager: {fileID: 0}
+  m_resolution: {x: 8, y: 32, z: 8}
+  m_scale: {x: 32, y: 192, z: 32}
+  noiseSize: 1
+  noiseOffset: {x: -1102, y: 0, z: 0}
+  terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
+  debug: 0
+  threshold: 0
+  drawGizmos: 1
+  drawGizmosMode: 2
 --- !u!1 &419700526
 GameObject:
   m_ObjectHideFlags: 0
@@ -6147,6 +6361,113 @@ Transform:
   m_Father: {fileID: 554387736}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &428012530
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 428012531}
+  - component: {fileID: 428012534}
+  - component: {fileID: 428012533}
+  - component: {fileID: 428012532}
+  m_Layer: 9
+  m_Name: Chunk (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &428012531
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 428012530}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -57.6, z: -64}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1321536707}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &428012532
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 428012530}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 52e67680063911d45af4a52211b84f8f, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &428012533
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 428012530}
+  m_Mesh: {fileID: 0}
+--- !u!114 &428012534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 428012530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b0b57b889e265d41a7cab6ec365d526, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  updateInEditor: 1
+  terrainManager: {fileID: 0}
+  m_resolution: {x: 16, y: 64, z: 16}
+  m_scale: {x: 32, y: 192, z: 32}
+  noiseSize: 1
+  noiseOffset: {x: -1102, y: 0, z: 0}
+  terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
+  debug: 0
+  threshold: 0
+  drawGizmos: 1
+  drawGizmosMode: 2
 --- !u!1 &441341496
 GameObject:
   m_ObjectHideFlags: 0
@@ -6358,7 +6679,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &448606195
 GameObject:
   m_ObjectHideFlags: 0
@@ -6465,7 +6786,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &453707704
 GameObject:
   m_ObjectHideFlags: 0
@@ -6677,7 +6998,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &467876859
 GameObject:
   m_ObjectHideFlags: 0
@@ -6784,7 +7105,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &469169498
 GameObject:
   m_ObjectHideFlags: 0
@@ -6891,7 +7212,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &469965759
 GameObject:
   m_ObjectHideFlags: 0
@@ -6998,7 +7319,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &470321204
 GameObject:
   m_ObjectHideFlags: 0
@@ -7188,7 +7509,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &474798335
 GameObject:
   m_ObjectHideFlags: 0
@@ -7295,7 +7616,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &487331096
 GameObject:
   m_ObjectHideFlags: 0
@@ -7402,7 +7723,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &493670356
 GameObject:
   m_ObjectHideFlags: 0
@@ -7551,7 +7872,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &508912907
 GameObject:
   m_ObjectHideFlags: 0
@@ -7709,7 +8030,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &525478415
 GameObject:
   m_ObjectHideFlags: 0
@@ -7816,7 +8137,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &541400558
 GameObject:
   m_ObjectHideFlags: 0
@@ -7923,7 +8244,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &544992341
 GameObject:
   m_ObjectHideFlags: 0
@@ -8030,7 +8351,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &548618345
 GameObject:
   m_ObjectHideFlags: 0
@@ -8137,7 +8458,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &549221139
 GameObject:
   m_ObjectHideFlags: 0
@@ -8244,7 +8565,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &554387735
 GameObject:
   m_ObjectHideFlags: 0
@@ -8277,6 +8598,7 @@ Transform:
   - {fileID: 1445663853}
   - {fileID: 1258304447}
   - {fileID: 918431827}
+  - {fileID: 1321536707}
   - {fileID: 795898229}
   - {fileID: 1854750146}
   - {fileID: 24372711}
@@ -8498,7 +8820,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &570137334
 GameObject:
   m_ObjectHideFlags: 0
@@ -8710,7 +9032,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &581917197
 GameObject:
   m_ObjectHideFlags: 0
@@ -8817,7 +9139,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &585636639
 GameObject:
   m_ObjectHideFlags: 0
@@ -8924,7 +9246,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &610349169
 GameObject:
   m_ObjectHideFlags: 0
@@ -9031,7 +9353,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &637276798
 GameObject:
   m_ObjectHideFlags: 0
@@ -9169,7 +9491,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &642702071
 GameObject:
   m_ObjectHideFlags: 0
@@ -9381,7 +9703,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &646967470
 GameObject:
   m_ObjectHideFlags: 0
@@ -9488,7 +9810,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &651166050
 GameObject:
   m_ObjectHideFlags: 0
@@ -9595,7 +9917,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &652897219
 GameObject:
   m_ObjectHideFlags: 0
@@ -9702,7 +10024,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &680914305
 GameObject:
   m_ObjectHideFlags: 0
@@ -9809,7 +10131,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &682539673
 GameObject:
   m_ObjectHideFlags: 0
@@ -9916,7 +10238,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &686005901
 GameObject:
   m_ObjectHideFlags: 0
@@ -10023,7 +10345,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &686023323
 GameObject:
   m_ObjectHideFlags: 0
@@ -10130,7 +10452,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &693299490
 GameObject:
   m_ObjectHideFlags: 0
@@ -10237,7 +10559,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &699183878
 GameObject:
   m_ObjectHideFlags: 0
@@ -10344,7 +10666,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &699691500
 GameObject:
   m_ObjectHideFlags: 0
@@ -10451,7 +10773,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &702629563
 GameObject:
   m_ObjectHideFlags: 0
@@ -10558,7 +10880,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &703516642
 GameObject:
   m_ObjectHideFlags: 0
@@ -10665,7 +10987,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &717223818
 GameObject:
   m_ObjectHideFlags: 0
@@ -10772,7 +11094,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &720500403
 GameObject:
   m_ObjectHideFlags: 0
@@ -10879,7 +11201,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &744068523
 GameObject:
   m_ObjectHideFlags: 0
@@ -10986,7 +11308,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &762394828
 GameObject:
   m_ObjectHideFlags: 0
@@ -11093,7 +11415,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &770221606
 GameObject:
   m_ObjectHideFlags: 0
@@ -11410,7 +11732,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &786766597
 GameObject:
   m_ObjectHideFlags: 0
@@ -11517,7 +11839,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &790643266
 GameObject:
   m_ObjectHideFlags: 0
@@ -11624,7 +11946,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &795898228
 GameObject:
   m_ObjectHideFlags: 0
@@ -11830,7 +12152,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &803167639
 GameObject:
   m_ObjectHideFlags: 0
@@ -11976,7 +12298,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &814713727
 GameObject:
   m_ObjectHideFlags: 0
@@ -12083,7 +12405,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &845453827
 GameObject:
   m_ObjectHideFlags: 0
@@ -12190,7 +12512,114 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
+--- !u!1 &850109965
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 850109966}
+  - component: {fileID: 850109969}
+  - component: {fileID: 850109968}
+  - component: {fileID: 850109967}
+  m_Layer: 9
+  m_Name: Chunk (5)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &850109966
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 850109965}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -57.6, z: -64}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1321536707}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &850109967
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 850109965}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 52e67680063911d45af4a52211b84f8f, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &850109968
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 850109965}
+  m_Mesh: {fileID: 0}
+--- !u!114 &850109969
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 850109965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b0b57b889e265d41a7cab6ec365d526, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  updateInEditor: 1
+  terrainManager: {fileID: 0}
+  m_resolution: {x: 2, y: 8, z: 2}
+  m_scale: {x: 32, y: 192, z: 32}
+  noiseSize: 1
+  noiseOffset: {x: -1102, y: 0, z: 0}
+  terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
+  debug: 0
+  threshold: 0
+  drawGizmos: 1
+  drawGizmosMode: 2
 --- !u!1 &852318709
 GameObject:
   m_ObjectHideFlags: 0
@@ -12297,7 +12726,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &874986508
 GameObject:
   m_ObjectHideFlags: 0
@@ -12404,7 +12833,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &876087551
 GameObject:
   m_ObjectHideFlags: 0
@@ -12633,7 +13062,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &902770676
 GameObject:
   m_ObjectHideFlags: 0
@@ -12740,7 +13169,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &910939863
 GameObject:
   m_ObjectHideFlags: 0
@@ -12847,7 +13276,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &918431826
 GameObject:
   m_ObjectHideFlags: 0
@@ -12930,7 +13359,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 919060991}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -280, y: -57.6, z: 0}
+  m_LocalPosition: {x: -280, y: -57.6, z: 0.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -13009,7 +13438,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &928537891
 GameObject:
   m_ObjectHideFlags: 0
@@ -13116,7 +13545,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &939357368
 GameObject:
   m_ObjectHideFlags: 0
@@ -13223,7 +13652,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &941776856
 GameObject:
   m_ObjectHideFlags: 0
@@ -13330,7 +13759,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &942564609
 GameObject:
   m_ObjectHideFlags: 0
@@ -13437,7 +13866,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &976390130
 GameObject:
   m_ObjectHideFlags: 0
@@ -13649,7 +14078,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &996402405
 GameObject:
   m_ObjectHideFlags: 0
@@ -13756,7 +14185,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &999947991
 GameObject:
   m_ObjectHideFlags: 0
@@ -13863,7 +14292,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1000681113
 GameObject:
   m_ObjectHideFlags: 0
@@ -14118,7 +14547,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1018371215
 GameObject:
   m_ObjectHideFlags: 0
@@ -14225,7 +14654,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1019681293
 GameObject:
   m_ObjectHideFlags: 0
@@ -14437,7 +14866,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1043038194
 GameObject:
   m_ObjectHideFlags: 0
@@ -14544,7 +14973,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1055199648
 GameObject:
   m_ObjectHideFlags: 0
@@ -14651,7 +15080,114 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
+--- !u!1 &1062640252
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1062640253}
+  - component: {fileID: 1062640256}
+  - component: {fileID: 1062640255}
+  - component: {fileID: 1062640254}
+  m_Layer: 9
+  m_Name: Chunk (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1062640253
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1062640252}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -57.6, z: -64}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1321536707}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &1062640254
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1062640252}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 52e67680063911d45af4a52211b84f8f, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1062640255
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1062640252}
+  m_Mesh: {fileID: 0}
+--- !u!114 &1062640256
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1062640252}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b0b57b889e265d41a7cab6ec365d526, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  updateInEditor: 1
+  terrainManager: {fileID: 0}
+  m_resolution: {x: 32, y: 128, z: 32}
+  m_scale: {x: 32, y: 192, z: 32}
+  noiseSize: 1
+  noiseOffset: {x: -1102, y: 0, z: 0}
+  terrainShape: {fileID: 11400000, guid: 2d37d9d14fd280145ae56bc290e29872, type: 2}
+  debug: 0
+  threshold: 0
+  drawGizmos: 1
+  drawGizmosMode: 2
 --- !u!1 &1062741310
 GameObject:
   m_ObjectHideFlags: 0
@@ -14758,7 +15294,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1068910777
 GameObject:
   m_ObjectHideFlags: 0
@@ -14970,7 +15506,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1080385453
 GameObject:
   m_ObjectHideFlags: 0
@@ -15077,7 +15613,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1102155689
 GameObject:
   m_ObjectHideFlags: 0
@@ -15184,7 +15720,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1108022926
 GameObject:
   m_ObjectHideFlags: 0
@@ -15291,7 +15827,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1112263454
 GameObject:
   m_ObjectHideFlags: 0
@@ -15398,7 +15934,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1125845499
 GameObject:
   m_ObjectHideFlags: 0
@@ -15505,7 +16041,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1136870480
 GameObject:
   m_ObjectHideFlags: 0
@@ -15612,7 +16148,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1145010941
 GameObject:
   m_ObjectHideFlags: 0
@@ -15719,7 +16255,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1150107952
 GameObject:
   m_ObjectHideFlags: 0
@@ -15826,7 +16362,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1150596351
 GameObject:
   m_ObjectHideFlags: 0
@@ -15933,7 +16469,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1158936467
 GameObject:
   m_ObjectHideFlags: 0
@@ -16040,7 +16576,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1161391693
 GameObject:
   m_ObjectHideFlags: 0
@@ -16147,7 +16683,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1165699345
 GameObject:
   m_ObjectHideFlags: 0
@@ -16254,7 +16790,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1175592014
 GameObject:
   m_ObjectHideFlags: 0
@@ -16361,7 +16897,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1180320024
 GameObject:
   m_ObjectHideFlags: 0
@@ -16468,7 +17004,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1194505504
 GameObject:
   m_ObjectHideFlags: 0
@@ -16714,7 +17250,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1205162102
 GameObject:
   m_ObjectHideFlags: 0
@@ -16974,7 +17510,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1219236314
 GameObject:
   m_ObjectHideFlags: 0
@@ -17081,7 +17617,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1220548223
 GameObject:
   m_ObjectHideFlags: 0
@@ -17188,7 +17724,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1225683508
 GameObject:
   m_ObjectHideFlags: 0
@@ -17295,7 +17831,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1226673965
 GameObject:
   m_ObjectHideFlags: 0
@@ -17402,7 +17938,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1228161502
 GameObject:
   m_ObjectHideFlags: 0
@@ -17675,7 +18211,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1248379074
 GameObject:
   m_ObjectHideFlags: 0
@@ -17782,7 +18318,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1248905000
 GameObject:
   m_ObjectHideFlags: 0
@@ -17889,7 +18425,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1253757155
 GameObject:
   m_ObjectHideFlags: 0
@@ -17996,7 +18532,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1258304446
 GameObject:
   m_ObjectHideFlags: 0
@@ -18242,7 +18778,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1260325158
 GameObject:
   m_ObjectHideFlags: 0
@@ -18349,7 +18885,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1264873171
 GameObject:
   m_ObjectHideFlags: 0
@@ -18456,7 +18992,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1284769156
 GameObject:
   m_ObjectHideFlags: 0
@@ -18563,7 +19099,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1297164023
 GameObject:
   m_ObjectHideFlags: 0
@@ -18670,7 +19206,43 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
+--- !u!1 &1321536706
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1321536707}
+  m_Layer: 0
+  m_Name: Surfaces
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &1321536707
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1321536706}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1062640253}
+  - {fileID: 428012531}
+  - {fileID: 404485338}
+  - {fileID: 95081396}
+  - {fileID: 850109966}
+  m_Father: {fileID: 554387736}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1329855018
 GameObject:
   m_ObjectHideFlags: 0
@@ -18777,7 +19349,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1330187808
 GameObject:
   m_ObjectHideFlags: 0
@@ -18884,7 +19456,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1338645315
 GameObject:
   m_ObjectHideFlags: 0
@@ -18991,7 +19563,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1342233365
 GameObject:
   m_ObjectHideFlags: 0
@@ -19098,7 +19670,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1360579268
 GameObject:
   m_ObjectHideFlags: 0
@@ -19205,7 +19777,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1379816565
 GameObject:
   m_ObjectHideFlags: 0
@@ -19312,7 +19884,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1380772634
 GameObject:
   m_ObjectHideFlags: 0
@@ -19600,7 +20172,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 5.36
+  drawGizmosMode: 0
 --- !u!1 &1394331638
 GameObject:
   m_ObjectHideFlags: 0
@@ -19812,7 +20384,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1400860170
 GameObject:
   m_ObjectHideFlags: 0
@@ -19919,7 +20491,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1415174061
 GameObject:
   m_ObjectHideFlags: 0
@@ -20026,7 +20598,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1418532144
 GameObject:
   m_ObjectHideFlags: 0
@@ -20133,7 +20705,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1445663852
 GameObject:
   m_ObjectHideFlags: 0
@@ -20386,7 +20958,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1483422089
 GameObject:
   m_ObjectHideFlags: 0
@@ -20493,7 +21065,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1483621346
 GameObject:
   m_ObjectHideFlags: 0
@@ -20862,7 +21434,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1505686903
 GameObject:
   m_ObjectHideFlags: 0
@@ -20969,7 +21541,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1518253752
 GameObject:
   m_ObjectHideFlags: 0
@@ -21181,7 +21753,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1541517102
 GameObject:
   m_ObjectHideFlags: 0
@@ -21288,7 +21860,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1552787119
 GameObject:
   m_ObjectHideFlags: 0
@@ -21395,7 +21967,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 5.36
+  drawGizmosMode: 0
 --- !u!1 &1562889436
 GameObject:
   m_ObjectHideFlags: 0
@@ -21502,7 +22074,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1564374878
 GameObject:
   m_ObjectHideFlags: 0
@@ -21609,7 +22181,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1591072438
 GameObject:
   m_ObjectHideFlags: 0
@@ -21716,7 +22288,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1605857039
 GameObject:
   m_ObjectHideFlags: 0
@@ -21823,7 +22395,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1606584723
 GameObject:
   m_ObjectHideFlags: 0
@@ -21930,7 +22502,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1613818792
 GameObject:
   m_ObjectHideFlags: 0
@@ -22037,7 +22609,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1625845790
 GameObject:
   m_ObjectHideFlags: 0
@@ -22144,7 +22716,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1642289133
 GameObject:
   m_ObjectHideFlags: 0
@@ -22251,7 +22823,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1646702279
 GameObject:
   m_ObjectHideFlags: 0
@@ -22358,7 +22930,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1666460185
 GameObject:
   m_ObjectHideFlags: 0
@@ -22496,7 +23068,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1673741963
 GameObject:
   m_ObjectHideFlags: 0
@@ -22603,7 +23175,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1676140784
 GameObject:
   m_ObjectHideFlags: 0
@@ -22710,7 +23282,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1676638793
 GameObject:
   m_ObjectHideFlags: 0
@@ -22983,7 +23555,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1679666290
 GameObject:
   m_ObjectHideFlags: 0
@@ -23090,7 +23662,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1682793198
 GameObject:
   m_ObjectHideFlags: 0
@@ -23337,7 +23909,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1704721417
 GameObject:
   m_ObjectHideFlags: 0
@@ -23444,7 +24016,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1723219606
 GameObject:
   m_ObjectHideFlags: 0
@@ -23551,7 +24123,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 5.36
+  drawGizmosMode: 0
 --- !u!1 &1745351554
 GameObject:
   m_ObjectHideFlags: 0
@@ -23658,7 +24230,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1756467154
 GameObject:
   m_ObjectHideFlags: 0
@@ -23765,7 +24337,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1761814341
 GameObject:
   m_ObjectHideFlags: 0
@@ -23872,7 +24444,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1785138225
 GameObject:
   m_ObjectHideFlags: 0
@@ -23979,7 +24551,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1793526372
 GameObject:
   m_ObjectHideFlags: 0
@@ -24086,7 +24658,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1796126537
 GameObject:
   m_ObjectHideFlags: 0
@@ -24193,7 +24765,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1800358333
 GameObject:
   m_ObjectHideFlags: 0
@@ -24300,7 +24872,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1818263288
 GameObject:
   m_ObjectHideFlags: 0
@@ -24407,7 +24979,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1825934124
 GameObject:
   m_ObjectHideFlags: 0
@@ -24514,7 +25086,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1826171628
 GameObject:
   m_ObjectHideFlags: 0
@@ -24621,7 +25193,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1833074496
 GameObject:
   m_ObjectHideFlags: 0
@@ -24728,7 +25300,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1838124432
 GameObject:
   m_ObjectHideFlags: 0
@@ -24956,7 +25528,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1845271103
 GameObject:
   m_ObjectHideFlags: 0
@@ -25063,7 +25635,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1854706013
 GameObject:
   m_ObjectHideFlags: 0
@@ -25170,7 +25742,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1854750145
 GameObject:
   m_ObjectHideFlags: 0
@@ -25328,7 +25900,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1857605943
 GameObject:
   m_ObjectHideFlags: 0
@@ -25435,7 +26007,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1861269582
 GameObject:
   m_ObjectHideFlags: 0
@@ -25542,7 +26114,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1861827990
 GameObject:
   m_ObjectHideFlags: 0
@@ -25649,7 +26221,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1864009885
 GameObject:
   m_ObjectHideFlags: 0
@@ -25756,7 +26328,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1867329377
 GameObject:
   m_ObjectHideFlags: 0
@@ -25863,7 +26435,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1868254150
 GameObject:
   m_ObjectHideFlags: 0
@@ -26002,7 +26574,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1886256867
 GameObject:
   m_ObjectHideFlags: 0
@@ -26214,7 +26786,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1897973429
 GameObject:
   m_ObjectHideFlags: 0
@@ -26505,7 +27077,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 5.36
+  drawGizmosMode: 0
 --- !u!1 &1910112285
 GameObject:
   m_ObjectHideFlags: 0
@@ -26612,7 +27184,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1925953970
 GameObject:
   m_ObjectHideFlags: 0
@@ -26719,7 +27291,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1932315827
 GameObject:
   m_ObjectHideFlags: 0
@@ -26826,7 +27398,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1938218231
 GameObject:
   m_ObjectHideFlags: 0
@@ -26933,7 +27505,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1958632009
 GameObject:
   m_ObjectHideFlags: 0
@@ -27040,7 +27612,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1961581707
 GameObject:
   m_ObjectHideFlags: 0
@@ -27147,7 +27719,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1963339350
 GameObject:
   m_ObjectHideFlags: 0
@@ -27393,7 +27965,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &1996501340
 GameObject:
   m_ObjectHideFlags: 0
@@ -27500,7 +28072,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &2001172340
 GameObject:
   m_ObjectHideFlags: 0
@@ -27746,7 +28318,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &2021533276
 GameObject:
   m_ObjectHideFlags: 0
@@ -27853,7 +28425,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &2024260575
 GameObject:
   m_ObjectHideFlags: 0
@@ -27960,7 +28532,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &2028694050
 GameObject:
   m_ObjectHideFlags: 0
@@ -28067,7 +28639,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &2033718947
 GameObject:
   m_ObjectHideFlags: 0
@@ -28279,7 +28851,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &2046265708
 GameObject:
   m_ObjectHideFlags: 0
@@ -28386,7 +28958,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &2054615947
 GameObject:
   m_ObjectHideFlags: 0
@@ -28493,7 +29065,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &2067189798
 GameObject:
   m_ObjectHideFlags: 0
@@ -28600,7 +29172,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &2068499312
 GameObject:
   m_ObjectHideFlags: 0
@@ -28707,7 +29279,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &2073348729
 GameObject:
   m_ObjectHideFlags: 0
@@ -28814,7 +29386,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &2074668180
 GameObject:
   m_ObjectHideFlags: 0
@@ -28921,7 +29493,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &2092129053
 GameObject:
   m_ObjectHideFlags: 0
@@ -29028,7 +29600,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &2098409131
 GameObject:
   m_ObjectHideFlags: 0
@@ -29135,7 +29707,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &2103222555
 GameObject:
   m_ObjectHideFlags: 0
@@ -29242,7 +29814,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &2117001235
 GameObject:
   m_ObjectHideFlags: 0
@@ -29349,7 +29921,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &2137661068
 GameObject:
   m_ObjectHideFlags: 0
@@ -29456,7 +30028,7 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 0
-  gizmosSize: 0.1
+  drawGizmosMode: 0
 --- !u!1 &2137689710
 GameObject:
   m_ObjectHideFlags: 0
@@ -29563,4 +30135,4 @@ MonoBehaviour:
   debug: 0
   threshold: 0
   drawGizmos: 1
-  gizmosSize: 0.1
+  drawGizmosMode: 0

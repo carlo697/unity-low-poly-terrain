@@ -76,7 +76,13 @@ public class TerrainChunk : MonoBehaviour {
   public float threshold = 0f;
 
   public bool drawGizmos = true;
-  public float gizmosSize = 0.5f;
+  public GizmosMode drawGizmosMode;
+  public enum GizmosMode {
+    WiredCube,
+    CubesDensity,
+    CubesSurface
+  };
+
 
   #region Status
   public enum GenerationState {
@@ -142,8 +148,8 @@ public class TerrainChunk : MonoBehaviour {
   private JobHandle? m_physicsJobHandle;
   #endregion
 
-  // public CubeGridPoint[] points { get { return m_points; } }
-  // private CubeGridPoint[] m_points;
+  public VoxelGrid grid { get { return m_grid; } }
+  private VoxelGrid m_grid;
 
   private void Awake() {
     m_isAwake = true;
@@ -271,6 +277,10 @@ public class TerrainChunk : MonoBehaviour {
   }
 
   private void OnDestroy() {
+    if (m_grid != null) {
+      m_grid.Dispose();
+    }
+
     if (!Application.isEditor) {
       Destroy(m_meshFilter.sharedMesh);
     }
@@ -323,8 +333,13 @@ public class TerrainChunk : MonoBehaviour {
         m_terrainJobHandle.Value.Complete();
 
         if (!m_destroyFlag) {
-          // Copy points and mesh data
-          // m_points = m_jobPoints.ToArray();
+          // Copy points and build grid
+          if (m_grid == null) {
+            m_grid = new VoxelGrid(scale, resolution, threshold);
+          }
+          m_grid.CopyPointsFrom(m_jobPoints);
+
+          // Copy mesh data
           // m_meshVertices = m_jobVertices.ToArray();
           // m_meshTriangles = m_jobTriangles.ToArray();
           // m_meshUVs = m_jobUVs.ToArray();
@@ -449,20 +464,52 @@ public class TerrainChunk : MonoBehaviour {
 
     if (!drawGizmos) return;
 
-    Gizmos.color = Color.white;
-    Gizmos.DrawWireCube(m_bounds.center, m_bounds.size);
+    if (drawGizmosMode == GizmosMode.WiredCube) {
+      Gizmos.color = Color.white;
+      Gizmos.DrawWireCube(m_bounds.center, m_bounds.size);
+    } else {
+      Vector3 voxelSize = new Vector3(
+        (1f / ((float)resolution.x)) * scale.x,
+        (1f / ((float)resolution.y)) * scale.y,
+        (1f / ((float)resolution.z)) * scale.z
+      );
+      Vector3 voxelExtents = voxelSize / 2f;
 
-    // for (int z = 0; z < m_grid.resolution.z; z++) {
-    //   for (int y = 0; y < m_grid.resolution.y; y++) {
-    //     for (int x = 0; x < m_grid.resolution.x; x++) {
-    //       Vector3 pointPosition = m_grid.GetPointPosition(x, y, z);
-    //       Vector3 globalPointPosition = transform.TransformPoint(pointPosition);
+      for (int z = 0; z < resolution.z; z++) {
+        for (int y = 0; y < resolution.y; y++) {
+          for (int x = 0; x < resolution.x; x++) {
+            Vector3 pointPosition = new Vector3(
+              ((float)x / ((float)resolution.x)) * scale.x,
+              ((float)y / ((float)resolution.y)) * scale.y,
+              ((float)z / ((float)resolution.z)) * scale.z
+            );
+            Vector3 globalPointPosition = transform.TransformPoint(pointPosition + voxelExtents);
 
-    //       float value = m_grid.GetPoint(x, y, z).value;
-    //       Gizmos.color = new Color(value, value, value);
-    //       Gizmos.DrawCube(globalPointPosition, Vector3.one * gizmosSize);
-    //     }
-    //   }
-    // }
+            Color color;
+            if (m_grid == null) {
+              color = Color.black;
+            } else if (drawGizmosMode == GizmosMode.CubesDensity) {
+              float value = m_grid != null ? m_grid.GetPoint(x, y, z).value : 1f;
+              color = new Color(value, value, value);
+            } else if (drawGizmosMode == GizmosMode.CubesSurface) {
+              // Find the case index
+              Vector3Int coords = new Vector3Int(x, y, z);
+              int caseIndex = MarchingCubes.FindCaseIndex(grid, threshold, coords);
+
+              if (caseIndex == 0 || caseIndex == 0xFF) {
+                continue;
+              } else {
+                color = Color.white;
+              }
+            } else {
+              color = Color.black;
+            }
+
+            Gizmos.color = color;
+            Gizmos.DrawCube(globalPointPosition, voxelSize);
+          }
+        }
+      }
+    }
   }
 }

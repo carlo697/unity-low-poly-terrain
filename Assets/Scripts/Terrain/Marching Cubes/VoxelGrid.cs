@@ -1,4 +1,5 @@
 using UnityEngine;
+using Unity.Collections;
 using System;
 using System.Buffers;
 using System.Runtime.CompilerServices;
@@ -55,6 +56,10 @@ public class VoxelGrid : IDisposable {
       ref VoxelPoint point = ref m_points[index];
       point.position = GetPointPosition(index);
     }
+  }
+
+  public void CopyPointsFrom(NativeList<VoxelPoint> points) {
+    points.AsArray().CopyTo(m_points);
   }
 
   public void CopyPointsFrom(VoxelGrid grid) {
