@@ -22,3 +22,32 @@ MonoBehaviour:
     min: 100
     max: 250
   testHeight: 0.5
+  noise:
+    seed: 0
+    scale: 1
+    tree: {fileID: 11400000, guid: 3db9cc66d5d230746aec7ea1836380b6, type: 2}
+    useCurve: 0
+    curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: -1
+        value: -1
+        inSlope: 0
+        outSlope: 1
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 1
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
