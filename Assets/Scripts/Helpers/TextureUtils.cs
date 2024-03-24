@@ -225,4 +225,56 @@ public static class TextureUtils {
 
     return distances;
   }
+
+  public static float[] Generate3dGaussianWeights(int size) {
+    int offset = size * 2;
+    int axisLength = 1 + offset;
+    int maxCoord = axisLength - 1;
+
+    int weightCount = axisLength * axisLength * axisLength;
+    float[] weights = new float[weightCount];
+
+    const float o = 0.84089642f;
+    const float oSquared = o * o;
+
+    // float constant = (1f / (Mathf.Sqrt(2f * Mathf.PI) * o));
+    float constant = (1f / Mathf.Pow(Mathf.Sqrt(2f * Mathf.PI) * o, 3));
+
+    for (int z = 0; z < axisLength; z++) {
+      for (int y = 0; y < axisLength; y++) {
+        for (int x = 0; x < axisLength; x++) {
+          int index = GetIndexFrom3d(x, y, z, axisLength, axisLength);
+
+          float normalizedX = ((float)x - size) / size;
+          float normalizedY = ((float)y - size) / size;
+          float normalizedZ = ((float)z - size) / size;
+
+          // float weight = constant * Mathf.Exp(-(normalizedX * normalizedX) / (2f * oSquared));
+          // weight *= constant * Mathf.Exp(-(normalizedY * normalizedY) / (2f * oSquared));
+          // weight *= constant * Mathf.Exp(-(normalizedZ * normalizedZ) / (2f * oSquared));
+
+          // float weight =
+          //   constant
+          //   * Mathf.Exp(-(normalizedX * normalizedX + normalizedY * normalizedY + normalizedZ * normalizedZ) / (2f * oSquared));
+
+          float weight = Mathf.Exp(-(normalizedX * normalizedX + normalizedY * normalizedY + normalizedZ * normalizedZ) / (2f * oSquared));
+
+          weights[index] = weight;
+        }
+      }
+    }
+
+    // Sum the total
+    float total = 0f;
+    for (int index = 0; index < weightCount; index++) {
+      total += weights[index];
+    }
+
+    // Divide all the values by the total so the total count equals 1
+    for (int index = 0; index < weightCount; index++) {
+      weights[index] /= total;
+    }
+
+    return weights;
+  }
 }
