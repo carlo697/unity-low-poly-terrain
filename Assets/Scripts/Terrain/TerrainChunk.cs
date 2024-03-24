@@ -74,6 +74,7 @@ public class TerrainChunk : MonoBehaviour {
   }
 
   public float threshold = 0f;
+  public int upsamplingLevel = 0;
 
   public bool drawGizmos = true;
   public GizmosMode drawGizmosMode;
@@ -224,8 +225,7 @@ public class TerrainChunk : MonoBehaviour {
     // Create the delegates for sampling the noise
     TerrainSamplerFunc samplerFunc;
     if (terrainShape != null) {
-      FastNoiseChunk chunk = new FastNoiseChunk(this);
-      samplerFunc = terrainShape.GetSampler(chunk);
+      samplerFunc = terrainShape.GetSampler();
     } else {
       throw new Exception("No sampler found");
     }
@@ -255,9 +255,12 @@ public class TerrainChunk : MonoBehaviour {
       colors = m_jobColors,
       triangleMaterials = m_jobTriangleMaterials,
       points = m_jobPoints,
-      scale = scale,
       resolution = resolution,
+      position = m_noisePosition,
+      scale = scale,
+      noiseScale = noiseSize,
       threshold = threshold,
+      upsamplingLevel = upsamplingLevel,
       debug = debug,
       managedDataHandle = m_jobManagedDataHandle
     };
@@ -334,10 +337,10 @@ public class TerrainChunk : MonoBehaviour {
 
         if (!m_destroyFlag) {
           // Copy points and build grid
-          if (m_grid == null) {
-            m_grid = new VoxelGrid(scale, resolution, threshold);
-          }
-          m_grid.CopyPointsFrom(m_jobPoints);
+          // if (m_grid == null) {
+          //   m_grid = new VoxelGrid(scale, resolution, threshold);
+          // }
+          // m_grid.CopyPointsFrom(m_jobPoints);
 
           // Copy mesh data
           // m_meshVertices = m_jobVertices.ToArray();

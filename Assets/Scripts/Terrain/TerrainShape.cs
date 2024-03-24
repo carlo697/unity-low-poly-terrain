@@ -118,8 +118,21 @@ public class TerrainShape : ScriptableObject {
     TemperatureAndPrecipitation
   }
 
-  public TerrainSamplerFunc GetSampler(FastNoiseChunk chunk) {
-    return (VoxelGrid grid, TerrainMarchingCubesJob.ManagedData data) => {
+  public TerrainSamplerFunc GetSampler() {
+    return (
+      Vector3Int chunkResolution,
+      Vector3 chunkPosition,
+      Vector3 chunkScale,
+      float chunkNoiseScale,
+      VoxelGrid grid,
+      TerrainMarchingCubesJob.ManagedData data
+    ) => {
+      FastNoiseChunk chunk = new FastNoiseChunk(
+        chunkResolution + Vector3Int.one,
+        chunkPosition,
+        chunkScale,
+        chunkNoiseScale
+      );
       int pixelCount2d = chunk.pointCount2d;
 
       Biome[] biomes = this.biomes;

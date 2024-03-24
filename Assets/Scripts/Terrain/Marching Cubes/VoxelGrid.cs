@@ -12,6 +12,9 @@ public class VoxelGrid : IDisposable {
   public Vector3Int size { get { return m_size; } }
   private Vector3Int m_size;
 
+  public Vector3Int maxCoords { get { return m_maxCoords; } }
+  private Vector3Int m_maxCoords;
+
   public int totalPointCount { get { return m_totalPointCount; } }
   private int m_totalPointCount;
 
@@ -37,7 +40,8 @@ public class VoxelGrid : IDisposable {
     this.threshold = threshold;
 
     // Calculations needed to create the grid array
-    m_size = new Vector3Int(resolution.x + 1, resolution.y + 1, resolution.z + 1);
+    m_size = resolution + Vector3Int.one;
+    m_maxCoords = resolution - Vector3Int.one;
     m_totalPointCount = m_size.x * m_size.y * m_size.z;
 
     // Create the grid array
@@ -104,6 +108,15 @@ public class VoxelGrid : IDisposable {
       ((float)x / ((float)resolution.x)) * scale.x,
       ((float)y / ((float)resolution.y)) * scale.y,
       ((float)z / ((float)resolution.z)) * scale.z
+    );
+  }
+
+  [MethodImpl(MethodImplOptions.AggressiveInlining)]
+  public Vector3 GetPointNormalizedPosition(int x, int y, int z) {
+    return new Vector3(
+      (float)x / ((float)resolution.x),
+      (float)y / ((float)resolution.y),
+      (float)z / ((float)resolution.z)
     );
   }
 
