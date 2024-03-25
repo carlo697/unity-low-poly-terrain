@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9db61526a402a2d4ba750795122b0c47, type: 3}
+  m_Name: Plateau Shape
+  m_EditorClassIdentifier: 
+  outputNode:
+    rid: 6015746443652366374
+  nodes:
+  - rid: 6015746443652366374
+  - rid: 6015746443652366382
+  - rid: 6015746443652366384
+  references:
+    version: 2
+    RefIds:
+    - rid: 6015746443652366374
+      type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
+      data:
+        guid: e3a53d99-10c5-4acf-aa44-8d29f8303b8f
+        nodePosition: {x: 0, y: 0}
+        edges:
+        - parentPortName: Output
+          childNode:
+            rid: 6015746443652366384
+        metadataName: Output
+        isCollapsed: 0
+        intValues: []
+        floatValues: []
+        enumValues: []
+    - rid: 6015746443652366382
+      type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
+      data:
+        guid: 84f52a59-5a98-49be-897d-57d8f0e82fc7
+        nodePosition: {x: -499, y: 0}
+        edges: []
+        metadataName: OpenSimplex2S
+        isCollapsed: 0
+        intValues: []
+        floatValues: []
+        enumValues: []
+    - rid: 6015746443652366384
+      type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
+      data:
+        guid: aef3572d-8624-4f2c-9183-b033d8ced4bb
+        nodePosition: {x: -279, y: 0}
+        edges:
+        - parentPortName: Source
+          childNode:
+            rid: 6015746443652366382
+        metadataName: FractalFBm
+        isCollapsed: 0
+        intValues:
+        - name: Octaves
+          value: 5
+        floatValues:
+        - name: Lacunarity
+          value: 2
+        - name: Gain
+          value: 0.5
+        - name: Weighted Strength
+          value: 0
+        enumValues: []

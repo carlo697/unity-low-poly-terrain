@@ -33,22 +33,18 @@ public class TerrainShape : ScriptableObject {
   [Header("Base Noise Settings")]
   public int terrainSeed = 0;
   public float noiseScale = 1500f;
-  public FractalNoise baseNoise = new FractalNoise {
+  public NoiseTreeGenerator baseNoise = new NoiseTreeGenerator {
     seed = 0,
     scale = 1f,
-    octaves = 8
   };
   public bool updateChunksInEditor = true;
 
   [Header("Falloff Settings")]
   public bool useFalloff = true;
   public FalloffNoise landMask = new FalloffNoise();
-  public FractalNoise landGradientSteepness = new FractalNoise {
+  public NoiseTreeGenerator landGradientSteepness = new NoiseTreeGenerator {
     seed = 3,
     scale = 1f,
-    noiseType = NoiseType.OpenSimplex2S,
-    fractalType = FractalType.FractalFBm,
-    octaves = 3
   };
 
   [Header("Biome Settings")]
@@ -57,13 +53,9 @@ public class TerrainShape : ScriptableObject {
   public bool useTemperatureAndPrecipitation = true;
   public float biomesNoiseScale = 0.75f;
   public float biomesVoronoiRandomness = 0.5f;
-  public FractalNoise biomeWarp = new FractalNoise {
+  public NoiseTreeGenerator biomeWarp = new NoiseTreeGenerator {
     seed = 4,
     scale = 4f,
-    amplitude = 1.5f,
-    noiseType = NoiseType.OpenSimplex2S,
-    octaves = 6,
-    fractalType = FractalType.FractalFBm
   };
   public TemperatureNoise averageTemperature;
   public PrecipitationNoise annualPrecipitation;
@@ -72,25 +64,17 @@ public class TerrainShape : ScriptableObject {
   [Header("Plateaus")]
   public bool usePlateaus = true;
   public float absoluteMaximunPlateauHeight = 48f;
-  public FractalNoise plateauMask = new FractalNoise {
+  public NoiseTreeGenerator plateauMask = new NoiseTreeGenerator {
     seed = 20,
-    scale = 1f,
-    noiseType = NoiseType.OpenSimplex2S,
-    octaves = 2,
-    useCurve = true
+    scale = 1.5f,
   };
-  public FractalNoise plateauShape = new FractalNoise {
+  public NoiseTreeGenerator plateauShape = new NoiseTreeGenerator {
     seed = 22,
-    scale = 0.15f,
-    noiseType = NoiseType.OpenSimplex2S,
-    octaves = 5,
-    useCurve = true
+    scale = 0.225f,
   };
-  public FractalNoise plateauGround = new FractalNoise {
+  public NoiseTreeGenerator plateauGround = new NoiseTreeGenerator {
     seed = 24,
-    scale = 2.5f,
-    noiseType = NoiseType.OpenSimplex2S,
-    octaves = 4
+    scale = 3.75f,
   };
 
   [Header("Details")]

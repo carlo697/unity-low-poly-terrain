@@ -1,0 +1,87 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9db61526a402a2d4ba750795122b0c47, type: 3}
+  m_Name: Biomes Warp
+  m_EditorClassIdentifier: 
+  outputNode:
+    rid: 6015746443652366363
+  nodes:
+  - rid: 6015746443652366363
+  - rid: 6015746443652366368
+  - rid: 6015746443652366369
+  - rid: 6015746443652366370
+  references:
+    version: 2
+    RefIds:
+    - rid: 6015746443652366363
+      type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
+      data:
+        guid: ad99a806-f363-4a0a-9e3c-3fcc48f23485
+        nodePosition: {x: 0, y: 0}
+        edges:
+        - parentPortName: Output
+          childNode:
+            rid: 6015746443652366369
+        metadataName: Output
+        isCollapsed: 0
+        intValues: []
+        floatValues: []
+        enumValues: []
+    - rid: 6015746443652366368
+      type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
+      data:
+        guid: 5027c747-69c4-41f0-974d-8a7be18705b4
+        nodePosition: {x: -524, y: 0}
+        edges:
+        - parentPortName: LHS
+          childNode:
+            rid: 6015746443652366370
+        metadataName: Multiply
+        isCollapsed: 0
+        intValues: []
+        floatValues:
+        - name: RHS
+          value: 1.5
+        enumValues: []
+    - rid: 6015746443652366369
+      type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
+      data:
+        guid: a5b23b80-ab0d-423c-885b-9496a2d4bdba
+        nodePosition: {x: -292, y: 0}
+        edges:
+        - parentPortName: Source
+          childNode:
+            rid: 6015746443652366368
+        metadataName: FractalFBm
+        isCollapsed: 0
+        intValues:
+        - name: Octaves
+          value: 6
+        floatValues:
+        - name: Lacunarity
+          value: 2
+        - name: Gain
+          value: 0.5
+        - name: Weighted Strength
+          value: 0
+        enumValues: []
+    - rid: 6015746443652366370
+      type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
+      data:
+        guid: 19338b40-9c91-47b6-a16b-aaa8e613a969
+        nodePosition: {x: -760, y: 0}
+        edges: []
+        metadataName: OpenSimplex2S
+        isCollapsed: 0
+        intValues: []
+        floatValues: []
+        enumValues: []

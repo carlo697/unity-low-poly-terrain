@@ -125,13 +125,7 @@ MonoBehaviour:
   baseNoise:
     seed: 0
     scale: 1
-    amplitude: 1
-    noiseType: 4
-    gain: 0.5
-    weightedStrength: 0.2
-    lacunarity: 2
-    octaves: 8
-    fractalType: 1
+    tree: {fileID: 11400000, guid: c30949e36782ed34cb39e22ad64dd7e2, type: 2}
     useCurve: 1
     curve:
       serializedVersion: 2
@@ -193,9 +187,6 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    useDomainWarp: 1
-    domainWarpAmplitude: 0.3
-    domainWarpFrequency: 2
   updateChunksInEditor: 1
   useFalloff: 1
   landMask:
@@ -293,13 +284,7 @@ MonoBehaviour:
   landGradientSteepness:
     seed: 3
     scale: 1
-    amplitude: 1
-    noiseType: 4
-    gain: 0.5
-    weightedStrength: 0
-    lacunarity: 2
-    octaves: 3
-    fractalType: 0
+    tree: {fileID: 11400000, guid: 4d880c4cfc4da9c4eb5ff19d1e26a160, type: 2}
     useCurve: 1
     curve:
       serializedVersion: 2
@@ -352,9 +337,6 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    useDomainWarp: 0
-    domainWarpAmplitude: 1
-    domainWarpFrequency: 2
   defaultBiome: {fileID: 11400000, guid: 69c4aa4d9a3bd364dac552cb86230c67, type: 2}
   useBiomes: 1
   useTemperatureAndPrecipitation: 1
@@ -363,13 +345,7 @@ MonoBehaviour:
   biomeWarp:
     seed: 4
     scale: 4
-    amplitude: 1.5
-    noiseType: 4
-    gain: 0.5
-    weightedStrength: 0
-    lacunarity: 2
-    octaves: 6
-    fractalType: 0
+    tree: {fileID: 11400000, guid: 46feedaffa8d7cb4dbb3ae923c12c873, type: 2}
     useCurve: 0
     curve:
       serializedVersion: 2
@@ -395,9 +371,6 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    useDomainWarp: 0
-    domainWarpAmplitude: 1
-    domainWarpFrequency: 0.5
   averageTemperature:
     mapSize: {x: 16000, y: 16000}
     range:
@@ -479,13 +452,7 @@ MonoBehaviour:
   plateauMask:
     seed: 20
     scale: 1.5
-    amplitude: 1
-    noiseType: 4
-    gain: 0.5
-    weightedStrength: 0
-    lacunarity: 2
-    octaves: 2
-    fractalType: 0
+    tree: {fileID: 11400000, guid: 25f9c8f6330ea7b44a0a455c1719480b, type: 2}
     useCurve: 1
     curve:
       serializedVersion: 2
@@ -529,19 +496,10 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    useDomainWarp: 0
-    domainWarpAmplitude: 1
-    domainWarpFrequency: 0.5
   plateauShape:
     seed: 22
     scale: 0.225
-    amplitude: 1
-    noiseType: 4
-    gain: 0.5
-    weightedStrength: 0
-    lacunarity: 2
-    octaves: 5
-    fractalType: 0
+    tree: {fileID: 11400000, guid: 6f200381dc7126f45843efc196ea8c05, type: 2}
     useCurve: 1
     curve:
       serializedVersion: 2
@@ -612,19 +570,10 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    useDomainWarp: 0
-    domainWarpAmplitude: 1
-    domainWarpFrequency: 0.5
   plateauGround:
     seed: 24
     scale: 3.75
-    amplitude: 1
-    noiseType: 4
-    gain: 0.5
-    weightedStrength: 0
-    lacunarity: 2
-    octaves: 4
-    fractalType: 0
+    tree: {fileID: 11400000, guid: bac0b748752cd8946acfad8a331bb294, type: 2}
     useCurve: 0
     curve:
       serializedVersion: 2
@@ -650,9 +599,6 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    useDomainWarp: 0
-    domainWarpAmplitude: 1
-    domainWarpFrequency: 0.5
   useDetails: 0
   detailSpawners:
   - {fileID: 11400000, guid: 7dae6a9c888920b4e90b14e3ba88f2d6, type: 2}

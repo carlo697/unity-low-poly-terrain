@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9db61526a402a2d4ba750795122b0c47, type: 3}
+  m_Name: Land Gradient Steepness
+  m_EditorClassIdentifier: 
+  outputNode:
+    rid: 6015746443652366357
+  nodes:
+  - rid: 6015746443652366357
+  - rid: 6015746443652366359
+  - rid: 6015746443652366361
+  references:
+    version: 2
+    RefIds:
+    - rid: 6015746443652366357
+      type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
+      data:
+        guid: b2d0e814-7d6c-48ad-9bc4-804e6c41f9f6
+        nodePosition: {x: 0, y: 0}
+        edges:
+        - parentPortName: Output
+          childNode:
+            rid: 6015746443652366361
+        metadataName: Output
+        isCollapsed: 0
+        intValues: []
+        floatValues: []
+        enumValues: []
+    - rid: 6015746443652366359
+      type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
+      data:
+        guid: 358ea839-0675-4cec-af02-3c9eff4c7d21
+        nodePosition: {x: -532.87, y: 0.0000076293945}
+        edges: []
+        metadataName: OpenSimplex2S
+        isCollapsed: 0
+        intValues: []
+        floatValues: []
+        enumValues: []
+    - rid: 6015746443652366361
+      type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
+      data:
+        guid: 859da6e2-cbd6-4776-8606-c574791ca668
+        nodePosition: {x: -293.6775, y: 0.0000076293945}
+        edges:
+        - parentPortName: Source
+          childNode:
+            rid: 6015746443652366359
+        metadataName: FractalFBm
+        isCollapsed: 0
+        intValues:
+        - name: Octaves
+          value: 3
+        floatValues:
+        - name: Lacunarity
+          value: 2
+        - name: Gain
+          value: 0.5
+        - name: Weighted Strength
+          value: 0
+        enumValues: []
