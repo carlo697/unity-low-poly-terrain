@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9db61526a402a2d4ba750795122b0c47, type: 3}
+  m_Name: Temperature
+  m_EditorClassIdentifier: 
+  outputNode:
+    rid: 6015746443652366343
+  nodes:
+  - rid: 6015746443652366343
+  - rid: 6015746443652366346
+  references:
+    version: 2
+    RefIds:
+    - rid: 6015746443652366343
+      type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
+      data:
+        guid: 84349e3a-e50a-40a1-880e-ac4515e315c0
+        nodePosition: {x: 0, y: 0}
+        edges:
+        - parentPortName: Output
+          childNode:
+            rid: 6015746443652366346
+        metadataName: Output
+        isCollapsed: 0
+        intValues: []
+        floatValues: []
+        enumValues: []
+    - rid: 6015746443652366346
+      type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
+      data:
+        guid: 55c6210c-8bc6-44c4-aa08-97e5c117a0a3
+        nodePosition: {x: -288, y: 0}
+        edges: []
+        metadataName: OpenSimplex2S
+        isCollapsed: 0
+        intValues: []
+        floatValues: []
+        enumValues: []

@@ -407,13 +407,7 @@ MonoBehaviour:
     noise:
       seed: 5
       scale: 4
-      amplitude: 1
-      noiseType: 4
-      gain: 0.5
-      weightedStrength: 0
-      lacunarity: 2
-      octaves: 1
-      fractalType: 0
+      tree: {fileID: 11400000, guid: e7fe9f88eaac94a4c98b2e8347d8a365, type: 2}
       useCurve: 1
       curve:
         serializedVersion: 2
@@ -439,9 +433,6 @@ MonoBehaviour:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-      useDomainWarp: 0
-      domainWarpAmplitude: 0.1
-      domainWarpFrequency: 2
   annualPrecipitation:
     range:
       min: 0
@@ -449,13 +440,7 @@ MonoBehaviour:
     noise:
       seed: 6
       scale: 4
-      amplitude: 1
-      noiseType: 4
-      gain: 0.5
-      weightedStrength: 0
-      lacunarity: 2
-      octaves: 1
-      fractalType: 0
+      tree: {fileID: 11400000, guid: 0157429b51e6fbe49b7a813d5d4205b1, type: 2}
       useCurve: 1
       curve:
         serializedVersion: 2
@@ -481,9 +466,6 @@ MonoBehaviour:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-      useDomainWarp: 0
-      domainWarpAmplitude: 0.1
-      domainWarpFrequency: 2
   biomes:
     array:
     - {fileID: 11400000, guid: ffc6b4f7c76fbfd4aa6e2a5943a8c9c8, type: 2}

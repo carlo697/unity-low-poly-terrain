@@ -5,14 +5,10 @@ using System.Runtime.CompilerServices;
 [Serializable]
 public class PrecipitationNoise {
   public Range range = new Range(0f, 450f);
-  public FractalNoise noise = new FractalNoise {
+
+  public NoiseTreeGenerator noise = new NoiseTreeGenerator {
     seed = 6,
-    scale = 8f,
-    noiseType = NoiseType.OpenSimplex2S,
-    octaves = 3,
-    fractalType = FractalType.FractalFBm,
-    useCurve = true,
-    curve = AnimationCurve.Linear(-1f, 0f, 1f, 450f)
+    scale = 4f,
   };
 
   public class Generator : INoiseGenerator {

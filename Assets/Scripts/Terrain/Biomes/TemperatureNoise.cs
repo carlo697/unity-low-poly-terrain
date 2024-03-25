@@ -7,14 +7,10 @@ public class TemperatureNoise {
   public Vector2 mapSize = Vector3.one * 16000f;
   public Range range = new Range(-15f, 30f);
   public float polarTemperatureDifference = 45f;
-  public FractalNoise noise = new FractalNoise {
+
+  public NoiseTreeGenerator noise = new NoiseTreeGenerator {
     seed = 5,
-    scale = 8f,
-    noiseType = NoiseType.OpenSimplex2S,
-    octaves = 3,
-    fractalType = FractalType.FractalFBm,
-    useCurve = true,
-    curve = AnimationCurve.Linear(-1f, 20f, 1f, 30f)
+    scale = 4f,
   };
 
   public class Generator : INoiseGenerator {
