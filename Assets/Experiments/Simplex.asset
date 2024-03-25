@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9db61526a402a2d4ba750795122b0c47, type: 3}
+  m_Name: Simplex
+  m_EditorClassIdentifier: 
+  outputNode:
+    rid: 6015746459337228299
+  nodes:
+  - rid: 6015746459337228299
+  - rid: 6015746459337228300
+  references:
+    version: 2
+    RefIds:
+    - rid: 6015746459337228299
+      type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
+      data:
+        guid: 707e76b6-5d18-458a-8e85-6fd6f95620e3
+        nodePosition: {x: 0, y: 0}
+        edges:
+        - parentPortName: Output
+          childNode:
+            rid: 6015746459337228300
+        metadataName: Output
+        isCollapsed: 0
+        intValues: []
+        floatValues: []
+        enumValues: []
+    - rid: 6015746459337228300
+      type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
+      data:
+        guid: 13e6af75-f773-4f56-a8e8-fc7febb621cc
+        nodePosition: {x: -229, y: 0}
+        edges: []
+        metadataName: Simplex
+        isCollapsed: 0
+        intValues: []
+        floatValues: []
+        enumValues: []

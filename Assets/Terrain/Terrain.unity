@@ -2101,7 +2101,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 123402230}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 3, y: 0, z: 0}
+  m_LocalPosition: {x: 3, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2125,13 +2125,7 @@ MonoBehaviour:
   noise:
     seed: 0
     scale: 80
-    amplitude: 1
-    noiseType: 4
-    gain: 0.5
-    weightedStrength: 0
-    lacunarity: 2
-    octaves: 1
-    fractalType: 0
+    tree: {fileID: 11400000, guid: d57e16af32a2f974b9f4f54eabe0afac, type: 2}
     useCurve: 1
     curve:
       serializedVersion: 2
@@ -2184,9 +2178,6 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    useDomainWarp: 0
-    domainWarpAmplitude: 0.55
-    domainWarpFrequency: 0.87
   useThreshold: 0
   threshold: 0.5
   debugTime: 0
@@ -3905,7 +3896,7 @@ GameObject:
   - component: {fileID: 245156131}
   - component: {fileID: 245156130}
   m_Layer: 0
-  m_Name: Terrain
+  m_Name: Base Height
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3919,7 +3910,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 245156128}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 3, y: 1, z: 0}
+  m_LocalPosition: {x: 1, y: 2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3943,13 +3934,7 @@ MonoBehaviour:
   noise:
     seed: 0
     scale: 40
-    amplitude: 1
-    noiseType: 4
-    gain: 0.5
-    weightedStrength: 0.2
-    lacunarity: 2
-    octaves: 8
-    fractalType: 1
+    tree: {fileID: 11400000, guid: c30949e36782ed34cb39e22ad64dd7e2, type: 2}
     useCurve: 1
     curve:
       serializedVersion: 2
@@ -4011,9 +3996,6 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    useDomainWarp: 1
-    domainWarpAmplitude: 0.3
-    domainWarpFrequency: 2
   useThreshold: 0
   threshold: 0.5
   debugTime: 0
@@ -12274,12 +12256,12 @@ Transform:
   m_Children:
   - {fileID: 1194505505}
   - {fileID: 2001172341}
-  - {fileID: 1483621347}
-  - {fileID: 245156129}
   - {fileID: 1676638794}
   - {fileID: 1228161503}
   - {fileID: 1000681114}
   - {fileID: 123402231}
+  - {fileID: 1483621347}
+  - {fileID: 245156129}
   m_Father: {fileID: 554387736}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -14428,7 +14410,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1000681113}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 2, y: 0, z: 0}
+  m_LocalPosition: {x: 2, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -14452,13 +14434,7 @@ MonoBehaviour:
   noise:
     seed: 0
     scale: 40
-    amplitude: 1
-    noiseType: 4
-    gain: 0.5
-    weightedStrength: 3.96
-    lacunarity: 2
-    octaves: 1
-    fractalType: 1
+    tree: {fileID: 11400000, guid: 44a582684f7578748947c63f59ac9087, type: 2}
     useCurve: 1
     curve:
       serializedVersion: 2
@@ -14493,9 +14469,6 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    useDomainWarp: 0
-    domainWarpAmplitude: 0.55
-    domainWarpFrequency: 0.87
   useThreshold: 0
   threshold: 0.5
   debugTime: 0
@@ -17162,7 +17135,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1194505504}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -17186,13 +17159,7 @@ MonoBehaviour:
   noise:
     seed: 0
     scale: 40
-    amplitude: 1
-    noiseType: 1
-    gain: 0.5
-    weightedStrength: 0
-    lacunarity: 2
-    octaves: 1
-    fractalType: 0
+    tree: {fileID: 11400000, guid: 19148f9be6ce3624f84db9b5d748be55, type: 2}
     useCurve: 0
     curve:
       serializedVersion: 2
@@ -17218,9 +17185,6 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    useDomainWarp: 0
-    domainWarpAmplitude: 1
-    domainWarpFrequency: 0.5
   useThreshold: 0
   threshold: 0.5
   debugTime: 0
@@ -18103,7 +18067,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1228161502}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1, y: 0, z: 0}
+  m_LocalPosition: {x: 1, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -18127,13 +18091,7 @@ MonoBehaviour:
   noise:
     seed: 0
     scale: 40
-    amplitude: 1
-    noiseType: 1
-    gain: 0.5
-    weightedStrength: 0
-    lacunarity: 2
-    octaves: 1
-    fractalType: 0
+    tree: {fileID: 11400000, guid: bbbf6ff3d7fe0894888b070f33f25ffc, type: 2}
     useCurve: 1
     curve:
       serializedVersion: 2
@@ -18186,9 +18144,6 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    useDomainWarp: 0
-    domainWarpAmplitude: 1
-    domainWarpFrequency: 0.5
   useThreshold: 0
   threshold: 0.5
   debugTime: 0
@@ -21252,7 +21207,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1483621346}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 2, y: 1, z: 0}
+  m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -21276,13 +21231,7 @@ MonoBehaviour:
   noise:
     seed: 288
     scale: 0.25
-    amplitude: 1
-    noiseType: 4
-    gain: 0.5
-    weightedStrength: 0
-    lacunarity: 2
-    octaves: 8
-    fractalType: 0
+    tree: {fileID: 11400000, guid: bf8956d8fe2fe39419f86c05de7037c4, type: 2}
     useCurve: 0
     curve:
       serializedVersion: 2
@@ -21317,9 +21266,6 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    useDomainWarp: 1
-    domainWarpAmplitude: 0.4
-    domainWarpFrequency: 1
   useThreshold: 1
   threshold: 0.3
   debugTime: 0
@@ -23486,7 +23432,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1676638793}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -23510,13 +23456,7 @@ MonoBehaviour:
   noise:
     seed: 0
     scale: 40
-    amplitude: 1
-    noiseType: 1
-    gain: 0.5
-    weightedStrength: 0
-    lacunarity: 2
-    octaves: 1
-    fractalType: 0
+    tree: {fileID: 11400000, guid: bbbf6ff3d7fe0894888b070f33f25ffc, type: 2}
     useCurve: 1
     curve:
       serializedVersion: 2
@@ -23569,9 +23509,6 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    useDomainWarp: 0
-    domainWarpAmplitude: 1
-    domainWarpFrequency: 0.5
   useThreshold: 0
   threshold: 0.5
   debugTime: 0
@@ -28312,7 +28249,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2001172340}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1, y: 1, z: 0}
+  m_LocalPosition: {x: 1, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -28336,13 +28273,7 @@ MonoBehaviour:
   noise:
     seed: 0
     scale: 40
-    amplitude: 1
-    noiseType: 2
-    gain: 0.5
-    weightedStrength: 0
-    lacunarity: 2
-    octaves: 1
-    fractalType: 0
+    tree: {fileID: 11400000, guid: 53bc759ce92c28c48b36398e2bdba0c7, type: 2}
     useCurve: 0
     curve:
       serializedVersion: 2
@@ -28368,9 +28299,6 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    useDomainWarp: 0
-    domainWarpAmplitude: 1
-    domainWarpFrequency: 0.5
   useThreshold: 0
   threshold: 0.5
   debugTime: 0

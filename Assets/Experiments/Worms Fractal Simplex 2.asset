@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9db61526a402a2d4ba750795122b0c47, type: 3}
+  m_Name: Worms Fractal Simplex 2
+  m_EditorClassIdentifier: 
+  outputNode:
+    rid: 6015746459337228293
+  nodes:
+  - rid: 6015746459337228293
+  - rid: 6015746459337228310
+  - rid: 6015746459337228311
+  references:
+    version: 2
+    RefIds:
+    - rid: 6015746459337228293
+      type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
+      data:
+        guid: 83a2386a-c07b-46ea-bdd8-29109e2d084f
+        nodePosition: {x: -56.559998, y: 0}
+        edges:
+        - parentPortName: Output
+          childNode:
+            rid: 6015746459337228311
+        metadataName: Output
+        isCollapsed: 0
+        intValues: []
+        floatValues: []
+        enumValues: []
+    - rid: 6015746459337228310
+      type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
+      data:
+        guid: ca28fc6b-2647-4652-88f9-d698755fc3b3
+        nodePosition: {x: -587.96, y: 0}
+        edges: []
+        metadataName: OpenSimplex2
+        isCollapsed: 0
+        intValues: []
+        floatValues: []
+        enumValues: []
+    - rid: 6015746459337228311
+      type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
+      data:
+        guid: 7f5f7d46-7bb4-4299-8838-0d9547f29a17
+        nodePosition: {x: -354, y: 0}
+        edges:
+        - parentPortName: Source
+          childNode:
+            rid: 6015746459337228310
+        metadataName: FractalRidged
+        isCollapsed: 0
+        intValues:
+        - name: Octaves
+          value: 1
+        floatValues:
+        - name: Lacunarity
+          value: 2
+        - name: Gain
+          value: 0.5
+        - name: Weighted Strength
+          value: 0
+        enumValues: []

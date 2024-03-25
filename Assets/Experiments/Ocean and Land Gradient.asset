@@ -1,0 +1,89 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9db61526a402a2d4ba750795122b0c47, type: 3}
+  m_Name: Ocean and Land Gradient
+  m_EditorClassIdentifier: 
+  outputNode:
+    rid: 6015746459337228302
+  nodes:
+  - rid: 6015746459337228302
+  - rid: 6015746459337228306
+  - rid: 6015746459337228307
+  - rid: 6015746459337228308
+  references:
+    version: 2
+    RefIds:
+    - rid: 6015746459337228302
+      type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
+      data:
+        guid: 64510181-2b96-4cbb-b445-b278759db82c
+        nodePosition: {x: 148.68, y: 0}
+        edges:
+        - parentPortName: Output
+          childNode:
+            rid: 6015746459337228308
+        metadataName: Output
+        isCollapsed: 0
+        intValues: []
+        floatValues: []
+        enumValues: []
+    - rid: 6015746459337228306
+      type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
+      data:
+        guid: 633d7eb3-4a43-4993-a645-b0b6f5b7924f
+        nodePosition: {x: -655, y: 0}
+        edges: []
+        metadataName: OpenSimplex2S
+        isCollapsed: 0
+        intValues: []
+        floatValues: []
+        enumValues: []
+    - rid: 6015746459337228307
+      type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
+      data:
+        guid: 53d0d66a-a490-4169-af30-09101f2fff46
+        nodePosition: {x: -433, y: 0}
+        edges:
+        - parentPortName: Source
+          childNode:
+            rid: 6015746459337228306
+        metadataName: FractalFBm
+        isCollapsed: 0
+        intValues:
+        - name: Octaves
+          value: 8
+        floatValues:
+        - name: Lacunarity
+          value: 2
+        - name: Gain
+          value: 0.5
+        - name: Weighted Strength
+          value: 0
+        enumValues: []
+    - rid: 6015746459337228308
+      type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
+      data:
+        guid: 012cb3ee-9406-4d84-8d15-b14163eddcc6
+        nodePosition: {x: -143, y: 0}
+        edges:
+        - parentPortName: Source
+          childNode:
+            rid: 6015746459337228307
+        metadataName: DomainWarpGradient
+        isCollapsed: 0
+        intValues: []
+        floatValues:
+        - name: Warp Frequency
+          value: 1
+        - name: Warp Amplitude
+          value: 0.4
+        enumValues: []
