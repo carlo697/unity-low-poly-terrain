@@ -8,16 +8,10 @@ public class FalloffNoise {
   public bool useNoise = true;
   public AnimationCurve falloffGradientCurve = AnimationCurve.Linear(0f, 0f, 1f, 1f);
 
-  public FractalNoise noise = new FractalNoise {
+  public NoiseTreeGenerator noise = new NoiseTreeGenerator {
     seed = 2,
     scale = 5.5f,
-    noiseType = NoiseType.OpenSimplex2S,
-    octaves = 8,
-    fractalType = FractalType.FractalFBm,
-    useCurve = true,
-    curve = AnimationCurve.Linear(-1f, 0f, 1f, 1f)
   };
-
 
   public class Generator : INoiseGenerator {
     private FalloffNoise m_settings;
