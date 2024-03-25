@@ -20,6 +20,7 @@ public class TerrainChunkManager : MonoBehaviour {
   public int levelsOfDetail = 8;
   public float detailDistanceBase = 2f;
   public float detailDistanceMultiplier = 2.5f;
+  public int minYResolution = 16;
 
   [Header("Generation Periods")]
   public float updatePeriod = 0.1f;
@@ -88,10 +89,10 @@ public class TerrainChunkManager : MonoBehaviour {
     gameObject.transform.position = bounds.center - bounds.extents;
     gameObject.transform.SetParent(this.transform);
 
-    // Create chunk component
+    // Add chunk component
     TerrainChunk chunk = gameObject.AddComponent<TerrainChunk>();
 
-    // Hide the meshRenderer
+    // Hide the mesh renderer
     chunk.meshRenderer.enabled = false;
 
     // Add to the list
@@ -101,20 +102,25 @@ public class TerrainChunkManager : MonoBehaviour {
     // Add mesh collider
     gameObject.AddComponent<MeshCollider>();
 
-    // Calculate the resolution level
-    float resolutionLevel = chunkScale.x / bounds.size.x;
-
     // Set variables
     chunk.terrainManager = this;
     chunk.drawGizmos = false;
     chunk.debug = logGenerationInfo;
     chunk.terrainShape = m_terrainShape;
+
+    // Calculate the resolution level
+    float resolutionLevel = chunkScale.x / bounds.size.x;
+
+    // Set space variables
     chunk.scale = bounds.size;
+    int yResolution = Mathf.Max(Mathf.CeilToInt(chunkResolution.y * resolutionLevel), minYResolution);
     chunk.resolution = new Vector3Int(
       chunkResolution.x,
-      Mathf.CeilToInt(chunkResolution.y * resolutionLevel),
+      yResolution,
       chunkResolution.z
     );
+
+    // Material
     chunk.GetComponent<MeshRenderer>().sharedMaterial = chunkMaterial;
 
     // Events

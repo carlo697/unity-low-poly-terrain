@@ -17511,6 +17511,7 @@ MonoBehaviour:
   levelsOfDetail: 8
   detailDistanceBase: 2
   detailDistanceMultiplier: 2.5
+  minYResolution: 16
   updatePeriod: 0.2
   generatePeriod: 0.02
   maxConsecutiveChunks: 8
