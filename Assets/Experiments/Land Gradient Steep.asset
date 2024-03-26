@@ -10,57 +10,56 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9db61526a402a2d4ba750795122b0c47, type: 3}
-  m_Name: Ocean and Land Gradient
+  m_Name: Land Gradient Steep
   m_EditorClassIdentifier: 
   outputNode:
-    rid: 6015746459337228302
+    rid: 6015746443652366357
   nodes:
-  - rid: 6015746459337228302
-  - rid: 6015746459337228306
-  - rid: 6015746459337228307
-  - rid: 6015746459337228308
+  - rid: 6015746443652366357
+  - rid: 6015746443652366359
+  - rid: 6015746443652366361
   references:
     version: 2
     RefIds:
-    - rid: 6015746459337228302
+    - rid: 6015746443652366357
       type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
       data:
-        guid: 64510181-2b96-4cbb-b445-b278759db82c
-        nodePosition: {x: 148.68, y: 0}
+        guid: b2d0e814-7d6c-48ad-9bc4-804e6c41f9f6
+        nodePosition: {x: 0, y: 0}
         edges:
         - parentPortName: Output
           childNode:
-            rid: 6015746459337228308
+            rid: 6015746443652366361
         metadataName: Output
         isCollapsed: 0
         intValues: []
         floatValues: []
         enumValues: []
-    - rid: 6015746459337228306
+    - rid: 6015746443652366359
       type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
       data:
-        guid: 633d7eb3-4a43-4993-a645-b0b6f5b7924f
-        nodePosition: {x: -655, y: 0}
+        guid: 358ea839-0675-4cec-af02-3c9eff4c7d21
+        nodePosition: {x: -532.87, y: 0.0000076293945}
         edges: []
         metadataName: OpenSimplex2S
         isCollapsed: 0
         intValues: []
         floatValues: []
         enumValues: []
-    - rid: 6015746459337228307
+    - rid: 6015746443652366361
       type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
       data:
-        guid: 53d0d66a-a490-4169-af30-09101f2fff46
-        nodePosition: {x: -433, y: 0}
+        guid: 859da6e2-cbd6-4776-8606-c574791ca668
+        nodePosition: {x: -293.6775, y: 0.0000076293945}
         edges:
         - parentPortName: Source
           childNode:
-            rid: 6015746459337228306
+            rid: 6015746443652366359
         metadataName: FractalFBm
         isCollapsed: 0
         intValues:
         - name: Octaves
-          value: 8
+          value: 3
         floatValues:
         - name: Lacunarity
           value: 2
@@ -68,22 +67,4 @@ MonoBehaviour:
           value: 0.5
         - name: Weighted Strength
           value: 0
-        enumValues: []
-    - rid: 6015746459337228308
-      type: {class: NoiseNode, ns: FastNoise2Graph, asm: FastNoise2Graph}
-      data:
-        guid: 012cb3ee-9406-4d84-8d15-b14163eddcc6
-        nodePosition: {x: -143, y: 0}
-        edges:
-        - parentPortName: Source
-          childNode:
-            rid: 6015746459337228307
-        metadataName: DomainWarpGradient
-        isCollapsed: 0
-        intValues: []
-        floatValues:
-        - name: Warp Frequency
-          value: 1
-        - name: Warp Amplitude
-          value: 0.4
         enumValues: []

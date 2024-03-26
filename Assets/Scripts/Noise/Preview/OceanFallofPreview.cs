@@ -7,16 +7,22 @@ public class OceanFallofPreview : NoisePreview {
   public Vector2 falloffOffset = Vector2.zero;
   public Vector2 falloffScale = Vector2.one;
   public bool useFalloffOnly;
-  public bool useOutputCurve;
-  public AnimationCurve outputCurve = AnimationCurve.Linear(0f, 0f, 1f, 1f);
 
   [Header("Ocean Border")]
-  public bool useSeaBorder;
-  public float seaBorderBeforeThreshold = 0.05f;
-  public float seaBorderAfterThreshold = 0.1f;
+  public bool displayLandGradient;
+  public bool displayOceanGradient;
+  public GradientSteepMode gradientSteepMode;
+  public float fixedGradientSteep = 0.15f;
+  public NoiseTreeGenerator gradientSteepNoise;
+
+  public enum GradientSteepMode {
+    Fixed,
+    Noise
+  }
 
   public override float[,] GenerateNoise() {
     var generator = noise.GetGenerator();
+    var steepGenerator = gradientSteepNoise.GetGenerator();
 
     // Generate heightmap
     float[,] heightmap = new float[resolution, resolution];
@@ -26,14 +32,6 @@ public class OceanFallofPreview : NoisePreview {
         float normalizedX = ((float)x / resolution + falloffOffset.x) * falloffScale.x;
         float normalizedY = ((float)y / resolution + falloffOffset.y) * falloffScale.y;
 
-        // Clamped coordinates for creating the falloff map
-        float posX = Mathf.Clamp01(normalizedX) * 2f - 1f;
-        float posY = Mathf.Clamp01(normalizedY) * 2f - 1f;
-
-        // Create the falloff map
-        float falloff = 1f - (1f - posX * posX) * (1f - posY * posY);
-        float curvedFalloff = 1f - falloffCurve.Evaluate(falloff);
-
         // Sample and normalize the noise
         float noise = generator.Generate3d(
           normalizedX + offset.x,
@@ -42,43 +40,68 @@ public class OceanFallofPreview : NoisePreview {
           1f,
           0
         );
-        noise = (noise + 1f) / 2f;
+
+        // Clamped coordinates for creating the falloff map
+        float posX = Mathf.Clamp01(normalizedX) * 2f - 1f;
+        float posY = Mathf.Clamp01(normalizedY) * 2f - 1f;
+
+        // Create the falloff map
+        float falloff = 1f - (1f - posX * posX) * (1f - posY * posY);
+        falloff = 1f - falloffCurve.Evaluate(falloff);
 
         // Combine the falloff map and the noise
         // float finalFalloff = noise - curvedFalloff;
-        float finalFalloff = useFalloffOnly ? curvedFalloff : noise * curvedFalloff;
-        if (useOutputCurve) {
-          finalFalloff = outputCurve.Evaluate(finalFalloff);
+        float finalOutput = noise * falloff;
+        if (useFalloffOnly) {
+          finalOutput = falloff;
         }
 
-        // Draw sea border
-        if (useSeaBorder) {
-          float borderGradient;
-          float start = threshold - seaBorderBeforeThreshold;
-          float middle = threshold;
-          if (finalFalloff <= start) {
-            borderGradient = 0f;
-          } else if (finalFalloff <= middle) {
-            borderGradient = Mathf.SmoothStep(
-              0f,
+        if (displayLandGradient || displayOceanGradient) {
+          float seaLevel = threshold;
+
+          float steepness;
+          if (gradientSteepMode == GradientSteepMode.Noise && steepGenerator != null) {
+            steepness = steepGenerator.Generate3d(
+              normalizedX + offset.x,
+              normalizedY + offset.y,
+              offset.z,
               1f,
-              (finalFalloff - start) / (seaBorderBeforeThreshold)
+              0
             );
           } else {
-            borderGradient = Mathf.SmoothStep(
-              1f,
-              0f,
-              (finalFalloff - middle) / (seaBorderAfterThreshold)
-            );
+            steepness = fixedGradientSteep;
           }
 
-          finalFalloff = borderGradient;
+          float gradient = 0f;
+          if (displayLandGradient) {
+            float landGradient;
+            if (finalOutput <= seaLevel) {
+              landGradient = 0f;
+            } else {
+              landGradient = Mathf.SmoothStep(0f, 1f, (finalOutput - seaLevel) / steepness);
+            }
+
+            gradient = landGradient;
+          }
+
+          if (displayOceanGradient) {
+            float oceanGradient;
+            if (finalOutput > seaLevel) {
+              oceanGradient = 0f;
+            } else {
+              oceanGradient = Mathf.SmoothStep(0f, 1f, ((seaLevel - finalOutput) / steepness));
+            }
+
+            gradient += oceanGradient;
+          }
+
+          finalOutput = gradient;
         }
 
         if (useThreshold) {
-          heightmap[x, y] = finalFalloff >= threshold ? 1f : 0f;
+          heightmap[x, y] = finalOutput >= threshold ? 1f : 0f;
         } else {
-          heightmap[x, y] = finalFalloff;
+          heightmap[x, y] = finalOutput;
         }
       }
     }
